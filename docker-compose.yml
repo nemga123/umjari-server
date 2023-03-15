@@ -1,0 +1,26 @@
+# docker-compose.yml
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: app:0.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:10
+    environment:
+      - POSTGRES_DB=umjari
+      - POSTGRES_USER=umjari
+      - POSTGRES_PASSWORD=devpassword
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:25000:5432"
+
+volumes:
+  postgres-data:
+    driver: local
