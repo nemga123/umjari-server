@@ -34,3 +34,7 @@ spring:
     show-sql: true
     database: postgresql
 ---
+app:
+  jwt:
+    jwt-secret-key: "jwt_secret"
+    jwt-expiration-in-ms: 36000000
