@@ -1,6 +1,12 @@
 # Umjari
 
 1. start server
-```shell
-$ docker-compose up -d
-```
+   1. in local
+    ```shell
+    $ ./gradlew bootRun --args='--spring.profiles.active=local'
+    ```
+   2. by docker
+    ```shell
+    $ ./gradlew bootJar
+    $ docker-compose up --build -d
+    ```

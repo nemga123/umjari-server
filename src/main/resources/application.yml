@@ -1,4 +1,25 @@
 spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/umjari?serverTimezone=UTC
+    username: umjari
+    password: devpassword
+  sql:
+    init:
+      mode: always
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
   datasource:
     url: jdbc:postgresql://postgres:5432/umjari?serverTimezone=UTC
     username: umjari
@@ -12,3 +33,4 @@ spring:
       ddl-auto: update
     show-sql: true
     database: postgresql
+---
