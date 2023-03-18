@@ -22,6 +22,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.hibernate.validator:hibernate-validator")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")

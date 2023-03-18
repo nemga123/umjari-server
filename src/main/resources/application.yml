@@ -2,6 +2,15 @@ spring:
   config:
     activate:
       on-profile: local
+app:
+  jwt:
+    jwt-secret-key: "umjarijwtsecretkeyumjarijwtsecretkeyumjarijwtsecretkey"
+    jwt-expiration-in-ms: 36000000
+---
+spring:
+  config:
+    activate:
+      on-profile: local
   datasource:
     url: jdbc:postgresql://localhost:5432/umjari?serverTimezone=UTC
     username: umjari
@@ -34,7 +43,3 @@ spring:
     show-sql: true
     database: postgresql
 ---
-app:
-  jwt:
-    jwt-secret-key: "jwt_secret"
-    jwt-expiration-in-ms: 36000000
