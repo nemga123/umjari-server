@@ -43,7 +43,7 @@ class SecurityConfig(
                 .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/v1/ping/").permitAll()
-                .requestMatchers("/api/v1/auth/me/").authenticated()
+                .requestMatchers("/api/v1/user/me/").authenticated()
                 .anyRequest().permitAll()
         return httpSecurity.build()
     }

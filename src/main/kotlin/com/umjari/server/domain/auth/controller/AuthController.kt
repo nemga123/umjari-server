@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 
-@Tag(name = "auth", description = "유저 관련 APIs")
+@Tag(name = "auth", description = "유저 인 관련 APIs")
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
@@ -27,10 +27,5 @@ class AuthController(
     fun signup(@Valid @RequestBody signupRequest: AuthDto.SignUpRequest): ResponseEntity<Any> {
         val user = authService.signUp(signupRequest)
         return ResponseEntity.noContent().header("Authorization", jwtTokenProvider.generateToken(user.userId)).build()
-    }
-
-    @GetMapping("/me/")
-    fun getMyInfo(@CurrentUser user: User): UserDto.UserInfoResponse {
-        return UserDto.UserInfoResponse(user)
     }
 }
