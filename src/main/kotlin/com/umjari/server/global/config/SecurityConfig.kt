@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -35,10 +36,12 @@ class SecurityConfig(
                 .apply(AuthenticationFilterDsl(jwtTokenProvider))
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/login/**").permitAll()
-                .requestMatchers("/api/v1/auth/signup/**").permitAll()
-                .requestMatchers("/api/v1/ping/**").authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers(AntPathRequestMatcher("/api/v1/auth/login/", "POST")).permitAll()
+                .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/ping/").permitAll()
+                .requestMatchers("/api/v1/auth/me/").authenticated()
+                .anyRequest().authenticated()
         return httpSecurity.build()
     }
 }

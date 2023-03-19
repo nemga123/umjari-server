@@ -23,8 +23,15 @@ class CustomUsernamePasswordAuthenticationFilter(
     }
 
     override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
-        response.addHeader("Authorization", jwtTokenProvider.generateToken(authResult))
-        response.status = HttpServletResponse.SC_NO_CONTENT
+        response.contentType = "application/json"
+        response.characterEncoding = "UTF-8"
+        response.writer.write(createAccessToken(authResult))
+        response.status = HttpServletResponse.SC_OK
+    }
+
+    private fun createAccessToken(authResult: Authentication): String {
+        val accessToken = mapOf("accessToken" to jwtTokenProvider.generateToken(authResult))
+        return ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(accessToken)
     }
 
     override fun unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException) {
