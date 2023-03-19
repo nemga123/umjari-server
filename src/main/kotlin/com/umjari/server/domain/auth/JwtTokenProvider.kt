@@ -40,11 +40,11 @@ class JwtTokenProvider(
         val key = Keys.hmacShaKeyFor(keyBytes)
 
         val token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(key)
-                .compact()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(expiryDate)
+            .signWith(key)
+            .compact()
         return tokenPrefix + token
     }
 
@@ -60,19 +60,19 @@ class JwtTokenProvider(
         val key = Keys.hmacShaKeyFor(keyBytes)
 
         val claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(tokenWithOutPrefix)
-                .body
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(tokenWithOutPrefix)
+            .body
 
         val userId = claims.get("userId", String::class.java)
         val currentUser = userRepository.findByUserId(userId)
-                ?: throw RuntimeException("$userId does not exist.")
+            ?: throw RuntimeException("$userId does not exist.")
         val userPrincipal = UserPrincipal(currentUser)
         return AuthenticationToken(userPrincipal, null)
     }
     fun validateToken(authToken: String?): Boolean {
-        if(authToken.isNullOrEmpty()){
+        if (authToken.isNullOrEmpty()) {
             logger.error("Token is not provided")
             return false
         }

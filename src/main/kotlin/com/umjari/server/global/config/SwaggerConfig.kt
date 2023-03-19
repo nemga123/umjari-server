@@ -13,11 +13,11 @@ class SwaggerConfig {
     @Bean
     fun springOpenApi(): OpenAPI {
         return OpenAPI()
-                .components(Components())
-                .info(
-                    Info().title("Umjari API")
-                            .description("Umjari API Docs")
-                            .version("v1")
-                )
+            .components(Components())
+            .info(
+                Info().title("Umjari API")
+                    .description("Umjari API Docs")
+                    .version("v1"),
+            )
     }
 }

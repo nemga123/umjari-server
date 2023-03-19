@@ -15,12 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
-
 @Configuration
 @EnableWebSecurity(debug = true)
 class SecurityConfig(
-        private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
-        private val jwtTokenProvider: JwtTokenProvider,
+    private val jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint,
+    private val jwtTokenProvider: JwtTokenProvider,
 ) {
     @Bean
     fun passwordEncoder(): PasswordEncoder {
@@ -30,31 +29,36 @@ class SecurityConfig(
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         httpSecurity
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-                .apply(AuthenticationFilterDsl(jwtTokenProvider))
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers(AntPathRequestMatcher("/api/v1/auth/login/", "POST")).permitAll()
-                .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/api/v1/ping/").permitAll()
-                .requestMatchers("/api/v1/user/me/").authenticated()
-                .anyRequest().permitAll()
+            .httpBasic().disable()
+            .csrf().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and()
+            .apply(AuthenticationFilterDsl(jwtTokenProvider))
+            .and()
+            .authorizeHttpRequests()
+            .requestMatchers(AntPathRequestMatcher("/api/v1/auth/login/", "POST")).permitAll()
+            .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
+            .requestMatchers("/error").permitAll()
+            .requestMatchers("/api/v1/ping/").permitAll()
+            .requestMatchers("/api/v1/user/me/").authenticated()
+            .anyRequest().permitAll()
         return httpSecurity.build()
     }
 
     @Bean
     fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity -> web.ignoring()
+        return WebSecurityCustomizer { web: WebSecurity ->
+            web.ignoring()
                 .requestMatchers(
-                    "/css/**", "/images/**", "/js/**"
+                    "/css/**",
+                    "/images/**",
+                    "/js/**",
                     // -- Swagger UI v3 (Open API)
-                    , "/v3/api-docs/**", "/swagger-ui/**"
-        ) }
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                )
+        }
     }
 }

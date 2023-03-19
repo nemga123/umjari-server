@@ -6,7 +6,6 @@ import com.umjari.server.domain.user.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
-
 @Service
 class AuthService(
     private val userRepository: UserRepository,

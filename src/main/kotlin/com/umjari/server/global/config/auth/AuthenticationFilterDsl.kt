@@ -6,11 +6,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer
 
 class AuthenticationFilterDsl(
-        private val jwtTokenProvider: JwtTokenProvider,
-): AbstractHttpConfigurer<AuthenticationFilterDsl, HttpSecurity>() {
+    private val jwtTokenProvider: JwtTokenProvider,
+) : AbstractHttpConfigurer<AuthenticationFilterDsl, HttpSecurity>() {
     override fun configure(builder: HttpSecurity) {
         val authenticationManager = builder.getSharedObject(AuthenticationManager::class.java)
         builder.addFilter(CustomUsernamePasswordAuthenticationFilter(authenticationManager, jwtTokenProvider))
-                .addFilter(JwtAuthenticationFilter(authenticationManager, jwtTokenProvider))
+            .addFilter(JwtAuthenticationFilter(authenticationManager, jwtTokenProvider))
     }
 }

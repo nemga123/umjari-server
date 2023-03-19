@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 class UmjariApplication
 
 fun main(args: Array<String>) {
-	runApplication<UmjariApplication>(*args)
+    runApplication<UmjariApplication>(*args)
 }

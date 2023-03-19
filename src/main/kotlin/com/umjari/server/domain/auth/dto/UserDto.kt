@@ -9,7 +9,7 @@ class UserDto {
         val phoneNumber: String,
         val intro: String?,
     ) {
-        constructor(user: User): this(
+        constructor(user: User) : this(
             nickname = user.nickname,
             email = user.email,
             phoneNumber = user.phoneNumber,

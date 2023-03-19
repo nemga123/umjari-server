@@ -32,4 +32,4 @@ class User(
     var nickname: String,
 
     var intro: String?,
-): BaseTimeEntity()
+) : BaseTimeEntity()

@@ -16,13 +16,18 @@ import java.io.BufferedReader
 
 class CustomUsernamePasswordAuthenticationFilter(
     private val authenticationManager: AuthenticationManager,
-    private val jwtTokenProvider: JwtTokenProvider
-): UsernamePasswordAuthenticationFilter(authenticationManager) {
+    private val jwtTokenProvider: JwtTokenProvider,
+) : UsernamePasswordAuthenticationFilter(authenticationManager) {
     init {
         setRequiresAuthenticationRequestMatcher(AntPathRequestMatcher("/api/v1/auth/login/", "POST"))
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication) {
+    override fun successfulAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        chain: FilterChain,
+        authResult: Authentication,
+    ) {
         response.contentType = "application/json"
         response.characterEncoding = "UTF-8"
         response.writer.write(createAccessToken(authResult))
@@ -34,7 +39,11 @@ class CustomUsernamePasswordAuthenticationFilter(
         return ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(accessToken)
     }
 
-    override fun unsuccessfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, failed: AuthenticationException) {
+    override fun unsuccessfulAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        failed: AuthenticationException,
+    ) {
         super.unsuccessfulAuthentication(request, response, failed)
         response.status = HttpServletResponse.SC_UNAUTHORIZED
     }

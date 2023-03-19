@@ -4,7 +4,7 @@ import com.umjari.server.domain.user.model.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserPrincipal(val user: User): UserDetails {
+class UserPrincipal(val user: User) : UserDetails {
     override fun getAuthorities(): List<GrantedAuthority> {
         return listOf()
     }

@@ -9,7 +9,7 @@ import java.lang.RuntimeException
 @Service
 class UserPrincipalDetailService(
     private val userRepository: UserRepository,
-): UserDetailsService {
+) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository.findByUserId(username) ?: throw RuntimeException()
         return UserPrincipal(user)

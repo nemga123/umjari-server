@@ -5,11 +5,13 @@ import org.springframework.security.authentication.AbstractAuthenticationToken
 class AuthenticationToken(
     private val principal: UserPrincipal,
     private var accessToken: String?,
-): AbstractAuthenticationToken(principal.authorities) {
+) : AbstractAuthenticationToken(principal.authorities) {
     init {
-        if (authorities == null)
+        if (authorities == null) {
             super.setAuthenticated(false)
-        else super.setAuthenticated(true)
+        } else {
+            super.setAuthenticated(true)
+        }
     }
 
     override fun getCredentials(): Any? {

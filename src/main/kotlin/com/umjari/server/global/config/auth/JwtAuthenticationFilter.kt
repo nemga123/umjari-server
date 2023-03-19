@@ -10,8 +10,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 class JwtAuthenticationFilter(
     authenticationManager: AuthenticationManager,
-    private val jwtTokenProvider: JwtTokenProvider
-): BasicAuthenticationFilter(authenticationManager) {
+    private val jwtTokenProvider: JwtTokenProvider,
+) : BasicAuthenticationFilter(authenticationManager) {
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val token = request.getHeader(jwtTokenProvider.header)
         if (token != null && jwtTokenProvider.validateToken(token)) {
