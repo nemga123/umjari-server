@@ -1,8 +1,8 @@
 package com.umjari.server.global.config
 
 import com.umjari.server.domain.auth.JwtTokenProvider
-import com.umjari.server.global.config.auth.AuthenticationFilterDsl
-import com.umjari.server.global.config.auth.JwtAuthenticationEntryPoint
+import com.umjari.server.global.auth.JwtAuthenticationEntryPoint
+import com.umjari.server.global.auth.filter.AuthenticationFilterDsl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -40,10 +40,14 @@ class SecurityConfig(
             .authorizeHttpRequests()
             .requestMatchers(AntPathRequestMatcher("/api/v1/auth/login/", "POST")).permitAll()
             .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
+            .requestMatchers(AntPathRequestMatcher("/api/v1/group/", "POST")).permitAll()
+            .requestMatchers(AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET")).permitAll()
+            .requestMatchers(AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT")).permitAll()
             .requestMatchers("/error").permitAll()
             .requestMatchers("/api/v1/ping/").permitAll()
             .requestMatchers("/api/v1/user/me/").authenticated()
-            .anyRequest().permitAll()
+            .requestMatchers("/swagger-ui/**").permitAll()
+            .anyRequest().authenticated()
         return httpSecurity.build()
     }
 
@@ -52,11 +56,8 @@ class SecurityConfig(
         return WebSecurityCustomizer { web: WebSecurity ->
             web.ignoring()
                 .requestMatchers(
-                    "/css/**",
-                    "/images/**",
-                    "/js/**",
                     // -- Swagger UI v3 (Open API)
-                    "/v3/api-docs/**",
+                    "/api-docs/**",
                     "/swagger-ui/**",
                 )
         }

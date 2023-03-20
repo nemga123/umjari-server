@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PositiveOrZero
 
 @Entity
-@Table
+@Table(name = "umjari_group")
 class Group(
     @field:NotEmpty
     var name: String,

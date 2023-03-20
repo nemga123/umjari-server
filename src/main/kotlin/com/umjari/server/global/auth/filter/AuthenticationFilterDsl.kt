@@ -1,4 +1,4 @@
-package com.umjari.server.global.config.auth
+package com.umjari.server.global.auth.filter
 
 import com.umjari.server.domain.auth.JwtTokenProvider
 import org.springframework.security.authentication.AuthenticationManager
