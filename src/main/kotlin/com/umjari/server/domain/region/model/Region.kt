@@ -6,10 +6,11 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 import jakarta.validation.constraints.NotBlank
 
 @Entity
-@Table
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["parent", "child"])])
 class Region(
     @Column(updatable = false)
     @field:NotBlank
