@@ -34,7 +34,7 @@ class Group(
     @field:PositiveOrZero
     var monthlyFee: Int,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region_id", referencedColumnName = "id")
     var region: Region,
 
