@@ -2,7 +2,7 @@ package com.umjari.server.domain.user.controller
 
 import com.umjari.server.domain.auth.dto.UserDto
 import com.umjari.server.domain.user.model.User
-import com.umjari.server.global.annotation.CurrentUser
+import com.umjari.server.global.auth.annotation.CurrentUser
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

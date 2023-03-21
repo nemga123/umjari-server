@@ -1,4 +1,4 @@
-package com.umjari.server.global.config.auth
+package com.umjari.server.global.auth.filter
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.umjari.server.domain.auth.JwtTokenProvider

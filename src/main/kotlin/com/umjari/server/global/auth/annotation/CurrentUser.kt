@@ -1,4 +1,4 @@
-package com.umjari.server.global.annotation
+package com.umjari.server.global.auth.annotation
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 
