@@ -7,35 +7,39 @@ import jakarta.validation.constraints.PositiveOrZero
 
 class GroupDto {
     data class CreateGroupRequest(
-        @field:NotBlank val name: String,
+        @field:NotBlank val name: String?,
         val logo: String?,
-        @field:NotBlank val practiceTime: String,
-        @field:NotNull val audition: Boolean,
-        @field:PositiveOrZero val membershipFee: Int,
-        @field:PositiveOrZero val monthlyFee: Int,
-        @field:NotBlank val regionParent: String,
-        @field:NotBlank val regionChild: String,
-        @field:NotBlank val regionDetail: String,
+        @field:NotBlank val practiceTime: String?,
+        @field:NotNull val audition: Boolean?,
+        @field:NotNull @field:PositiveOrZero
+        val membershipFee: Int?,
+        @field:NotNull @field:PositiveOrZero
+        val monthlyFee: Int?,
+        @field:NotBlank val regionParent: String?,
+        @field:NotBlank val regionChild: String?,
+        @field:NotBlank val regionDetail: String?,
         val homepage: String?,
         val detailIntro: String?,
         @field:NotNull
-        val recruit: Boolean,
+        val recruit: Boolean?,
         val recruitDetail: String?,
     )
 
     data class UpdateGroupRequest(
-        @field:NotBlank val name: String,
-        @field:NotBlank val practiceTime: String,
-        @field:NotNull val audition: Boolean,
-        @field:PositiveOrZero val membershipFee: Int,
-        @field:PositiveOrZero val monthlyFee: Int,
-        @field:NotBlank val regionParent: String,
-        @field:NotBlank val regionChild: String,
-        @field:NotBlank val regionDetail: String,
+        @field:NotBlank val name: String?,
+        @field:NotBlank val practiceTime: String?,
+        @field:NotNull val audition: Boolean?,
+        @field:NotNull @field:PositiveOrZero
+        val membershipFee: Int?,
+        @field:NotNull @field:PositiveOrZero
+        val monthlyFee: Int?,
+        @field:NotBlank val regionParent: String?,
+        @field:NotBlank val regionChild: String?,
+        @field:NotBlank val regionDetail: String?,
         val homepage: String?,
         val detailIntro: String?,
         @field:NotNull
-        val recruit: Boolean,
+        val recruit: Boolean?,
         val recruitDetail: String?,
     )
 
