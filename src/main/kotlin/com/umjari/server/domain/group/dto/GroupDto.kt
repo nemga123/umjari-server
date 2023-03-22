@@ -38,8 +38,9 @@ class GroupDto {
         @field:NotBlank val regionDetail: String?,
         val homepage: String?,
         val detailIntro: String?,
-        @field:NotNull
-        val recruit: Boolean?,
+    )
+
+    data class UpdateGroupRecruitDetailRequest(
         val recruitDetail: String?,
     )
 

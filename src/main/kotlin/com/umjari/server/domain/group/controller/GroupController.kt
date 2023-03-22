@@ -44,4 +44,20 @@ class GroupController(
     ) {
         groupService.updateGroup(groupId, updateGroupRequest)
     }
+
+    @PutMapping("/{group_id}/is-recruit/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun toggleGroupRecruit(@PathVariable("group_id") groupId: Long) {
+        groupService.toggleGroupRecruit(groupId)
+    }
+
+    @PutMapping("/{group_id}/recruit-detail/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateGroupRecruitDetail(
+        @PathVariable("group_id") groupId: Long,
+        @Valid @RequestBody
+        updateGroupRecruitDetailRequest: GroupDto.UpdateGroupRecruitDetailRequest,
+    ) {
+        groupService.updateGroupRecruitDetail(groupId, updateGroupRecruitDetailRequest)
+    }
 }

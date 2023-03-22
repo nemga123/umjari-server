@@ -6,9 +6,7 @@ import com.umjari.server.global.auth.filter.AuthenticationFilterDsl
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -40,26 +38,17 @@ class SecurityConfig(
             .authorizeHttpRequests()
             .requestMatchers(AntPathRequestMatcher("/api/v1/auth/login/", "POST")).permitAll()
             .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
-            .requestMatchers(AntPathRequestMatcher("/api/v1/group/", "POST")).permitAll()
-            .requestMatchers(AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET")).permitAll()
-            .requestMatchers(AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT")).permitAll()
+            .requestMatchers(
+                AntPathRequestMatcher("/api/v1/group/", "POST"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/is-recruit/", "PUT"),
+            ).permitAll()
             .requestMatchers("/error").permitAll()
             .requestMatchers("/api/v1/ping/").permitAll()
             .requestMatchers("/api/v1/user/me/").authenticated()
-            .requestMatchers("/swagger-ui/**").permitAll()
+            .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
             .anyRequest().authenticated()
         return httpSecurity.build()
-    }
-
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers(
-                    // -- Swagger UI v3 (Open API)
-                    "/api-docs/**",
-                    "/swagger-ui/**",
-                )
-        }
     }
 }
