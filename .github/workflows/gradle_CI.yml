@@ -49,7 +49,6 @@ jobs:
         ./gradlew ktlintCheck
         cat build/reports/ktlint/**/*.txt
     - name: Build with Gradle
-      run: ./gradlew build -x test -x ktlintCheck
 
     - name: Test with Gradle
       run: ./gradlew test
