@@ -1,0 +1,25 @@
+spring:
+    config:
+        activate:
+            on-profile: local
+    datasource:
+        url: jdbc:postgresql://localhost:5432/umjari?serverTimezone=UTC
+        username: umjari
+        password: devpassword
+    sql:
+        init:
+            mode: always
+    jpa:
+        generate-ddl: true
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        database: postgresql
+springdoc:
+    version: 'v1'
+    api-docs:
+        path: /api-docs
+    default-consumes-media-type: application/json
+    default-produces-media-type: application/json
+    paths-to-match:
+        - /api/v1/**
