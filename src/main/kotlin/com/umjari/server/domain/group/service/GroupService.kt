@@ -22,7 +22,7 @@ class GroupService(
             val obj = Region(createGroupRequest.regionParent, createGroupRequest.regionChild)
             regionRepository.save(obj)
         }
-        print("?")
+
         val group = Group(
             name = createGroupRequest.name!!,
             logo = createGroupRequest.logo ?: "default_image",
@@ -51,7 +51,6 @@ class GroupService(
     fun updateGroup(groupId: Long, updateGroupRequest: GroupDto.UpdateGroupRequest) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
-        print("?")
 
         updateRegionOfGroup(group, updateGroupRequest.regionParent!!, updateGroupRequest.regionChild!!)
         with(group) {
@@ -64,8 +63,6 @@ class GroupService(
             regionDetail = updateGroupRequest.regionDetail!!
             homepage = updateGroupRequest.homepage
             detailIntro = updateGroupRequest.detailIntro
-            recruit = updateGroupRequest.recruit!!
-            recruitDetail = updateGroupRequest.recruitDetail
         }
 
         groupRepository.save(group)
@@ -79,5 +76,22 @@ class GroupService(
             }
             group.region = region
         }
+    }
+
+    fun toggleGroupRecruit(groupId: Long) {
+        val group = groupRepository.findByIdOrNull(groupId)
+            ?: throw GroupIdNotFoundException(groupId)
+        group.recruit = !group.recruit
+        groupRepository.save(group)
+    }
+
+    fun updateGroupRecruitDetail(
+        groupId: Long,
+        updateGroupRecruitDetailRequest: GroupDto.UpdateGroupRecruitDetailRequest,
+    ) {
+        val group = groupRepository.findByIdOrNull(groupId)
+            ?: throw GroupIdNotFoundException(groupId)
+        group.recruitDetail = updateGroupRecruitDetailRequest.recruitDetail
+        groupRepository.save(group)
     }
 }
