@@ -46,6 +46,12 @@ class GroupService(
         return GroupDto.GroupDetailResponse(group)
     }
 
+    fun getGroupRecruitDetail(groupId: Long): GroupDto.GroupRecruitDetailResponse {
+        val group = groupRepository.findByIdOrNull(groupId)
+            ?: throw GroupIdNotFoundException(groupId)
+        return GroupDto.GroupRecruitDetailResponse(group)
+    }
+
     fun updateGroup(groupId: Long, updateGroupRequest: GroupDto.UpdateGroupRequest) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)

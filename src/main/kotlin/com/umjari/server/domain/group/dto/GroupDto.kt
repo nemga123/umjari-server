@@ -56,8 +56,6 @@ class GroupDto {
         val homepage: String?,
         val detailIntro: String?,
         val recruit: Boolean,
-        val recruitInstrument: List<Instrument>?,
-        val recruitDetail: String?,
     ) {
         constructor(group: Group) : this(
             id = group.id,
@@ -72,7 +70,19 @@ class GroupDto {
             homepage = group.homepage,
             detailIntro = group.detailIntro,
             recruit = group.recruit,
-            recruitInstrument = if (group.recruit) group.recruitInstruments else null,
+        )
+    }
+
+    data class GroupRecruitDetailResponse(
+        val id: Long,
+        val recruit: Boolean,
+        val recruitInstruments: List<Instrument>?,
+        val recruitDetail: String?,
+    ) {
+        constructor(group: Group) : this(
+            id = group.id,
+            recruit = group.recruit,
+            recruitInstruments = if (group.recruit) group.recruitInstruments else null,
             recruitDetail = if (group.recruit) group.recruitDetail else null,
         )
     }
