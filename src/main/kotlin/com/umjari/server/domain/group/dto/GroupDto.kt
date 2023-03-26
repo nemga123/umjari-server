@@ -1,6 +1,7 @@
 package com.umjari.server.domain.group.dto
 
 import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.model.Instrument
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PositiveOrZero
@@ -20,9 +21,6 @@ class GroupDto {
         @field:NotBlank val regionDetail: String?,
         val homepage: String?,
         val detailIntro: String?,
-        @field:NotNull
-        val recruit: Boolean?,
-        val recruitDetail: String?,
     )
 
     data class UpdateGroupRequest(
@@ -41,7 +39,8 @@ class GroupDto {
     )
 
     data class UpdateGroupRecruitDetailRequest(
-        val recruitDetail: String?,
+        val recruitInstruments: ArrayList<Instrument>,
+        val recruitDetail: String,
     )
 
     data class GroupDetailResponse(
@@ -57,6 +56,7 @@ class GroupDto {
         val homepage: String?,
         val detailIntro: String?,
         val recruit: Boolean,
+        val recruitInstrument: List<Instrument>?,
         val recruitDetail: String?,
     ) {
         constructor(group: Group) : this(
@@ -72,7 +72,8 @@ class GroupDto {
             homepage = group.homepage,
             detailIntro = group.detailIntro,
             recruit = group.recruit,
-            recruitDetail = group.recruitDetail,
+            recruitInstrument = if (group.recruit) group.recruitInstruments else null,
+            recruitDetail = if (group.recruit) group.recruitDetail else null,
         )
     }
 }

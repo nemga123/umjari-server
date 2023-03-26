@@ -34,8 +34,6 @@ class GroupService(
             regionDetail = createGroupRequest.regionDetail!!,
             homepage = createGroupRequest.homepage,
             detailIntro = createGroupRequest.detailIntro,
-            recruit = createGroupRequest.recruit!!,
-            recruitDetail = createGroupRequest.recruitDetail,
         )
 
         groupRepository.save(group)
@@ -91,6 +89,7 @@ class GroupService(
     ) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+        group.recruitInstruments = updateGroupRecruitDetailRequest.recruitInstruments
         group.recruitDetail = updateGroupRecruitDetailRequest.recruitDetail
         groupRepository.save(group)
     }

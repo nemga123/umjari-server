@@ -47,10 +47,10 @@ class Group(
     var detailIntro: String?,
 
     @field:NotNull
-    var recruit: Boolean,
+    var recruit: Boolean = false,
 
     @ElementCollection
-    var recruitInstruments: List<Instrument>,
+    var recruitInstruments: MutableList<Instrument> = mutableListOf(),
 
-    var recruitDetail: String?,
+    var recruitDetail: String = "",
 ) : BaseEntity()
