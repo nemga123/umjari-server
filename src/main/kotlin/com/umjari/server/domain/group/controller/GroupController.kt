@@ -35,6 +35,12 @@ class GroupController(
         return groupService.getGroup(groupId)
     }
 
+    @GetMapping("/{group_id}/recruit/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getGroupRecruitDetail(@PathVariable("group_id") groupId: Long): GroupDto.GroupRecruitDetailResponse {
+        return groupService.getGroupRecruitDetail(groupId)
+    }
+
     @PutMapping("/{group_id}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updateGroup(

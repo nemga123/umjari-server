@@ -41,8 +41,10 @@ class SecurityConfig(
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/is-recruit/", "PUT"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit-detail/", "PUT"),
             ).permitAll()
             .requestMatchers("/error").permitAll()
             .requestMatchers("/api/v1/ping/").permitAll()

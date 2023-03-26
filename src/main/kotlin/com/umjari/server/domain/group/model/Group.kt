@@ -2,6 +2,7 @@ package com.umjari.server.domain.group.model
 
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseEntity
+import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
@@ -46,7 +47,10 @@ class Group(
     var detailIntro: String?,
 
     @field:NotNull
-    var recruit: Boolean,
+    var recruit: Boolean = false,
 
-    var recruitDetail: String?,
+    @ElementCollection
+    var recruitInstruments: MutableList<Instrument> = mutableListOf(),
+
+    var recruitDetail: String = "",
 ) : BaseEntity()
