@@ -34,7 +34,7 @@ jobs:
       run: mkdir deploy
 
     - name: Copy jar files
-      run: cp ./build/libs/*.jar ./deploy/
+      run: cp ./build/libs/*SNAPSHOT.jar ./deploy/
 
     - name: Copy deploy scripts
       run: cp -r ./scripts/* ./deploy/
