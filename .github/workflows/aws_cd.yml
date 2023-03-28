@@ -36,11 +36,8 @@ jobs:
     - name: Copy jar files
       run: cp ./build/libs/*.jar ./deploy/
 
-    - name: Copy appspec.yml
-      run: cp appspec.yml ./deploy/
-
     - name: Copy deploy scripts
-      run: cp -r ./scripts/deploy/ ./deploy/
+      run: cp -r ./scripts/* ./deploy/
 
     - name: Zip deploy directory
       run: zip -r -qq -j ./umjari-server.zip ./deploy
