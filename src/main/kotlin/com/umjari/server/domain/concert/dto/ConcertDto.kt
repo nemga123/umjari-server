@@ -34,6 +34,33 @@ class ConcertDto {
         @field:NotBlank val regionDetail: String?,
     )
 
+    data class UpdateConcertDetailRequest(
+        @field:NotBlank val title: String?,
+        @field:NotBlank val subtitle: String?,
+        @field:NotBlank val conductor: String?,
+        @field:NotNull val host: String?,
+        @field:NotNull val support: String?,
+        @field:NotNull val qna: String?,
+        @field:NotBlank val posterImg: String?,
+        @field:NotBlank
+        @field:Pattern(
+            regexp = "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})$",
+            message = "date format is 'YYYY-MM-DD HH:MM:SS'",
+        )
+        val concertDate: String?,
+        @field:NotNull @field:Positive
+        val concertRunningTime: Int?,
+        @field:NotNull @field:PositiveOrZero
+        val fee: Int?,
+        @field:NotBlank val regionParent: String?,
+        @field:NotBlank val regionChild: String?,
+        @field:NotBlank val regionDetail: String?,
+    )
+
+    data class UpdateConcertInfoRequest(
+        @field:NotBlank val concertInfo: String?,
+    )
+
     data class ConcertDetailResponse(
         val id: Long,
         val groupId: Long,

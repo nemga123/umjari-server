@@ -6,8 +6,7 @@ import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.repository.GroupRepository
-import com.umjari.server.domain.region.model.Region
-import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -17,16 +16,13 @@ import org.springframework.stereotype.Service
 class GroupService(
     private val groupRepository: GroupRepository,
     private val concertRepository: ConcertRepository,
-    private val regionRepository: RegionRepository,
+    private val regionService: RegionService,
 ) {
     fun createGroup(createGroupRequest: GroupDto.CreateGroupRequest): GroupDto.GroupDetailResponse {
-        val region = regionRepository.findByParentAndChild(
+        val region = regionService.getOrCreateRegion(
             createGroupRequest.regionParent!!,
             createGroupRequest.regionChild!!,
-        ) ?: run {
-            val obj = Region(createGroupRequest.regionParent, createGroupRequest.regionChild)
-            regionRepository.save(obj)
-        }
+        )
 
         val group = Group(
             name = createGroupRequest.name!!,
@@ -79,11 +75,7 @@ class GroupService(
 
     private fun updateRegionOfGroup(group: Group, regionParent: String, regionChild: String) {
         if (group.region.parent != regionParent && group.region.child != regionChild) {
-            val region = regionRepository.findByParentAndChild(regionParent, regionChild) ?: run {
-                val obj = Region(regionParent, regionChild)
-                regionRepository.save(obj)
-            }
-            group.region = region
+            group.region = regionService.getOrCreateRegion(regionParent, regionChild)
         }
     }
 
