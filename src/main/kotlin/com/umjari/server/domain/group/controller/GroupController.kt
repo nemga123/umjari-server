@@ -1,9 +1,14 @@
 package com.umjari.server.domain.group.controller
 
+import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.service.GroupService
+import com.umjari.server.global.pagination.PageResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort.Direction
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -65,5 +70,18 @@ class GroupController(
         updateGroupRecruitDetailRequest: GroupDto.UpdateGroupRecruitDetailRequest,
     ) {
         groupService.updateGroupRecruitDetail(groupId, updateGroupRecruitDetailRequest)
+    }
+
+    @GetMapping("/{group_id}/concerts/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getConcertListByGroupId(
+        @PathVariable("group_id") groupId: Long,
+        @PageableDefault(
+            size = 20,
+            sort = ["createdAt"],
+            direction = Direction.DESC,
+        ) pageable: Pageable,
+    ): PageResponse<ConcertDto.ConcertSimpleResponse> {
+        return groupService.getConcertListByGroupId(groupId, pageable)
     }
 }

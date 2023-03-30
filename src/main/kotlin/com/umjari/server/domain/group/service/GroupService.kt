@@ -1,17 +1,22 @@
 package com.umjari.server.domain.group.service
 
+import com.umjari.server.domain.concert.dto.ConcertDto
+import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.global.pagination.PageResponse
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class GroupService(
     private val groupRepository: GroupRepository,
+    private val concertRepository: ConcertRepository,
     private val regionRepository: RegionRepository,
 ) {
     fun createGroup(createGroupRequest: GroupDto.CreateGroupRequest): GroupDto.GroupDetailResponse {
@@ -98,5 +103,14 @@ class GroupService(
         group.recruitInstruments = updateGroupRecruitDetailRequest.recruitInstruments
         group.recruitDetail = updateGroupRecruitDetailRequest.recruitDetail
         groupRepository.save(group)
+    }
+
+    fun getConcertListByGroupId(groupId: Long, pageable: Pageable): PageResponse<ConcertDto.ConcertSimpleResponse> {
+        if (!groupRepository.existsById(groupId)) {
+            throw GroupIdNotFoundException(groupId)
+        }
+        val concerts = concertRepository.getConcertsByGroupId(groupId, pageable)
+        val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
+        return PageResponse(concertResponses, pageable.pageNumber)
     }
 }
