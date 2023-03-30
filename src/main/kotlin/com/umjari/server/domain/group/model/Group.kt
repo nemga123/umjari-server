@@ -1,5 +1,6 @@
 package com.umjari.server.domain.group.model
 
+import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseEntity
 import jakarta.persistence.ElementCollection
@@ -7,6 +8,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
@@ -53,4 +55,7 @@ class Group(
     var recruitInstruments: MutableList<Instrument> = mutableListOf(),
 
     var recruitDetail: String = "",
+
+    @OneToMany(mappedBy = "group")
+    var concerts: MutableList<Concert> = mutableListOf(),
 ) : BaseEntity()

@@ -9,6 +9,7 @@ enum class ErrorType(
 
     DATA_NOT_FOUND(4000),
     GROUP_ID_NOT_FOUND(4001),
+    CONCERT_ID_NOT_FOUND(4002),
 
     CONFLICT(9000),
 
