@@ -8,7 +8,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
@@ -17,13 +17,13 @@ import java.util.Date
 @Entity
 @Table(name = "umjari_concert")
 class Concert(
-    @field:NotEmpty
+    @field:NotBlank
     var title: String,
 
-    @field:NotEmpty
+    @field:NotBlank
     var subtitle: String,
 
-    @field:NotEmpty
+    @field:NotBlank
     var conductor: String,
 
     @field:NotNull
@@ -35,10 +35,10 @@ class Concert(
     @field:NotNull
     var qna: String,
 
-    @field:NotEmpty
+    @field:NotBlank
     var concertInfo: String,
 
-    @field:NotEmpty
+    @field:NotBlank
     var posterImg: String,
 
     @field:NotNull
