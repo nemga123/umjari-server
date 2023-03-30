@@ -50,6 +50,8 @@ class SecurityConfig(
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/concert/group/{\\d+}/", "POST"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/concert/{\\d+}/details/", "PUT"),
+                AntPathRequestMatcher("/api/v1/concert/{\\d+}/info/", "PUT"),
             ).permitAll()
             .requestMatchers("/error").permitAll()
             .requestMatchers("/api/v1/ping/").permitAll()

@@ -6,8 +6,7 @@ import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.repository.GroupRepository
-import com.umjari.server.domain.region.model.Region
-import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.domain.region.service.RegionService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
@@ -15,7 +14,7 @@ import java.text.SimpleDateFormat
 @Service
 class ConcertService(
     private val concertRepository: ConcertRepository,
-    private val regionRepository: RegionRepository,
+    private val regionService: RegionService,
     private val groupRepository: GroupRepository,
 ) {
     private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -27,13 +26,10 @@ class ConcertService(
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
-        val region = regionRepository.findByParentAndChild(
+        val region = regionService.getOrCreateRegion(
             createConcertRequest.regionParent!!,
             createConcertRequest.regionChild!!,
-        ) ?: run {
-            val obj = Region(createConcertRequest.regionParent, createConcertRequest.regionChild)
-            regionRepository.save(obj)
-        }
+        )
 
         val concert = Concert(
             title = createConcertRequest.title!!,
@@ -61,5 +57,37 @@ class ConcertService(
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
         return ConcertDto.ConcertDetailResponse(concert)
+    }
+
+    fun updateConcertDetail(concertId: Long, updateConcertDetailRequest: ConcertDto.UpdateConcertDetailRequest) {
+        val concert = concertRepository.findByIdOrNull(concertId)
+            ?: throw ConcertNotFoundException(concertId)
+        with(concert) {
+            title = updateConcertDetailRequest.title!!
+            subtitle = updateConcertDetailRequest.subtitle!!
+            conductor = updateConcertDetailRequest.conductor!!
+            host = updateConcertDetailRequest.host!!
+            support = updateConcertDetailRequest.support!!
+            qna = updateConcertDetailRequest.qna!!
+            posterImg = updateConcertDetailRequest.posterImg!!
+            concertDate = dateFormatter.parse(updateConcertDetailRequest.concertDate!!)
+            concertRunningTime = updateConcertDetailRequest.concertRunningTime!!
+            fee = updateConcertDetailRequest.fee!!
+        }
+        concertRepository.save(concert)
+    }
+
+    private fun updateRegionOfConcert(concert: Concert, regionParent: String, regionChild: String) {
+        if (concert.region.parent != regionParent && concert.region.child != regionChild) {
+            val region = regionService.getOrCreateRegion(regionParent, regionChild)
+            concert.region = region
+        }
+    }
+
+    fun updateConcertInfo(concertId: Long, updateConcertInfoRequest: ConcertDto.UpdateConcertInfoRequest) {
+        val concert = concertRepository.findByIdOrNull(concertId)
+            ?: throw ConcertNotFoundException(concertId)
+        concert.concertInfo = updateConcertInfoRequest.concertInfo!!
+        concertRepository.save(concert)
     }
 }
