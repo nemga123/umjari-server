@@ -57,26 +57,22 @@ class GroupService(
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
-        updateRegionOfGroup(group, updateGroupRequest.regionParent!!, updateGroupRequest.regionChild!!)
         with(group) {
             name = updateGroupRequest.name!!
             practiceTime = updateGroupRequest.practiceTime!!
             audition = updateGroupRequest.audition!!
             membershipFee = updateGroupRequest.membershipFee!!
-            print(monthlyFee)
             monthlyFee = updateGroupRequest.monthlyFee!!
             regionDetail = updateGroupRequest.regionDetail!!
             homepage = updateGroupRequest.homepage
             detailIntro = updateGroupRequest.detailIntro
+            region = regionService.getOrCreateRegion(
+                updateGroupRequest.regionParent!!,
+                updateGroupRequest.regionChild!!,
+            )
         }
 
         groupRepository.save(group)
-    }
-
-    private fun updateRegionOfGroup(group: Group, regionParent: String, regionChild: String) {
-        if (group.region.parent != regionParent && group.region.child != regionChild) {
-            group.region = regionService.getOrCreateRegion(regionParent, regionChild)
-        }
     }
 
     fun toggleGroupRecruit(groupId: Long) {
