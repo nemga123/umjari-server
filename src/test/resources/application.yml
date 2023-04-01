@@ -20,8 +20,8 @@ spring:
         activate:
             on-profile: test
     datasource:
-        url: jdbc:postgresql://localhost:5432/umjari?serverTimezone=UTC
-        username: umjari
+        url: jdbc:postgresql://localhost:5432/umjari-test?serverTimezone=UTC
+        username: umjari-test
         password: devpassword
     sql:
         init:
@@ -29,6 +29,6 @@ spring:
     jpa:
         generate-ddl: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: create-drop
         show-sql: true
         database: postgresql

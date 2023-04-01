@@ -25,8 +25,8 @@ jobs:
       postgres:
         image: postgres:10
         env:
-          POSTGRES_DB: umjari
-          POSTGRES_USER: umjari
+          POSTGRES_DB: umjari-test
+          POSTGRES_USER: umjari-test
           POSTGRES_PASSWORD: devpassword
         ports:
           - 5432:5432
