@@ -55,7 +55,7 @@ class GroupTests {
         ).andExpect(
             status().isCreated,
         )
-        Assertions.assertEquals(groupRepository.count(), 1)
+        Assertions.assertEquals(1, groupRepository.count())
     }
 
     @Test
@@ -85,7 +85,7 @@ class GroupTests {
         ).andExpect(
             status().isCreated,
         )
-        Assertions.assertEquals(groupRepository.count(), 2)
+        Assertions.assertEquals(2, groupRepository.count())
     }
 
     @Test
