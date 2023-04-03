@@ -2,11 +2,13 @@ package com.umjari.server.domain.auth.model
 
 import com.umjari.server.domain.user.model.User
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserPrincipal(val user: User) : UserDetails {
     override fun getAuthorities(): List<GrantedAuthority> {
-        return listOf()
+        val roles: List<String> = user.roles.split(",").filter { it.isNotEmpty() }
+        return roles.map { role: String? -> SimpleGrantedAuthority(role) }
     }
 
     override fun getPassword(): String {

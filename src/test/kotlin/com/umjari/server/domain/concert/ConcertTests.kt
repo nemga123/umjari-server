@@ -1,10 +1,9 @@
 package com.umjari.server.domain.concert
 
 import com.umjari.server.domain.concert.repository.ConcertRepository
-import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.repository.GroupRepository
-import com.umjari.server.domain.region.model.Region
 import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.utils.TestUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
@@ -36,24 +35,17 @@ class ConcertTests {
     private lateinit var concertRepository: ConcertRepository
 
     companion object {
+        private lateinit var token: String
+
         @BeforeAll
         @JvmStatic
-        internal fun init(@Autowired regionRepository: RegionRepository, @Autowired groupRepository: GroupRepository) {
-            val region = Region(parent = "서울시", child = "관악구")
-            regionRepository.save(region)
-            val group = Group(
-                name = "GROUP_NAME1",
-                logo = "GROUP_LOGO",
-                practiceTime = "12:00",
-                audition = true,
-                membershipFee = 0,
-                monthlyFee = 0,
-                region = region,
-                regionDetail = "음대",
-                detailIntro = "음악 동아리",
-                homepage = "homepage",
-            )
-            groupRepository.save(group)
+        internal fun init(
+            @Autowired mockMvc: MockMvc,
+            @Autowired regionRepository: RegionRepository,
+            @Autowired groupRepository: GroupRepository,
+        ) {
+            TestUtils.createDummyGroup(regionRepository, groupRepository)
+            token = TestUtils.createDummyUser(mockMvc)
         }
     }
 
@@ -82,7 +74,8 @@ class ConcertTests {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/concert/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isCreated,
         )
@@ -91,7 +84,8 @@ class ConcertTests {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/concert/group/100/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNotFound,
         )
@@ -127,7 +121,8 @@ class ConcertTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/concert/1/info/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNoContent,
         )
@@ -135,7 +130,8 @@ class ConcertTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/concert/100/info/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNotFound,
         )
@@ -165,7 +161,8 @@ class ConcertTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/concert/1/details/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNoContent,
         )
@@ -173,7 +170,8 @@ class ConcertTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/concert/100/details/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNotFound,
         )

@@ -32,4 +32,6 @@ class User(
     var nickname: String,
 
     var intro: String?,
+
+    val roles: String = "ROLE_USER",
 ) : BaseTimeEntity()

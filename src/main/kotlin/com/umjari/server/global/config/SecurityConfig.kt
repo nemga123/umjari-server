@@ -36,23 +36,27 @@ class SecurityConfig(
             .apply(AuthenticationFilterDsl(jwtTokenProvider))
             .and()
             .authorizeHttpRequests()
-            .requestMatchers(AntPathRequestMatcher("/api/v1/auth/login/", "POST")).permitAll()
-            .requestMatchers(AntPathRequestMatcher("/api/v1/auth/signup/", "POST")).permitAll()
             .requestMatchers(
-                AntPathRequestMatcher("/api/v1/group/", "POST"),
+                AntPathRequestMatcher("/api/v1/auth/login/", "POST"),
+                AntPathRequestMatcher("/api/v1/auth/signup/", "POST"),
+            ).permitAll()
+            .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/concerts/", "GET"),
+                AntPathRequestMatcher("/api/v1/concert/{\\d+}/", "GET"),
+            ).permitAll()
+            .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/is-recruit/", "PUT"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit-detail/", "PUT"),
-            ).permitAll()
-            .requestMatchers(
                 AntPathRequestMatcher("/api/v1/concert/group/{\\d+}/", "POST"),
-                AntPathRequestMatcher("/api/v1/concert/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/details/", "PUT"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/info/", "PUT"),
-            ).permitAll()
+            ).hasRole("USER")
+            .requestMatchers(
+                AntPathRequestMatcher("/api/v1/group/", "POST"),
+            ).hasRole("ADMIN")
             .requestMatchers("/error").permitAll()
             .requestMatchers("/api/v1/ping/").permitAll()
             .requestMatchers("/api/v1/user/me/").authenticated()
