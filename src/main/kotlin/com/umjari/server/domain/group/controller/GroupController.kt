@@ -2,6 +2,7 @@ package com.umjari.server.domain.group.controller
 
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.group.dto.GroupDto
+import com.umjari.server.domain.group.dto.GroupRegisterDto
 import com.umjari.server.domain.group.service.GroupService
 import com.umjari.server.global.pagination.PageResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -83,5 +84,15 @@ class GroupController(
         ) pageable: Pageable,
     ): PageResponse<ConcertDto.ConcertSimpleResponse> {
         return groupService.getConcertListByGroupId(groupId, pageable)
+    }
+
+    @PostMapping("/{group_id}/register/")
+    @ResponseStatus(HttpStatus.OK)
+    fun registerGroupMember(
+        @PathVariable("group_id") groupId: Long,
+        @Valid @RequestBody
+        registerRequest: GroupRegisterDto.GroupRegisterRequest,
+    ): GroupRegisterDto.GroupRegisterResponse {
+        return groupService.registerGroupMember(groupId, registerRequest)
     }
 }
