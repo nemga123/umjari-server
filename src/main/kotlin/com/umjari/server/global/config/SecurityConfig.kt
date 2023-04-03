@@ -56,6 +56,7 @@ class SecurityConfig(
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/register/", "POST"),
             ).hasRole("ADMIN")
             .requestMatchers("/error").permitAll()
             .requestMatchers("/api/v1/ping/").permitAll()

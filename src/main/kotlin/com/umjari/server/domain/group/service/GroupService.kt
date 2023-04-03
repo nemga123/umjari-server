@@ -3,10 +3,14 @@ package com.umjari.server.domain.group.service
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.dto.GroupDto
+import com.umjari.server.domain.group.dto.GroupRegisterDto
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.region.service.RegionService
+import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -15,8 +19,10 @@ import org.springframework.stereotype.Service
 @Service
 class GroupService(
     private val groupRepository: GroupRepository,
+    private val groupMemberRepository: GroupMemberRepository,
     private val concertRepository: ConcertRepository,
     private val regionService: RegionService,
+    private val userRepository: UserRepository,
 ) {
     fun createGroup(createGroupRequest: GroupDto.CreateGroupRequest): GroupDto.GroupDetailResponse {
         val region = regionService.getOrCreateRegion(
@@ -100,5 +106,36 @@ class GroupService(
         val concerts = concertRepository.getConcertsByGroupId(groupId, pageable)
         val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
         return PageResponse(concertResponses, pageable.pageNumber)
+    }
+
+    fun registerGroupMember(
+        groupId: Long,
+        registerRequest: GroupRegisterDto.GroupRegisterRequest,
+    ): GroupRegisterDto.GroupRegisterResponse {
+        val group = groupRepository.findByIdOrNull(groupId)
+            ?: throw GroupIdNotFoundException(groupId)
+
+        val requestUserIds = registerRequest.userIds.toMutableList()
+
+        val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
+        val existingUserIds = userRepository.findUserIdsByUserIdIn(requestUserIds)
+        val notEnrolledUsers = groupMemberRepository.findAllUserIdsNotEnrolled(existingUserIds, groupId)
+        val notEnrolledUserIds = notEnrolledUsers.map { it.userId }.toSet()
+        notEnrolledUsers.forEach { user ->
+            val groupMember = GroupMember(group = group, user = user)
+            groupMemberRepository.save(groupMember)
+        }
+
+        val notExistingUserIds = requestUserIds.subtract(existingUserIds)
+        notExistingUserIds.forEach {
+            failedUsers.add(GroupRegisterDto.FailedUser(it, "User does not exist."))
+        }
+
+        val alreadyEnrolledUserIds = existingUserIds.subtract(notEnrolledUserIds)
+        alreadyEnrolledUserIds.forEach {
+            failedUsers.add(GroupRegisterDto.FailedUser(it, "User is already enrolled."))
+        }
+
+        return GroupRegisterDto.GroupRegisterResponse(failedUsers)
     }
 }
