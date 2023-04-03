@@ -72,16 +72,13 @@ class ConcertService(
             posterImg = updateConcertDetailRequest.posterImg!!
             concertDate = dateFormatter.parse(updateConcertDetailRequest.concertDate!!)
             concertRunningTime = updateConcertDetailRequest.concertRunningTime!!
+            region = regionService.getOrCreateRegion(
+                updateConcertDetailRequest.regionParent!!,
+                updateConcertDetailRequest.regionChild!!,
+            )
             fee = updateConcertDetailRequest.fee!!
         }
         concertRepository.save(concert)
-    }
-
-    private fun updateRegionOfConcert(concert: Concert, regionParent: String, regionChild: String) {
-        if (concert.region.parent != regionParent && concert.region.child != regionChild) {
-            val region = regionService.getOrCreateRegion(regionParent, regionChild)
-            concert.region = region
-        }
     }
 
     fun updateConcertInfo(concertId: Long, updateConcertInfoRequest: ConcertDto.UpdateConcertInfoRequest) {
