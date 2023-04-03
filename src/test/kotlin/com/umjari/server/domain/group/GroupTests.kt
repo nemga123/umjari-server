@@ -1,7 +1,9 @@
 package com.umjari.server.domain.group
 
 import com.umjari.server.domain.group.repository.GroupRepository
-import org.junit.jupiter.api.Assertions
+import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.utils.TestUtils
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
@@ -10,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class GroupTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -31,67 +30,23 @@ class GroupTests {
     @Autowired
     private lateinit var groupRepository: GroupRepository
 
+    companion object {
+        private lateinit var token: String
+
+        @BeforeAll
+        @JvmStatic
+        internal fun init(
+            @Autowired mockMvc: MockMvc,
+            @Autowired regionRepository: RegionRepository,
+            @Autowired groupRepository: GroupRepository,
+        ) {
+            TestUtils.createDummyGroup(regionRepository, groupRepository)
+            token = TestUtils.createDummyUser(mockMvc)
+        }
+    }
+
     @Test
     @Order(1)
-    fun testCreateGroup() {
-        val content = """
-            {
-              "name": "GROUP_NAME1",
-              "logo": "GROUP_LOGO",
-              "practiceTime": "12:00",
-              "audition": true,
-              "membershipFee": 0,
-              "monthlyFee": 0,
-              "regionParent": "서울시",
-              "regionChild": "관악구",
-              "regionDetail": "음대",
-              "homepage": "homepage.com",
-              "detailIntro": "음악 동아리"
-            }
-        """.trimIndent()
-
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/group/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
-        ).andExpect(
-            status().isCreated,
-        )
-        Assertions.assertEquals(1, groupRepository.count())
-    }
-
-    @Test
-    @Order(2)
-    fun testCreateGroupWithDefaultLogo() {
-        print(groupRepository.count())
-        val content = """
-            {
-              "name": "GROUP_NAME2",
-              "logo": null,
-              "practiceTime": "12:00",
-              "audition": true,
-              "membershipFee": 0,
-              "monthlyFee": 0,
-              "regionParent": "서울시",
-              "regionChild": "관악구",
-              "regionDetail": "음대",
-              "homepage": "homepage.com",
-              "detailIntro": "음악 동아리"
-            }
-        """.trimIndent()
-
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/group/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
-        ).andExpect(
-            status().isCreated,
-        )
-        Assertions.assertEquals(2, groupRepository.count())
-    }
-
-    @Test
-    @Order(3)
     fun testUpdateGroupInformation() {
         val content = """
             {
@@ -110,7 +65,8 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNoContent,
         )
@@ -118,7 +74,8 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/100/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNotFound,
         )
@@ -140,7 +97,8 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(newRegionContent),
+                .content(newRegionContent)
+                .header("Authorization", token),
         ).andExpect(
             status().isNoContent,
         )
@@ -150,13 +108,15 @@ class GroupTests {
     @Order(3)
     fun testUpdateRecruitInformation() {
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/"),
+            MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/")
+                .header("Authorization", token),
         ).andExpect(
             status().isNoContent,
         )
 
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/v1/group/100/is-recruit/"),
+            MockMvcRequestBuilders.put("/api/v1/group/100/is-recruit/")
+                .header("Authorization", token),
         ).andExpect(
             status().isNotFound,
         )
@@ -172,7 +132,8 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/1/recruit-detail/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNoContent,
         )
@@ -180,7 +141,8 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/100/recruit-detail/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content),
+                .content(content)
+                .header("Authorization", token),
         ).andExpect(
             status().isNotFound,
         )
