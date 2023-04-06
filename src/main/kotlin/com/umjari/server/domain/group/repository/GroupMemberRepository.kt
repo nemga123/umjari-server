@@ -13,9 +13,11 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long?> {
                 FROM User AS u
                 LEFT OUTER JOIN
                     GroupMember AS gm on u.id = gm.user.id
-                WHERE u.userId IN ('id')
-                    AND (gm.group.id != 1 OR gm.group.id is NULL)
+                WHERE u.userId IN (:userIds)
+                    AND (gm.group.id != :groupId OR gm.group.id is NULL)
         """,
     )
     fun findAllUserIdsNotEnrolled(@Param("userIds") userIds: Set<String>, @Param("groupId") groupId: Long): Set<User>
+
+    fun findByGroup_IdAndUser_Id(groupId: Long, userId: Long): GroupMember?
 }

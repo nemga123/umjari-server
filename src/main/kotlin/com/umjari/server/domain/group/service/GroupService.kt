@@ -10,6 +10,7 @@ import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.region.service.RegionService
+import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
@@ -23,6 +24,7 @@ class GroupService(
     private val concertRepository: ConcertRepository,
     private val regionService: RegionService,
     private val userRepository: UserRepository,
+    private val groupMemberAuthorityService: GroupMemberAuthorityService,
 ) {
     fun createGroup(createGroupRequest: GroupDto.CreateGroupRequest): GroupDto.GroupDetailResponse {
         val region = regionService.getOrCreateRegion(
@@ -59,9 +61,11 @@ class GroupService(
         return GroupDto.GroupRecruitDetailResponse(group)
     }
 
-    fun updateGroup(groupId: Long, updateGroupRequest: GroupDto.UpdateGroupRequest) {
+    fun updateGroup(user: User, groupId: Long, updateGroupRequest: GroupDto.UpdateGroupRequest) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
 
         with(group) {
             name = updateGroupRequest.name!!
@@ -81,19 +85,22 @@ class GroupService(
         groupRepository.save(group)
     }
 
-    fun toggleGroupRecruit(groupId: Long) {
+    fun toggleGroupRecruit(user: User, groupId: Long) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         group.recruit = !group.recruit
         groupRepository.save(group)
     }
 
     fun updateGroupRecruitDetail(
+        user: User,
         groupId: Long,
         updateGroupRecruitDetailRequest: GroupDto.UpdateGroupRecruitDetailRequest,
     ) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         group.recruitInstruments = updateGroupRecruitDetailRequest.recruitInstruments
         group.recruitDetail = updateGroupRecruitDetailRequest.recruitDetail
         groupRepository.save(group)

@@ -4,6 +4,8 @@ import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.dto.GroupRegisterDto
 import com.umjari.server.domain.group.service.GroupService
+import com.umjari.server.domain.user.model.User
+import com.umjari.server.global.auth.annotation.CurrentUser
 import com.umjari.server.global.pagination.PageResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -53,14 +55,18 @@ class GroupController(
         @PathVariable("group_id") groupId: Long,
         @Valid @RequestBody
         updateGroupRequest: GroupDto.UpdateGroupRequest,
+        @CurrentUser user: User,
     ) {
-        groupService.updateGroup(groupId, updateGroupRequest)
+        groupService.updateGroup(user, groupId, updateGroupRequest)
     }
 
     @PutMapping("/{group_id}/is-recruit/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun toggleGroupRecruit(@PathVariable("group_id") groupId: Long) {
-        groupService.toggleGroupRecruit(groupId)
+    fun toggleGroupRecruit(
+        @PathVariable("group_id") groupId: Long,
+        @CurrentUser user: User,
+    ) {
+        groupService.toggleGroupRecruit(user, groupId)
     }
 
     @PutMapping("/{group_id}/recruit-detail/")
@@ -69,8 +75,9 @@ class GroupController(
         @PathVariable("group_id") groupId: Long,
         @Valid @RequestBody
         updateGroupRecruitDetailRequest: GroupDto.UpdateGroupRecruitDetailRequest,
+        @CurrentUser user: User,
     ) {
-        groupService.updateGroupRecruitDetail(groupId, updateGroupRecruitDetailRequest)
+        groupService.updateGroupRecruitDetail(user, groupId, updateGroupRecruitDetailRequest)
     }
 
     @GetMapping("/{group_id}/concerts/")

@@ -2,6 +2,8 @@ package com.umjari.server.domain.concert.controller
 
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.service.ConcertService
+import com.umjari.server.domain.user.model.User
+import com.umjari.server.global.auth.annotation.CurrentUser
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -26,8 +28,9 @@ class ConcertController(
         @PathVariable("group_id") groupId: Long,
         @Valid @RequestBody
         createConcertRequest: ConcertDto.CreateConcertRequest,
+        @CurrentUser user: User,
     ): ConcertDto.ConcertDetailResponse {
-        return concertService.createConcert(createConcertRequest, groupId)
+        return concertService.createConcert(user, createConcertRequest, groupId)
     }
 
     @GetMapping("/{concert_id}/")
@@ -42,8 +45,9 @@ class ConcertController(
         @PathVariable("concert_id") concertId: Long,
         @Valid @RequestBody
         updateConcertDetailRequest: ConcertDto.UpdateConcertDetailRequest,
+        @CurrentUser user: User,
     ) {
-        concertService.updateConcertDetail(concertId, updateConcertDetailRequest)
+        concertService.updateConcertDetail(user, concertId, updateConcertDetailRequest)
     }
 
     @PutMapping("/{concert_id}/info/")
@@ -52,7 +56,8 @@ class ConcertController(
         @PathVariable("concert_id") concertId: Long,
         @Valid @RequestBody
         updateConcertInfoRequest: ConcertDto.UpdateConcertInfoRequest,
+        @CurrentUser user: User,
     ) {
-        concertService.updateConcertInfo(concertId, updateConcertInfoRequest)
+        concertService.updateConcertInfo(user, concertId, updateConcertInfoRequest)
     }
 }

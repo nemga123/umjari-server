@@ -1,8 +1,11 @@
 package com.umjari.server.domain.concert
 
 import com.umjari.server.domain.concert.repository.ConcertRepository
+import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -43,9 +46,14 @@ class ConcertTests {
             @Autowired mockMvc: MockMvc,
             @Autowired regionRepository: RegionRepository,
             @Autowired groupRepository: GroupRepository,
+            @Autowired groupMemberRepository: GroupMemberRepository,
+            @Autowired userRepository: UserRepository,
         ) {
-            TestUtils.createDummyGroup(regionRepository, groupRepository)
-            token = TestUtils.createDummyUser(mockMvc)
+            val group = TestUtils.createDummyGroup(regionRepository, groupRepository)
+            val result = TestUtils.createDummyUser(mockMvc, userRepository)
+            val user = result.first
+            token = result.second
+            groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
         }
     }
 
