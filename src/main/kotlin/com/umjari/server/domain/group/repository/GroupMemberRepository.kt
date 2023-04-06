@@ -18,4 +18,6 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long?> {
         """,
     )
     fun findAllUserIdsNotEnrolled(@Param("userIds") userIds: Set<String>, @Param("groupId") groupId: Long): Set<User>
+
+    fun findByGroup_IdAndUser_Id(groupId: Long, userId: Long): GroupMember?
 }
