@@ -62,9 +62,10 @@ class GroupService(
     }
 
     fun updateGroup(user: User, groupId: Long, updateGroupRequest: GroupDto.UpdateGroupRequest) {
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
 
         with(group) {
             name = updateGroupRequest.name!!
@@ -85,9 +86,9 @@ class GroupService(
     }
 
     fun toggleGroupRecruit(user: User, groupId: Long) {
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         group.recruit = !group.recruit
         groupRepository.save(group)
     }
@@ -97,10 +98,9 @@ class GroupService(
         groupId: Long,
         updateGroupRecruitDetailRequest: GroupDto.UpdateGroupRecruitDetailRequest,
     ) {
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
-
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         group.recruitInstruments = updateGroupRecruitDetailRequest.recruitInstruments
         group.recruitDetail = updateGroupRecruitDetailRequest.recruitDetail
         groupRepository.save(group)

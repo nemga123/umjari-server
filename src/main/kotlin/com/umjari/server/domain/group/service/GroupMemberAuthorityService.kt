@@ -3,7 +3,6 @@ package com.umjari.server.domain.group.service
 import com.umjari.server.domain.group.exception.GroupRoleNotAuthorizedException
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service

@@ -28,10 +28,10 @@ class ConcertService(
         createConcertRequest: ConcertDto.CreateConcertRequest,
         groupId: Long,
     ): ConcertDto.ConcertDetailResponse {
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
-
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
+
+        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
 
         val region = regionService.getOrCreateRegion(
             createConcertRequest.regionParent!!,
@@ -66,7 +66,11 @@ class ConcertService(
         return ConcertDto.ConcertDetailResponse(concert)
     }
 
-    fun updateConcertDetail(user: User, concertId: Long, updateConcertDetailRequest: ConcertDto.UpdateConcertDetailRequest) {
+    fun updateConcertDetail(
+        user: User,
+        concertId: Long,
+        updateConcertDetailRequest: ConcertDto.UpdateConcertDetailRequest,
+    ) {
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
 
@@ -90,7 +94,7 @@ class ConcertService(
         concertRepository.save(concert)
     }
 
-    fun updateConcertInfo(user:User, concertId: Long, updateConcertInfoRequest: ConcertDto.UpdateConcertInfoRequest) {
+    fun updateConcertInfo(user: User, concertId: Long, updateConcertInfoRequest: ConcertDto.UpdateConcertInfoRequest) {
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
         groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
