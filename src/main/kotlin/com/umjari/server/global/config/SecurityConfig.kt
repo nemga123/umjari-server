@@ -45,6 +45,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/concerts/", "GET"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/", "GET"),
             ).permitAll()
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
@@ -53,6 +54,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/concert/group/{\\d+}/", "POST"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/details/", "PUT"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/info/", "PUT"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/", "POST"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
