@@ -1,6 +1,5 @@
 package com.umjari.server.domain.groupqna.service
 
-import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
