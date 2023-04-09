@@ -9,7 +9,7 @@ class UserDto {
     ) {
         constructor(user: User) : this(
             id = user.id,
-            nickname = user.nickname
+            nickname = user.nickname,
         )
     }
 }

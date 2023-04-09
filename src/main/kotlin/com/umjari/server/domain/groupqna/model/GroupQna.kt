@@ -1,4 +1,4 @@
-package com.umjari.server.domain.group_qna.model
+package com.umjari.server.domain.groupqna.model
 
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.user.model.User
@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotNull
 
 @Entity
 @Table(name = "umjari_group_qna")
-class GroupQna (
+class GroupQna(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     val author: User,
@@ -35,4 +35,4 @@ class GroupQna (
 
     @field:NotNull
     val isPrivate: Boolean,
-): BaseTimeEntity()
+) : BaseTimeEntity()

@@ -1,7 +1,7 @@
-package com.umjari.server.domain.group_qna.controller
+package com.umjari.server.domain.groupqna.controller
 
-import com.umjari.server.domain.group_qna.dto.GroupQnaDto
-import com.umjari.server.domain.group_qna.service.GroupQnaService
+import com.umjari.server.domain.groupqna.dto.GroupQnaDto
+import com.umjari.server.domain.groupqna.service.GroupQnaService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
 import com.umjari.server.global.pagination.PageResponse
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -48,5 +49,26 @@ class GroupQnaController(
         @CurrentUser user: User?,
     ): PageResponse<GroupQnaDto.QnaResponse> {
         return groupQnaService.getQnaListByGroupId(groupId, user, pageable)
+    }
+
+    @GetMapping("/{qna_id}/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getQna(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @CurrentUser user: User?,
+    ): GroupQnaDto.QnaResponse {
+        return groupQnaService.getQna(groupId, qnaId, user)
+    }
+
+    @PutMapping("/{qna_id}/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateQna(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @Valid @RequestBody
+        createQnaRequest: GroupQnaDto.CreateQnaRequest,
+        @CurrentUser user: User,
+    ) {
     }
 }

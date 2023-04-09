@@ -1,8 +1,7 @@
-package com.umjari.server.domain.group_qna.dto
+package com.umjari.server.domain.groupqna.dto
 
-import com.umjari.server.domain.group_qna.model.GroupQna
+import com.umjari.server.domain.groupqna.model.GroupQna
 import com.umjari.server.domain.user.dto.UserDto
-import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
@@ -13,7 +12,7 @@ class GroupQnaDto {
         @field:NotNull val isPrivate: Boolean?,
     )
 
-    sealed class QnaResponse{
+    sealed class QnaResponse {
         abstract val id: Long
         abstract val title: String
         abstract val content: String
@@ -26,7 +25,7 @@ class GroupQnaDto {
         override val content: String,
         override val isPrivate: Boolean,
         val nickname: String,
-    ): QnaResponse() {
+    ) : QnaResponse() {
         constructor(qna: GroupQna) : this(
             id = qna.id,
             title = qna.title,
@@ -42,7 +41,7 @@ class GroupQnaDto {
         override val content: String,
         override val isPrivate: Boolean,
         val author: UserDto.SimpleUserDto,
-    ): QnaResponse() {
+    ) : QnaResponse() {
         constructor(qna: GroupQna) : this(
             id = qna.id,
             title = qna.title,
