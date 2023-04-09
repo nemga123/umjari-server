@@ -56,6 +56,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/details/", "PUT"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/info/", "PUT"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/", "POST"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/{\\d+}/", "PUT"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),

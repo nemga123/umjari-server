@@ -34,5 +34,5 @@ class GroupQna(
     var content: String,
 
     @field:NotNull
-    val isPrivate: Boolean,
+    var isPrivate: Boolean,
 ) : BaseTimeEntity()

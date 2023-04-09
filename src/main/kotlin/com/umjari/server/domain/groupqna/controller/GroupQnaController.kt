@@ -67,8 +67,9 @@ class GroupQnaController(
         @PathVariable("group_id") groupId: Long,
         @PathVariable("qna_id") qnaId: Long,
         @Valid @RequestBody
-        createQnaRequest: GroupQnaDto.CreateQnaRequest,
+        updateQnaRequest: GroupQnaDto.CreateQnaRequest,
         @CurrentUser user: User,
     ) {
+        groupQnaService.updateQna(groupId, qnaId, user, updateQnaRequest)
     }
 }

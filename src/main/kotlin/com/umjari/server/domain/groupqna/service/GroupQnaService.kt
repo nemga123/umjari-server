@@ -1,5 +1,6 @@
 package com.umjari.server.domain.groupqna.service
 
+import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
@@ -61,5 +62,17 @@ class GroupQnaService(
         } else {
             GroupQnaDto.NotPrivateQnaResponse(qna)
         }
+    }
+
+    fun updateQna(groupId: Long, qnaId: Long, user: User, updateGroupQnaRequest: GroupQnaDto.CreateQnaRequest) {
+        val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
+            ?: throw QnaIdNotFountException(groupId, qnaId)
+        if (qna.author.id != user.id) throw QnaIdNotFountException(groupId, qnaId)
+        with(qna) {
+            title = updateGroupQnaRequest.title!!
+            content = updateGroupQnaRequest.content!!
+            isPrivate = updateGroupQnaRequest.isPrivate!!
+        }
+        groupQnaRepository.save(qna)
     }
 }
