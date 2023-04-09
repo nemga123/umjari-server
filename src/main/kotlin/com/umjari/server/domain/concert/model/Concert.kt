@@ -3,6 +3,7 @@ package com.umjari.server.domain.concert.model
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseTimeEntity
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
@@ -36,6 +37,7 @@ class Concert(
     var qna: String,
 
     @field:NotBlank
+    @Column(columnDefinition = "TEXT")
     var concertInfo: String,
 
     @field:NotBlank
