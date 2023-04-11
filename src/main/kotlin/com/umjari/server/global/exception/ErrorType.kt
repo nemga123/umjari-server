@@ -4,6 +4,7 @@ enum class ErrorType(
     val code: Int,
 ) {
     INVALID_REQUEST(0),
+    QNA_CANNOT_BE_UPDATED(1),
 
     NOT_ALLOWED(3000),
     GROUP_ROLE_NOT_AUTHORIZED(3001),
