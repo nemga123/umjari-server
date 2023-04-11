@@ -3,8 +3,10 @@ package com.umjari.server.domain.groupqna.service
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
+import com.umjari.server.domain.groupqna.exception.QnaCannotBeUpdatedException
 import com.umjari.server.domain.groupqna.exception.QnaIdNotFountException
 import com.umjari.server.domain.groupqna.model.GroupQna
+import com.umjari.server.domain.groupqna.repository.GroupQnaReplyRepository
 import com.umjari.server.domain.groupqna.repository.GroupQnaRepository
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.pagination.PageResponse
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service
 class GroupQnaService(
     private val groupQnaRepository: GroupQnaRepository,
     private val groupRepository: GroupRepository,
+    private val groupQnaReplyRepository: GroupQnaReplyRepository,
 ) {
     fun createQna(
         createQnaRequest: GroupQnaDto.CreateQnaRequest,
@@ -67,6 +70,7 @@ class GroupQnaService(
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
             ?: throw QnaIdNotFountException(groupId, qnaId)
         if (qna.author.id != user.id) throw QnaIdNotFountException(groupId, qnaId)
+        if (!groupQnaReplyRepository.existsByQnaId(qna.id)) throw QnaCannotBeUpdatedException(qnaId)
         with(qna) {
             title = updateGroupQnaRequest.title!!
             content = updateGroupQnaRequest.content!!
