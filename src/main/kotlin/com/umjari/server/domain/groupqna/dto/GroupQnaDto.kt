@@ -68,7 +68,7 @@ class GroupQnaDto {
         constructor(qna: SimpleQnaDto) : this(
             id = qna.id,
             title = qna.title,
-            isPrivate = qna.isPrivate!!,
+            isPrivate = qna.private!!,
             nickname = qna.nickname,
             replyCount = qna.replyCount,
         )
@@ -84,7 +84,7 @@ class GroupQnaDto {
         constructor(qna: SimpleQnaDto) : this(
             id = qna.id,
             title = qna.title,
-            isPrivate = qna.isPrivate!!,
+            isPrivate = qna.private!!,
             author = UserDto.SimpleUserDto(qna.authorId, qna.authorNickname),
             replyCount = qna.replyCount,
         )
@@ -93,7 +93,7 @@ class GroupQnaDto {
     interface SimpleQnaDto {
         val id: Long
         val title: String
-        val isPrivate: Boolean
+        val private: Boolean
         val nickname: String
         val authorId: Long
         val authorNickname: String

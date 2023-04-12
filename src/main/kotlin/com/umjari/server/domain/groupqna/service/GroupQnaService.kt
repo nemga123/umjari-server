@@ -40,14 +40,19 @@ class GroupQnaService(
         return GroupQnaDto.NotPrivateQnaDetailResponse(qna)
     }
 
-    fun getQnaListByGroupId(groupId: Long, user: User?, pageable: Pageable): PageResponse<GroupQnaDto.QnaSimpleResponse> {
+    fun getQnaListByGroupId(
+        groupId: Long,
+        user: User?,
+        pageable: Pageable,
+    ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
         if (!groupRepository.existsById(groupId)) {
             throw GroupIdNotFoundException(groupId)
         }
 
         val qnaList = groupQnaRepository.getSimpleResponseByGroupId(groupId, pageable)
+        print(qnaList.toList())
         val qnaResponses = qnaList.map {
-            if (it.isPrivate!! && it.authorId != user?.id) {
+            if (it.private!! && it.authorId != user?.id) {
                 GroupQnaDto.PrivateQnaSimpleResponse(it)
             } else {
                 GroupQnaDto.NotPrivateQnaSimpleResponse(it)
