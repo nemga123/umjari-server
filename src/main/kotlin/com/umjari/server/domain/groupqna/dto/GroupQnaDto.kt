@@ -99,9 +99,4 @@ class GroupQnaDto {
         val authorNickname: String
         val replyCount: Int
     }
-
-    data class QnaDto(
-        val qna: GroupQna,
-        val replyCount: Long,
-    )
 }

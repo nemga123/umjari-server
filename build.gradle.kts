@@ -10,6 +10,7 @@ plugins {
     kotlin("plugin.jpa") version "1.7.22"
     id("com.adarshr.test-logger") version "3.2.0"
     id("jacoco")
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.8.20"
 }
 
 group = "com.umjari"
@@ -107,4 +108,10 @@ tasks.jacocoTestReport {
 jacoco {
     toolVersion = "0.8.8"
     reportsDirectory.set(layout.buildDirectory.dir("customJacocoReportDir"))
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.Embeddable")
+    annotation("jakarta.persistence.MappedSuperclass")
 }

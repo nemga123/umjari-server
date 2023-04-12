@@ -25,7 +25,10 @@ interface GroupQnaRepository : JpaRepository<GroupQna, Long?> {
             SELECT COUNT (qna) FROM GroupQna AS qna WHERE qna.group.id = :groupId
         """,
     )
-    fun getSimpleResponseByGroupId(@Param("groupId") groupId: Long, pageable: Pageable): Page<GroupQnaDto.SimpleQnaDto>
+    fun getSimpleResponseByGroupIdWithReplyCounts(
+        @Param("groupId") groupId: Long,
+        pageable: Pageable,
+    ): Page<GroupQnaDto.SimpleQnaDto>
 
     fun getByIdAndGroupId(id: Long, groupId: Long): GroupQna?
 }

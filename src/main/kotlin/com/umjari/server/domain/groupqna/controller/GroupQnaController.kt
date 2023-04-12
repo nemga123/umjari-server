@@ -72,4 +72,14 @@ class GroupQnaController(
     ) {
         groupQnaService.updateQna(groupId, qnaId, user, updateQnaRequest)
     }
+
+//    @PostMapping("/")
+//    fun createReplyOnQna(
+//        @PathVariable("group_id") groupId: Long,
+//        @PathVariable("qna_id") qnaId: Long,
+//        @Valid @RequestBody
+//        createReplyRequest: GroupQnaReplyDto.CreateReplyRequest,
+//        @CurrentUser user: User,
+//    ) {
+//    }
 }

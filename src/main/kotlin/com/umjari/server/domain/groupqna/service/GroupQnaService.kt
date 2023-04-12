@@ -49,8 +49,8 @@ class GroupQnaService(
             throw GroupIdNotFoundException(groupId)
         }
 
-        val qnaList = groupQnaRepository.getSimpleResponseByGroupId(groupId, pageable)
-        print(qnaList.toList())
+        val qnaList = groupQnaRepository.getSimpleResponseByGroupIdWithReplyCounts(groupId, pageable)
+
         val qnaResponses = qnaList.map {
             if (it.private!! && it.authorId != user?.id) {
                 GroupQnaDto.PrivateQnaSimpleResponse(it)
@@ -64,6 +64,8 @@ class GroupQnaService(
     fun getQna(groupId: Long, qnaId: Long, user: User?): GroupQnaDto.QnaDetailResponse {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
             ?: throw QnaIdNotFountException(groupId, qnaId)
+//        val replyList = groupQnaReplyRepository.getAllByQnaId(qna.id)
+//        val replyResponseList = replyList.map {  }
         return if (qna.isPrivate && qna.author.id != user?.id) {
             GroupQnaDto.PrivateQnaDetailResponse(qna)
         } else {

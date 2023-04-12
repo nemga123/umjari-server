@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface GroupQnaReplyRepository : JpaRepository<GroupQnaReply, Long?> {
     fun existsByQnaId(qnaId: Long): Boolean
+
+    fun getAllByQnaId(qnaId: Long): List<GroupQnaReply>
 }
