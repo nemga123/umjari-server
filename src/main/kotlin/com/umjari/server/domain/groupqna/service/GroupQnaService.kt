@@ -24,7 +24,7 @@ class GroupQnaService(
         createQnaRequest: GroupQnaDto.CreateQnaRequest,
         user: User,
         groupId: Long,
-    ): GroupQnaDto.NotPrivateQnaResponse {
+    ): GroupQnaDto.NotPrivateQnaDetailResponse {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
@@ -37,32 +37,32 @@ class GroupQnaService(
             isPrivate = createQnaRequest.isPrivate!!,
         )
         groupQnaRepository.save(qna)
-        return GroupQnaDto.NotPrivateQnaResponse(qna)
+        return GroupQnaDto.NotPrivateQnaDetailResponse(qna)
     }
 
-    fun getQnaListByGroupId(groupId: Long, user: User?, pageable: Pageable): PageResponse<GroupQnaDto.QnaResponse> {
+    fun getQnaListByGroupId(groupId: Long, user: User?, pageable: Pageable): PageResponse<GroupQnaDto.QnaSimpleResponse> {
         if (!groupRepository.existsById(groupId)) {
             throw GroupIdNotFoundException(groupId)
         }
 
-        val qnaList = groupQnaRepository.getAllByGroupId(groupId, pageable)
+        val qnaList = groupQnaRepository.getSimpleResponseByGroupId(groupId, pageable)
         val qnaResponses = qnaList.map {
-            if (it.isPrivate && it.author.id != user?.id) {
-                GroupQnaDto.PrivateQnaResponse(it)
+            if (it.isPrivate!! && it.authorId != user?.id) {
+                GroupQnaDto.PrivateQnaSimpleResponse(it)
             } else {
-                GroupQnaDto.NotPrivateQnaResponse(it)
+                GroupQnaDto.NotPrivateQnaSimpleResponse(it)
             }
         }
         return PageResponse(qnaResponses, pageable.pageNumber)
     }
 
-    fun getQna(groupId: Long, qnaId: Long, user: User?): GroupQnaDto.QnaResponse {
+    fun getQna(groupId: Long, qnaId: Long, user: User?): GroupQnaDto.QnaDetailResponse {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
             ?: throw QnaIdNotFountException(groupId, qnaId)
         return if (qna.isPrivate && qna.author.id != user?.id) {
-            GroupQnaDto.PrivateQnaResponse(qna)
+            GroupQnaDto.PrivateQnaDetailResponse(qna)
         } else {
-            GroupQnaDto.NotPrivateQnaResponse(qna)
+            GroupQnaDto.NotPrivateQnaDetailResponse(qna)
         }
     }
 

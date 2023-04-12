@@ -12,20 +12,20 @@ class GroupQnaDto {
         @field:NotNull val isPrivate: Boolean?,
     )
 
-    sealed class QnaResponse {
+    sealed class QnaDetailResponse {
         abstract val id: Long
         abstract val title: String
         abstract val content: String
         abstract val isPrivate: Boolean
     }
 
-    data class PrivateQnaResponse(
+    data class PrivateQnaDetailResponse(
         override val id: Long,
         override val title: String,
         override val content: String,
         override val isPrivate: Boolean,
         val nickname: String,
-    ) : QnaResponse() {
+    ) : QnaDetailResponse() {
         constructor(qna: GroupQna) : this(
             id = qna.id,
             title = qna.title,
@@ -35,13 +35,13 @@ class GroupQnaDto {
         )
     }
 
-    data class NotPrivateQnaResponse(
+    data class NotPrivateQnaDetailResponse(
         override val id: Long,
         override val title: String,
         override val content: String,
         override val isPrivate: Boolean,
         val author: UserDto.SimpleUserDto,
-    ) : QnaResponse() {
+    ) : QnaDetailResponse() {
         constructor(qna: GroupQna) : this(
             id = qna.id,
             title = qna.title,
@@ -50,4 +50,58 @@ class GroupQnaDto {
             author = UserDto.SimpleUserDto(qna.author),
         )
     }
+
+    sealed class QnaSimpleResponse {
+        abstract val id: Long
+        abstract val title: String
+        abstract val isPrivate: Boolean
+        abstract val replyCount: Int
+    }
+
+    data class PrivateQnaSimpleResponse(
+        override val id: Long,
+        override val title: String,
+        override val isPrivate: Boolean,
+        override val replyCount: Int,
+        val nickname: String,
+    ) : QnaSimpleResponse() {
+        constructor(qna: SimpleQnaDto) : this(
+            id = qna.id,
+            title = qna.title,
+            isPrivate = qna.isPrivate!!,
+            nickname = qna.nickname,
+            replyCount = qna.replyCount,
+        )
+    }
+
+    data class NotPrivateQnaSimpleResponse(
+        override val id: Long,
+        override val title: String,
+        override val isPrivate: Boolean,
+        override val replyCount: Int,
+        val author: UserDto.SimpleUserDto,
+    ) : QnaSimpleResponse() {
+        constructor(qna: SimpleQnaDto) : this(
+            id = qna.id,
+            title = qna.title,
+            isPrivate = qna.isPrivate!!,
+            author = UserDto.SimpleUserDto(qna.authorId, qna.authorNickname),
+            replyCount = qna.replyCount,
+        )
+    }
+
+    interface SimpleQnaDto {
+        val id: Long
+        val title: String
+        val isPrivate: Boolean
+        val nickname: String
+        val authorId: Long
+        val authorNickname: String
+        val replyCount: Int
+    }
+
+    data class QnaDto(
+        val qna: GroupQna,
+        val replyCount: Long,
+    )
 }

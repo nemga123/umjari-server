@@ -33,7 +33,7 @@ class GroupQnaController(
         @Valid @RequestBody
         createQnaRequest: GroupQnaDto.CreateQnaRequest,
         @CurrentUser user: User,
-    ): GroupQnaDto.NotPrivateQnaResponse {
+    ): GroupQnaDto.NotPrivateQnaDetailResponse {
         return groupQnaService.createQna(createQnaRequest, user, groupId)
     }
 
@@ -47,7 +47,7 @@ class GroupQnaController(
             direction = Sort.Direction.DESC,
         ) pageable: Pageable,
         @CurrentUser user: User?,
-    ): PageResponse<GroupQnaDto.QnaResponse> {
+    ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
         return groupQnaService.getQnaListByGroupId(groupId, user, pageable)
     }
 
@@ -57,7 +57,7 @@ class GroupQnaController(
         @PathVariable("group_id") groupId: Long,
         @PathVariable("qna_id") qnaId: Long,
         @CurrentUser user: User?,
-    ): GroupQnaDto.QnaResponse {
+    ): GroupQnaDto.QnaDetailResponse {
         return groupQnaService.getQna(groupId, qnaId, user)
     }
 
