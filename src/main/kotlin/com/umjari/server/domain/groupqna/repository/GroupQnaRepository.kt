@@ -12,7 +12,15 @@ interface GroupQnaRepository : JpaRepository<GroupQna, Long?> {
     @Query(
         value = """
         SELECT
-          qna.id AS id, qna.title AS title, qna.isPrivate AS private, qna.authorNickname AS nickname, author.id AS authorId, author.nickname AS authorNickname, COUNT (reply.id) AS replyCount
+            qna.id AS id,
+            qna.title AS title,
+            qna.isAnonymous AS anonymous,
+            qna.authorNickname AS nickname,
+            author.id AS authorId,
+            author.nickname AS authorNickname,
+            COUNT (reply.id) AS replyCount,
+            qna.createdAt AS createAt,
+            qna.updatedAt AS updatedAt
         FROM
           GroupQna AS qna
           JOIN User AS author ON qna.author.id = author.id

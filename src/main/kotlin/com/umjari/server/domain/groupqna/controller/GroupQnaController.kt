@@ -1,6 +1,8 @@
 package com.umjari.server.domain.groupqna.controller
 
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
+import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
+import com.umjari.server.domain.groupqna.service.GroupQnaReplyService
 import com.umjari.server.domain.groupqna.service.GroupQnaService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/group/{group_id}/qna")
 class GroupQnaController(
     private val groupQnaService: GroupQnaService,
+    private val groupQnaReplyService: GroupQnaReplyService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,7 +36,7 @@ class GroupQnaController(
         @Valid @RequestBody
         createQnaRequest: GroupQnaDto.CreateQnaRequest,
         @CurrentUser user: User,
-    ): GroupQnaDto.NotPrivateQnaDetailResponse {
+    ): GroupQnaDto.NotAnonymousQnaDetailResponse {
         return groupQnaService.createQna(createQnaRequest, user, groupId)
     }
 
@@ -73,13 +76,15 @@ class GroupQnaController(
         groupQnaService.updateQna(groupId, qnaId, user, updateQnaRequest)
     }
 
-//    @PostMapping("/")
-//    fun createReplyOnQna(
-//        @PathVariable("group_id") groupId: Long,
-//        @PathVariable("qna_id") qnaId: Long,
-//        @Valid @RequestBody
-//        createReplyRequest: GroupQnaReplyDto.CreateReplyRequest,
-//        @CurrentUser user: User,
-//    ) {
-//    }
+    @PostMapping("/{qna_id}/reply/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun createReplyOnQna(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @Valid @RequestBody
+        createReplyRequest: GroupQnaReplyDto.CreateReplyRequest,
+        @CurrentUser user: User,
+    ) {
+        groupQnaReplyService.createReplyOnQna(groupId, qnaId, createReplyRequest, user)
+    }
 }

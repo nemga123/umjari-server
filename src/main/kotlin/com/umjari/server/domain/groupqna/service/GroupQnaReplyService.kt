@@ -30,6 +30,8 @@ class GroupQnaReplyService(
             author = user,
             qna = qna,
             content = createReplyRequest.content!!,
+            isAnonymous = createReplyRequest.isAnonymous!!,
+            authorNickname = user.nickname,
         )
 
         groupQnaReplyRepository.save(qnaReply)
