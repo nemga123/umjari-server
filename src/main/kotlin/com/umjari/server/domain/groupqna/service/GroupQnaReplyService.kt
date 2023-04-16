@@ -3,7 +3,7 @@ package com.umjari.server.domain.groupqna.service
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.service.GroupMemberAuthorityService
 import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
-import com.umjari.server.domain.groupqna.exception.QnaIdNotFountException
+import com.umjari.server.domain.groupqna.exception.QnaIdNotFoundException
 import com.umjari.server.domain.groupqna.model.GroupQnaReply
 import com.umjari.server.domain.groupqna.repository.GroupQnaReplyRepository
 import com.umjari.server.domain.groupqna.repository.GroupQnaRepository
@@ -23,7 +23,7 @@ class GroupQnaReplyService(
         user: User,
     ) {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
-            ?: throw QnaIdNotFountException(groupId, qnaId)
+            ?: throw QnaIdNotFoundException(groupId, qnaId)
         groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.MEMBER, groupId, user.id)
 
         val qnaReply = GroupQnaReply(

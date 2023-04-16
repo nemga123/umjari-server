@@ -14,4 +14,8 @@ interface UserRepository : JpaRepository<User, Long?> {
     """,
     )
     fun findUserIdsByUserIdIn(@Param("userIds") userIds: List<String>): Set<String>
+
+    fun existsByUserId(userId: String): Boolean
+    fun existsByNickname(nickname: String): Boolean
+    fun existsByEmail(email: String): Boolean
 }
