@@ -8,12 +8,16 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 
 @Entity
 class GroupQnaReply(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     val author: User,
+
+    @field:NotNull
+    val authorNickname: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id", referencedColumnName = "id")
@@ -22,4 +26,7 @@ class GroupQnaReply(
     @field:NotBlank
     @Column(columnDefinition = "TEXT")
     val content: String,
+
+    @field:NotNull
+    var isAnonymous: Boolean,
 ) : BaseTimeEntity()

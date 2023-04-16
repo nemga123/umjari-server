@@ -1,6 +1,8 @@
 package com.umjari.server.domain.groupqna.controller
 
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
+import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
+import com.umjari.server.domain.groupqna.service.GroupQnaReplyService
 import com.umjari.server.domain.groupqna.service.GroupQnaService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/group/{group_id}/qna")
 class GroupQnaController(
     private val groupQnaService: GroupQnaService,
+    private val groupQnaReplyService: GroupQnaReplyService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,7 +36,7 @@ class GroupQnaController(
         @Valid @RequestBody
         createQnaRequest: GroupQnaDto.CreateQnaRequest,
         @CurrentUser user: User,
-    ): GroupQnaDto.NotPrivateQnaResponse {
+    ): GroupQnaDto.NotAnonymousQnaDetailResponse {
         return groupQnaService.createQna(createQnaRequest, user, groupId)
     }
 
@@ -47,7 +50,7 @@ class GroupQnaController(
             direction = Sort.Direction.DESC,
         ) pageable: Pageable,
         @CurrentUser user: User?,
-    ): PageResponse<GroupQnaDto.QnaResponse> {
+    ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
         return groupQnaService.getQnaListByGroupId(groupId, user, pageable)
     }
 
@@ -57,7 +60,7 @@ class GroupQnaController(
         @PathVariable("group_id") groupId: Long,
         @PathVariable("qna_id") qnaId: Long,
         @CurrentUser user: User?,
-    ): GroupQnaDto.QnaResponse {
+    ): GroupQnaDto.QnaDetailResponse {
         return groupQnaService.getQna(groupId, qnaId, user)
     }
 
@@ -71,5 +74,17 @@ class GroupQnaController(
         @CurrentUser user: User,
     ) {
         groupQnaService.updateQna(groupId, qnaId, user, updateQnaRequest)
+    }
+
+    @PostMapping("/{qna_id}/reply/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun createReplyOnQna(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @Valid @RequestBody
+        createReplyRequest: GroupQnaReplyDto.CreateReplyRequest,
+        @CurrentUser user: User,
+    ) {
+        groupQnaReplyService.createReplyOnQna(groupId, qnaId, createReplyRequest, user)
     }
 }
