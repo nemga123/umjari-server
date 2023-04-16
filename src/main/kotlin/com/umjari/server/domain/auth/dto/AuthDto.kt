@@ -1,5 +1,9 @@
 package com.umjari.server.domain.auth.dto
 
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
+
 class AuthDto {
     data class LogInRequest(
         val userId: String? = null,
@@ -7,11 +11,16 @@ class AuthDto {
     )
 
     data class SignUpRequest(
-        val userId: String,
-        val password: String,
-        val email: String,
-        val nickname: String,
+        @field:NotBlank
+        val userId: String?,
+        @field:NotBlank
+        val password: String?,
+        @field:NotBlank @field:Email
+        val email: String?,
+        @field:NotBlank
+        val nickname: String?,
         val intro: String? = null,
-        val phoneNumber: String,
+        @field:Pattern(regexp = "^[0-9]{11}$")
+        val phoneNumber: String?,
     )
 }

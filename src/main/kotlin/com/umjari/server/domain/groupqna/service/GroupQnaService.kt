@@ -5,7 +5,7 @@ import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
 import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
 import com.umjari.server.domain.groupqna.exception.QnaCannotBeUpdatedException
-import com.umjari.server.domain.groupqna.exception.QnaIdNotFountException
+import com.umjari.server.domain.groupqna.exception.QnaIdNotFoundException
 import com.umjari.server.domain.groupqna.model.GroupQna
 import com.umjari.server.domain.groupqna.repository.GroupQnaReplyRepository
 import com.umjari.server.domain.groupqna.repository.GroupQnaRepository
@@ -64,7 +64,7 @@ class GroupQnaService(
 
     fun getQna(groupId: Long, qnaId: Long, user: User?): GroupQnaDto.QnaDetailResponse {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
-            ?: throw QnaIdNotFountException(groupId, qnaId)
+            ?: throw QnaIdNotFoundException(groupId, qnaId)
         val replyList = groupQnaReplyRepository.getAllByQnaIdWithUser(qna.id)
         val replyResponseList = replyList.map {
             if (it.isAnonymous && it.author.id != user?.id) {
@@ -82,8 +82,8 @@ class GroupQnaService(
 
     fun updateQna(groupId: Long, qnaId: Long, user: User, updateGroupQnaRequest: GroupQnaDto.CreateQnaRequest) {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
-            ?: throw QnaIdNotFountException(groupId, qnaId)
-        if (qna.author.id != user.id) throw QnaIdNotFountException(groupId, qnaId)
+            ?: throw QnaIdNotFoundException(groupId, qnaId)
+        if (qna.author.id != user.id) throw QnaIdNotFoundException(groupId, qnaId)
         if (!groupQnaReplyRepository.existsByQnaId(qna.id)) throw QnaCannotBeUpdatedException(qnaId)
         with(qna) {
             title = updateGroupQnaRequest.title!!

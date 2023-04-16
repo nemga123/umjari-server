@@ -1,6 +1,9 @@
 package com.umjari.server.domain.auth.service
 
 import com.umjari.server.domain.auth.dto.AuthDto
+import com.umjari.server.domain.user.exception.DuplicatedUserEmailException
+import com.umjari.server.domain.user.exception.DuplicatedUserIdException
+import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -12,14 +15,22 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
 ) {
     fun signUp(signUpRequest: AuthDto.SignUpRequest): User {
-        // TODO: Uniqueness check
+        if (userRepository.existsByUserId(signUpRequest.userId!!)) {
+            throw DuplicatedUserIdException(signUpRequest.userId)
+        }
+        if (userRepository.existsByNickname(signUpRequest.nickname!!)) {
+            throw DuplicatedUserNicknameException(signUpRequest.nickname)
+        }
+        if (userRepository.existsByEmail(signUpRequest.email!!)) {
+            throw DuplicatedUserEmailException(signUpRequest.email)
+        }
         val encodedPassword = passwordEncoder.encode(signUpRequest.password)
         val user = User(
             userId = signUpRequest.userId,
             password = encodedPassword,
             email = signUpRequest.email,
             intro = signUpRequest.intro,
-            phoneNumber = signUpRequest.phoneNumber,
+            phoneNumber = signUpRequest.phoneNumber!!,
             nickname = signUpRequest.nickname,
         )
         return userRepository.save(user)

@@ -1,6 +1,7 @@
 package com.umjari.server.domain.user.dto
 
 import com.umjari.server.domain.user.model.User
+import jakarta.validation.constraints.NotBlank
 
 class UserDto {
     data class SimpleUserDto(
@@ -12,4 +13,9 @@ class UserDto {
             nickname = user.nickname,
         )
     }
+
+    data class NicknameRequest(
+        @field:NotBlank
+        val nickname: String?,
+    )
 }
