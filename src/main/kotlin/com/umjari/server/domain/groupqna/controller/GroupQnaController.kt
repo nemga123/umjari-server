@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -49,9 +50,10 @@ class GroupQnaController(
             sort = ["createdAt"],
             direction = Sort.Direction.DESC,
         ) pageable: Pageable,
+        @RequestParam(value = "text", required = false, defaultValue = "") text: String,
         @CurrentUser user: User?,
     ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
-        return groupQnaService.getQnaListByGroupId(groupId, user, pageable)
+        return groupQnaService.getQnaListByGroupId(groupId, user, text, pageable)
     }
 
     @GetMapping("/{qna_id}/")

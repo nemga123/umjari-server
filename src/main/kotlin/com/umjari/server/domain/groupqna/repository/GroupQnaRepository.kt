@@ -38,5 +38,38 @@ interface GroupQnaRepository : JpaRepository<GroupQna, Long?> {
         pageable: Pageable,
     ): Page<GroupQnaDto.SimpleQnaDto>
 
+    @Query(
+        value = """
+        SELECT
+            qna.id AS id,
+            qna.title AS title,
+            qna.isAnonymous AS anonymous,
+            qna.authorNickname AS nickname,
+            author.id AS authorId,
+            author.nickname AS authorNickname,
+            COUNT (reply.id) AS replyCount,
+            qna.createdAt AS createAt,
+            qna.updatedAt AS updatedAt
+        FROM
+          GroupQna AS qna
+          JOIN User AS author ON qna.author.id = author.id
+          LEFT JOIN GroupQnaReply AS reply ON reply.qna.id = qna.id
+        WHERE
+          qna.group.id = :groupId
+          AND (qna.title LIKE %:searchText% OR qna.content LIKE %:searchText%)
+        GROUP BY qna.id, author.id
+        """,
+        countQuery = """
+            SELECT COUNT (qna) FROM GroupQna AS qna
+                WHERE qna.group.id = :groupId
+                    AND (qna.title LIKE %:searchText% OR qna.content LIKE %:searchText%)
+        """,
+    )
+    fun getSimpleResponseByGroupIdAndSearchTextWithReplyCounts(
+        @Param("groupId") groupId: Long,
+        @Param("searchText") searchText: String,
+        pageable: Pageable,
+    ): Page<GroupQnaDto.SimpleQnaDto>
+
     fun getByIdAndGroupId(id: Long, groupId: Long): GroupQna?
 }

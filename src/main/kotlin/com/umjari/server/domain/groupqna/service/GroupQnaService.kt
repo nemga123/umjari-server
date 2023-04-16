@@ -44,13 +44,18 @@ class GroupQnaService(
     fun getQnaListByGroupId(
         groupId: Long,
         user: User?,
+        searchText: String,
         pageable: Pageable,
     ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
         if (!groupRepository.existsById(groupId)) {
             throw GroupIdNotFoundException(groupId)
         }
 
-        val qnaList = groupQnaRepository.getSimpleResponseByGroupIdWithReplyCounts(groupId, pageable)
+        val qnaList = if (searchText == "") {
+            groupQnaRepository.getSimpleResponseByGroupIdWithReplyCounts(groupId, pageable)
+        } else {
+            groupQnaRepository.getSimpleResponseByGroupIdAndSearchTextWithReplyCounts(groupId, searchText, pageable)
+        }
 
         val qnaResponses = qnaList.map {
             if (it.anonymous && it.authorId != user?.id) {
