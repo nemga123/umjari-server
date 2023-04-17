@@ -4,12 +4,15 @@ import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.exception.ConcertNotFoundException
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.repository.ConcertRepository
+import com.umjari.server.domain.concert.specification.ConcertSpecification
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.group.service.GroupMemberAuthorityService
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
+import com.umjari.server.global.pagination.PageResponse
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
@@ -21,7 +24,8 @@ class ConcertService(
     private val groupRepository: GroupRepository,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
 ) {
-    private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    private final val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
 
     fun createConcert(
         user: User,
@@ -47,7 +51,7 @@ class ConcertService(
             qna = createConcertRequest.qna!!,
             concertInfo = createConcertRequest.concertInfo!!,
             posterImg = createConcertRequest.posterImg!!,
-            concertDate = dateFormatter.parse(createConcertRequest.concertDate!!),
+            concertDate = dateTimeFormatter.parse(createConcertRequest.concertDate!!),
             concertRunningTime = createConcertRequest.concertRunningTime!!,
             fee = createConcertRequest.fee!!,
             region = region,
@@ -64,6 +68,25 @@ class ConcertService(
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
         return ConcertDto.ConcertDetailResponse(concert)
+    }
+
+    fun getConcertDashboard(
+        startDate: String?,
+        endDate: String?,
+        regionParent: String?,
+        regionChild: String?,
+        text: String?,
+        pageable: Pageable,
+    ): PageResponse<ConcertDto.ConcertSimpleResponse> {
+        val spec = ConcertSpecification()
+        startDate?.let { spec.filteredByDateStart(dateFormatter.parse(it)) }
+        endDate?.let { spec.filteredByDateEnd(dateFormatter.parse(it)) }
+        regionParent?.let { spec.filteredByRegionParent(regionParent) }
+        regionChild?.let { spec.filteredByRegionChild(regionChild) }
+        text?.let { spec.filteredByText(text) }
+        val concerts = concertRepository.findAll(spec.build(), pageable)
+        val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
+        return PageResponse(concertResponses, pageable.pageNumber)
     }
 
     fun updateConcertDetail(
@@ -83,7 +106,7 @@ class ConcertService(
             support = updateConcertDetailRequest.support!!
             qna = updateConcertDetailRequest.qna!!
             posterImg = updateConcertDetailRequest.posterImg!!
-            concertDate = dateFormatter.parse(updateConcertDetailRequest.concertDate!!)
+            concertDate = dateTimeFormatter.parse(updateConcertDetailRequest.concertDate!!)
             concertRunningTime = updateConcertDetailRequest.concertRunningTime!!
             region = regionService.getOrCreateRegion(
                 updateConcertDetailRequest.regionParent!!,

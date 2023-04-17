@@ -45,6 +45,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/concerts/", "GET"),
+                AntPathRequestMatcher("/api/v1/concert/dashboard/", "GET"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/{\\d+}/", "GET"),

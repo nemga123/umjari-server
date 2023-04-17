@@ -4,8 +4,12 @@ import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.service.ConcertService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
+import com.umjari.server.global.pagination.PageResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -31,6 +36,23 @@ class ConcertController(
         @CurrentUser user: User,
     ): ConcertDto.ConcertDetailResponse {
         return concertService.createConcert(user, createConcertRequest, groupId)
+    }
+
+    @GetMapping("/dashboard/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getConcertDashboard(
+        @RequestParam(required = false) startDate: String? = null,
+        @RequestParam(required = false) endDate: String? = null,
+        @RequestParam(required = false) regionParent: String? = null,
+        @RequestParam(required = false) regionChild: String? = null,
+        @RequestParam(required = false) text: String? = null,
+        @PageableDefault(
+            size = 20,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+    ): PageResponse<ConcertDto.ConcertSimpleResponse> {
+        return concertService.getConcertDashboard(startDate, endDate, regionParent, regionChild, text, pageable)
     }
 
     @GetMapping("/{concert_id}/")
