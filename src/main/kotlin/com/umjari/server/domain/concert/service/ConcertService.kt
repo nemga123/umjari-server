@@ -40,7 +40,7 @@ class ConcertService(
 
         val concert = Concert(
             title = createConcertRequest.title!!,
-            subtitle = createConcertRequest.subtitle!!,
+            subtitle = createConcertRequest.subtitle!!.trim(),
             conductor = createConcertRequest.conductor!!,
             host = createConcertRequest.host!!,
             support = createConcertRequest.support!!,
@@ -77,7 +77,7 @@ class ConcertService(
         groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
         with(concert) {
             title = updateConcertDetailRequest.title!!
-            subtitle = updateConcertDetailRequest.subtitle!!
+            subtitle = updateConcertDetailRequest.subtitle!!.trim()
             conductor = updateConcertDetailRequest.conductor!!
             host = updateConcertDetailRequest.host!!
             support = updateConcertDetailRequest.support!!

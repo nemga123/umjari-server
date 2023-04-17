@@ -21,7 +21,7 @@ class Concert(
     @field:NotBlank
     var title: String,
 
-    @field:NotBlank
+    @field:NotNull
     var subtitle: String,
 
     @field:NotBlank
