@@ -118,6 +118,7 @@ class GroupService(
     fun registerGroupMember(
         groupId: Long,
         registerRequest: GroupRegisterDto.GroupRegisterRequest,
+        role: GroupMember.MemberRole,
     ): GroupRegisterDto.GroupRegisterResponse {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
@@ -126,10 +127,17 @@ class GroupService(
 
         val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         val existingUserIds = userRepository.findUserIdsByUserIdIn(requestUserIds)
-        val notEnrolledUsers = groupMemberRepository.findAllUserIdsNotEnrolled(existingUserIds, groupId)
+        val notEnrolledUsers = if (existingUserIds.isNotEmpty()) {
+            groupMemberRepository.findAllUserIdsNotEnrolled(
+                existingUserIds,
+                groupId,
+            )
+        } else {
+            emptySet()
+        }
         val notEnrolledUserIds = notEnrolledUsers.map { it.userId }.toSet()
         notEnrolledUsers.forEach { user ->
-            val groupMember = GroupMember(group = group, user = user)
+            val groupMember = GroupMember(group = group, user = user, role = role)
             groupMemberRepository.save(groupMember)
         }
 

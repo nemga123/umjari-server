@@ -3,6 +3,7 @@ package com.umjari.server.domain.group.controller
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.dto.GroupRegisterDto
+import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.service.GroupService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -100,6 +101,16 @@ class GroupController(
         @Valid @RequestBody
         registerRequest: GroupRegisterDto.GroupRegisterRequest,
     ): GroupRegisterDto.GroupRegisterResponse {
-        return groupService.registerGroupMember(groupId, registerRequest)
+        return groupService.registerGroupMember(groupId, registerRequest, GroupMember.MemberRole.MEMBER)
+    }
+
+    @PostMapping("/{group_id}/register/admin/")
+    @ResponseStatus(HttpStatus.OK)
+    fun registerGroupMemberAsAdmin(
+        @PathVariable("group_id") groupId: Long,
+        @Valid @RequestBody
+        registerRequest: GroupRegisterDto.GroupRegisterRequest,
+    ): GroupRegisterDto.GroupRegisterResponse {
+        return groupService.registerGroupMember(groupId, registerRequest, GroupMember.MemberRole.ADMIN)
     }
 }
