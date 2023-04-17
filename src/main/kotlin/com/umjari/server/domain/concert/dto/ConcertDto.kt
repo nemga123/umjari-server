@@ -12,7 +12,7 @@ import java.util.*
 class ConcertDto {
     data class CreateConcertRequest(
         @field:NotBlank val title: String?,
-        @field:NotBlank val subtitle: String?,
+        @field:NotNull val subtitle: String?,
         @field:NotBlank val conductor: String?,
         @field:NotNull val host: String?,
         @field:NotNull val support: String?,
@@ -36,7 +36,7 @@ class ConcertDto {
 
     data class UpdateConcertDetailRequest(
         @field:NotBlank val title: String?,
-        @field:NotBlank val subtitle: String?,
+        @field:NotNull val subtitle: String?,
         @field:NotBlank val conductor: String?,
         @field:NotNull val host: String?,
         @field:NotNull val support: String?,
