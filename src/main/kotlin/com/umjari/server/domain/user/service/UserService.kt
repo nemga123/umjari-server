@@ -11,7 +11,7 @@ class UserService(
 ) {
     fun checkDuplicatedNickname(nicknameRequest: UserDto.NicknameRequest) {
         if (userRepository.existsByNickname(nicknameRequest.nickname!!)) {
-            throw DuplicatedUserNicknameException(nicknameRequest.nickname!!)
+            throw DuplicatedUserNicknameException(nicknameRequest.nickname)
         }
     }
 }
