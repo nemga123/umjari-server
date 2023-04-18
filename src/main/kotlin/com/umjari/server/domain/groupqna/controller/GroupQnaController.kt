@@ -51,9 +51,8 @@ class GroupQnaController(
             direction = Sort.Direction.DESC,
         ) pageable: Pageable,
         @RequestParam(value = "text", required = false, defaultValue = "") text: String,
-        @CurrentUser user: User?,
     ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
-        return groupQnaService.getQnaListByGroupId(groupId, user, text, pageable)
+        return groupQnaService.getQnaListByGroupId(groupId, text, pageable)
     }
 
     @GetMapping("/{qna_id}/")
@@ -61,9 +60,8 @@ class GroupQnaController(
     fun getQna(
         @PathVariable("group_id") groupId: Long,
         @PathVariable("qna_id") qnaId: Long,
-        @CurrentUser user: User?,
     ): GroupQnaDto.QnaDetailResponse {
-        return groupQnaService.getQna(groupId, qnaId, user)
+        return groupQnaService.getQna(groupId, qnaId)
     }
 
     @PutMapping("/{qna_id}/")

@@ -15,6 +15,8 @@ class AuthDto {
         val userId: String?,
         @field:NotBlank
         val password: String?,
+        @field:NotBlank
+        val name: String?,
         @field:NotBlank @field:Email
         val email: String?,
         @field:NotBlank

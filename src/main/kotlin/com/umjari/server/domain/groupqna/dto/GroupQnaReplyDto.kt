@@ -32,7 +32,7 @@ class GroupQnaReplyDto {
             content = qnaReply.content,
             createAt = qnaReply.createdAt!!.toString(),
             updatedAt = qnaReply.updatedAt!!.toString(),
-            isAnonymous = true,
+            isAnonymous = qnaReply.isAnonymous,
             nickname = qnaReply.authorNickname,
         )
     }
@@ -50,7 +50,7 @@ class GroupQnaReplyDto {
             content = qnaReply.content,
             createAt = qnaReply.createdAt!!.toString(),
             updatedAt = qnaReply.updatedAt!!.toString(),
-            isAnonymous = false,
+            isAnonymous = qnaReply.isAnonymous,
             author = UserDto.SimpleUserDto(qnaReply.author),
         )
     }

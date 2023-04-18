@@ -87,7 +87,7 @@ class GroupQnaDto {
         constructor(qna: SimpleQnaDto) : this(
             id = qna.id,
             title = qna.title,
-            isAnonymous = true,
+            isAnonymous = qna.anonymous,
             nickname = qna.nickname,
             replyCount = qna.replyCount,
             createAt = qna.createAt!!.toString(),
@@ -107,7 +107,7 @@ class GroupQnaDto {
         constructor(qna: SimpleQnaDto) : this(
             id = qna.id,
             title = qna.title,
-            isAnonymous = false,
+            isAnonymous = qna.anonymous,
             author = UserDto.SimpleUserDto(qna.authorId, qna.authorNickname),
             replyCount = qna.replyCount,
             createAt = qna.createAt!!.toString(),
