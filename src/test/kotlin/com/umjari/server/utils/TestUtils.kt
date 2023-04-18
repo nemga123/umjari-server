@@ -38,6 +38,7 @@ class TestUtils {
                 {
                     "userId": "id",
                     "password": "password",
+                    "name":"홍길동",
                     "email": "email@email.com",
                     "nickname": "nickname",
                     "intro": "intro",
