@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotBlank
 class UserDto {
     data class SimpleUserDto(
         val id: Long,
-        val nickname: String,
+        val name: String,
     ) {
         constructor(user: User) : this(
             id = user.id,
-            nickname = user.nickname,
+            name = user.name,
         )
     }
 

@@ -43,7 +43,6 @@ class GroupQnaService(
 
     fun getQnaListByGroupId(
         groupId: Long,
-        user: User?,
         searchText: String,
         pageable: Pageable,
     ): PageResponse<GroupQnaDto.QnaSimpleResponse> {
@@ -58,7 +57,7 @@ class GroupQnaService(
         }
 
         val qnaResponses = qnaList.map {
-            if (it.anonymous && it.authorId != user?.id) {
+            if (it.anonymous) {
                 GroupQnaDto.AnonymousQnaSimpleResponse(it)
             } else {
                 GroupQnaDto.NotAnonymousQnaSimpleResponse(it)
@@ -67,18 +66,18 @@ class GroupQnaService(
         return PageResponse(qnaResponses, pageable.pageNumber)
     }
 
-    fun getQna(groupId: Long, qnaId: Long, user: User?): GroupQnaDto.QnaDetailResponse {
+    fun getQna(groupId: Long, qnaId: Long): GroupQnaDto.QnaDetailResponse {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
             ?: throw QnaIdNotFoundException(groupId, qnaId)
         val replyList = groupQnaReplyRepository.getAllByQnaIdWithUser(qna.id)
         val replyResponseList = replyList.map {
-            if (it.isAnonymous && it.author.id != user?.id) {
+            if (it.isAnonymous) {
                 GroupQnaReplyDto.AnonymousQnaReplyResponse(it)
             } else {
                 GroupQnaReplyDto.NotAnonymousQnaReplyResponse(it)
             }
         }
-        return if (qna.isAnonymous && qna.author.id != user?.id) {
+        return if (qna.isAnonymous) {
             GroupQnaDto.AnonymousQnaDetailResponse(qna, replyResponseList)
         } else {
             GroupQnaDto.NotAnonymousQnaDetailResponse(qna, replyResponseList)

@@ -21,6 +21,9 @@ class User(
     var email: String,
 
     @field:NotBlank
+    var name: String,
+
+    @field:NotBlank
     var password: String,
 
     @Column(unique = true, name = "phone_number")

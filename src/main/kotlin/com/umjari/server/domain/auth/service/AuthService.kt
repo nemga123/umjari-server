@@ -28,6 +28,7 @@ class AuthService(
         val user = User(
             userId = signUpRequest.userId,
             password = encodedPassword,
+            name = signUpRequest.name!!,
             email = signUpRequest.email,
             intro = signUpRequest.intro,
             phoneNumber = signUpRequest.phoneNumber!!,
