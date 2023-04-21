@@ -17,7 +17,6 @@ class GroupDto {
         @field:Size(max = 255)
         val practiceTime: String?,
         @field:NotNull
-        @field:Size(max = 255)
         val audition: Boolean?,
         @field:NotNull @field:PositiveOrZero
         val membershipFee: Int?,
@@ -44,7 +43,6 @@ class GroupDto {
         @field:Size(max = 255)
         val practiceTime: String?,
         @field:NotNull
-        @field:Size(max = 255)
         val audition: Boolean?,
         @field:NotNull @field:PositiveOrZero
         val membershipFee: Int?,
