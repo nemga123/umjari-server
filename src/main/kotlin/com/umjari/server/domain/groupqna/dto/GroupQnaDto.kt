@@ -4,11 +4,14 @@ import com.umjari.server.domain.groupqna.model.GroupQna
 import com.umjari.server.domain.user.dto.UserDto
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 class GroupQnaDto {
     data class CreateQnaRequest(
-        @field:NotBlank val title: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val title: String?,
         @field:NotBlank val content: String?,
         @field:NotNull val isPrivate: Boolean?,
     )
