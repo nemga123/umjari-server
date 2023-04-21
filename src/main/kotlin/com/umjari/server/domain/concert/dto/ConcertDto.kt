@@ -32,7 +32,6 @@ class ConcertDto {
         @field:Size(max = 255)
         val qna: String?,
         @field:NotBlank
-        @field:Size(max = 255)
         val concertInfo: String?,
         @field:NotBlank
         @field:Size(max = 255)
@@ -103,7 +102,6 @@ class ConcertDto {
 
     data class UpdateConcertInfoRequest(
         @field:NotBlank
-        @field:Size(max = 255)
         val concertInfo: String?,
     )
 
