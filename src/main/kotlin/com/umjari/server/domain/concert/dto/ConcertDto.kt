@@ -6,19 +6,37 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.PositiveOrZero
+import jakarta.validation.constraints.Size
 import java.text.SimpleDateFormat
 import java.util.*
 
 class ConcertDto {
     data class CreateConcertRequest(
-        @field:NotBlank val title: String?,
-        @field:NotNull val subtitle: String?,
-        @field:NotBlank val conductor: String?,
-        @field:NotNull val host: String?,
-        @field:NotNull val support: String?,
-        @field:NotNull val qna: String?,
-        @field:NotBlank val concertInfo: String?,
-        @field:NotBlank val posterImg: String?,
+
+        @field:NotBlank
+        @field:Size(max = 255)
+        val title: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val subtitle: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val conductor: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val host: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val support: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val qna: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val concertInfo: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val posterImg: String?,
         @field:NotBlank
         @field:Pattern(
             regexp = "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})$",
@@ -29,19 +47,39 @@ class ConcertDto {
         val concertRunningTime: Int?,
         @field:NotNull @field:PositiveOrZero
         val fee: Int?,
-        @field:NotBlank val regionParent: String?,
-        @field:NotBlank val regionChild: String?,
-        @field:NotBlank val regionDetail: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionParent: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionChild: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionDetail: String?,
     )
 
     data class UpdateConcertDetailRequest(
-        @field:NotBlank val title: String?,
-        @field:NotNull val subtitle: String?,
-        @field:NotBlank val conductor: String?,
-        @field:NotNull val host: String?,
-        @field:NotNull val support: String?,
-        @field:NotNull val qna: String?,
-        @field:NotBlank val posterImg: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val title: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val subtitle: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val conductor: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val host: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val support: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val qna: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val posterImg: String?,
         @field:NotBlank
         @field:Pattern(
             regexp = "^(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})$",
@@ -52,13 +90,21 @@ class ConcertDto {
         val concertRunningTime: Int?,
         @field:NotNull @field:PositiveOrZero
         val fee: Int?,
-        @field:NotBlank val regionParent: String?,
-        @field:NotBlank val regionChild: String?,
-        @field:NotBlank val regionDetail: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionParent: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionChild: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionDetail: String?,
     )
 
     data class UpdateConcertInfoRequest(
-        @field:NotBlank val concertInfo: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val concertInfo: String?,
     )
 
     data class ConcertDetailResponse(

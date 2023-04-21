@@ -5,37 +5,62 @@ import com.umjari.server.domain.group.model.Instrument
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PositiveOrZero
+import jakarta.validation.constraints.Size
 
 class GroupDto {
     data class CreateGroupRequest(
-        @field:NotBlank val name: String?,
-        val logo: String?,
-        @field:NotBlank val practiceTime: String?,
-        @field:NotNull val audition: Boolean?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val name: String?,
+        @field:Size(max = 255) val logo: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val practiceTime: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val audition: Boolean?,
         @field:NotNull @field:PositiveOrZero
         val membershipFee: Int?,
         @field:NotNull @field:PositiveOrZero
         val monthlyFee: Int?,
-        @field:NotBlank val regionParent: String?,
-        @field:NotBlank val regionChild: String?,
-        @field:NotBlank val regionDetail: String?,
-        val homepage: String?,
-        val detailIntro: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionParent: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionChild: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionDetail: String?,
+        @field:Size(max = 255) val homepage: String?,
+        @field:Size(max = 255) val detailIntro: String?,
     )
 
     data class UpdateGroupRequest(
-        @field:NotBlank val name: String?,
-        @field:NotBlank val practiceTime: String?,
-        @field:NotNull val audition: Boolean?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val name: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val practiceTime: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val audition: Boolean?,
         @field:NotNull @field:PositiveOrZero
         val membershipFee: Int?,
         @field:NotNull @field:PositiveOrZero
         val monthlyFee: Int?,
-        @field:NotBlank val regionParent: String?,
-        @field:NotBlank val regionChild: String?,
-        @field:NotBlank val regionDetail: String?,
-        val homepage: String?,
-        val detailIntro: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionParent: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionChild: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val regionDetail: String?,
+        @field:Size(max = 255) val homepage: String?,
+        @field:Size(max = 255) val detailIntro: String?,
     )
 
     data class UpdateGroupRecruitDetailRequest(
