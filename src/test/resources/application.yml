@@ -14,6 +14,17 @@ springdoc:
     default-produces-media-type: application/json
     paths-to-match:
         - /api/v1/**
+cloud:
+    aws:
+        credentials:
+            access-key: "s3-access-key"
+            secret-key: "s3-secret-key"
+        s3:
+            bucket: "bucketName"
+        region:
+            static: "ap-northeast-2"
+        stack:
+            auto: false
 ---
 spring:
     config:
