@@ -2,7 +2,7 @@ spring:
     profiles:
         active: local
     config:
-        import: application-s3.yml
+        import: optional:application-s3.yml
 ---
 app:
     jwt:
