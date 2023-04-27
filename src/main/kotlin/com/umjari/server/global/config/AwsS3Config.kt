@@ -16,7 +16,7 @@ class AwsS3Config {
     fun assetS3Client(
         @Value("\${cloud.aws.credentials.access-key}") accessKey: String,
         @Value("\${cloud.aws.credentials.secret-key}") secretKey: String,
-        @Value("\${cloud.aws.region.static") region: String,
+        @Value("\${cloud.aws.region.static}") region: String,
     ): AmazonS3 {
         return AmazonS3ClientBuilder
             .standard()

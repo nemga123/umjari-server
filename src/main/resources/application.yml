@@ -1,6 +1,8 @@
 spring:
     profiles:
         active: local
+    config:
+        import: application-s3.yml
 ---
 app:
     jwt:

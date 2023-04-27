@@ -60,6 +60,8 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/", "POST"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/{\\d+}/", "PUT"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/{\\d+}/reply/", "POST"),
+                AntPathRequestMatcher("/api/v1/image/", "POST"),
+                AntPathRequestMatcher("/api/v1/image/", "DELETE"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
