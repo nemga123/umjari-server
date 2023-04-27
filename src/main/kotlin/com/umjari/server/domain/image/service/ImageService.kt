@@ -20,7 +20,7 @@ class ImageService(
         val fileToken = UUID.randomUUID().toString()
         val fileName = imageFile.originalFilename!!
         val extension = fileName.split(".").last()
-        val shortFileName = fileName.substring(100)
+        val shortFileName = if (fileName.length > 100) fileName.substring(0, 100) else fileName
         if (listOf("jpg", "jpeg", "png").none { it.equals(extension, ignoreCase = true) }) {
             throw InvalidImageFormatException(extension)
         }
