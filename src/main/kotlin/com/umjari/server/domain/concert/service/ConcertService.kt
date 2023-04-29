@@ -82,7 +82,7 @@ class ConcertService(
         startDate?.let { spec.filteredByDateStart(dateFormatter.parse(it)) }
         endDate?.let { spec.filteredByDateEnd(dateFormatter.parse(it)) }
         regionParent?.let { if (regionParent != "전체") spec.filteredByRegionParent(regionParent) }
-        regionChild?.let { if (regionParent != "전체") spec.filteredByRegionChild(regionChild) }
+        regionChild?.let { if (regionChild != "전체") spec.filteredByRegionChild(regionChild) }
         text?.let { spec.filteredByText(text) }
         val concerts = concertRepository.findAll(spec.build(), pageable)
         val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
