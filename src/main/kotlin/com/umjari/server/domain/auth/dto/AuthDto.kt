@@ -31,4 +31,9 @@ class AuthDto {
         @field:Pattern(regexp = "^[0-9]{11}$")
         val phoneNumber: String?,
     )
+
+    data class MailVerifyRequest(
+        @field:NotBlank @field:Email
+        val email: String?,
+    )
 }
