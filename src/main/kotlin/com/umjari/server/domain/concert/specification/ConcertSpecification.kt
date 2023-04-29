@@ -47,12 +47,22 @@ class ConcertSpecification {
     fun filteredByText(text: String) {
         var textSpec = Specification<Concert> { root, _, criteriaBuilder ->
             criteriaBuilder.like(
-                root.get("title"),
-                "%$text%",
+                criteriaBuilder.upper(root.get("title")),
+                "%${text.uppercase()}%",
             )
         }
-        textSpec = textSpec.or { root, _, criteriaBuilder -> criteriaBuilder.like(root.get("subtitle"), "%$text%") }
-        textSpec = textSpec.or { root, _, criteriaBuilder -> criteriaBuilder.like(root.get("concertInfo"), "%$text%") }
+        textSpec = textSpec.or { root, _, criteriaBuilder ->
+            criteriaBuilder.like(
+                criteriaBuilder.upper(root.get("subtitle")),
+                "%${text.uppercase()}%",
+            )
+        }
+        textSpec = textSpec.or { root, _, criteriaBuilder ->
+            criteriaBuilder.like(
+                criteriaBuilder.upper(root.get("concertInfo")),
+                "%${text.uppercase()}%",
+            )
+        }
 
         spec = spec.and(textSpec)
     }
