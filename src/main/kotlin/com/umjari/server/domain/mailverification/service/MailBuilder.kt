@@ -1,10 +1,10 @@
-package com.umjari.server.domain.auth.service
+package com.umjari.server.domain.mailverification.service
 
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
 
-@Service
+@Component
 class MailBuilder(
     private val templateEngine: TemplateEngine,
 ) {

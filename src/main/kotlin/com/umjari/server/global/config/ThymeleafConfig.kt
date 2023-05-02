@@ -11,10 +11,13 @@ class ThymeleafConfig {
     @Bean
     fun templateResolver(): SpringResourceTemplateResolver {
         val templateResolver = SpringResourceTemplateResolver()
-        templateResolver.prefix = "/resources/templates/"
+        templateResolver.prefix = "classpath:templates/"
         templateResolver.suffix = ".html"
         templateResolver.templateMode = TemplateMode.HTML
-        templateResolver.isCacheable = true
+        templateResolver.characterEncoding = "UTF-8"
+        templateResolver.isCacheable = false
+        templateResolver.checkExistence = true
+
         return templateResolver
     }
 
