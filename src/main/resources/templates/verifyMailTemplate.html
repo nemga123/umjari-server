@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="utf-8">
     <style>
         /* 가운데 정렬 */
         body {
@@ -17,7 +18,7 @@
 </head>
 <body>
 <p>홈페이지를 방문해주셔서 감사합니다.</p>
-<p>인증 번호는 <span class="auth-number">"${token}"</span>입니다.</p>
+<p>인증 번호는 <span class="auth-number" th:text="${token}"></span>입니다.</p>
 <p>해당 인증번호를 인증번호 확인란에 기입하여 주세요.</p>
 </body>
 </html>

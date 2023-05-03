@@ -1,5 +1,6 @@
-package com.umjari.server.domain.auth.model
+package com.umjari.server.domain.auth.service
 
+import com.umjari.server.domain.auth.model.UserPrincipal
 import com.umjari.server.domain.user.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService

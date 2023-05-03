@@ -1,6 +1,8 @@
 package com.umjari.server.domain.auth.service
 
 import com.umjari.server.domain.auth.dto.AuthDto
+import com.umjari.server.domain.auth.exception.EmailNotVerifiedException
+import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.user.exception.DuplicatedUserEmailException
 import com.umjari.server.domain.user.exception.DuplicatedUserIdException
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
@@ -13,15 +15,19 @@ import org.springframework.stereotype.Service
 class AuthService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val verifyTokenRepository: VerifyTokenRepository,
 ) {
     fun signUp(signUpRequest: AuthDto.SignUpRequest): User {
+        val verificationToken = verifyTokenRepository.findByEmailAndConfirmedIsTrue(signUpRequest.email!!)
+            ?: throw EmailNotVerifiedException()
+
         if (userRepository.existsByUserId(signUpRequest.userId!!)) {
             throw DuplicatedUserIdException(signUpRequest.userId)
         }
         if (userRepository.existsByNickname(signUpRequest.nickname!!)) {
             throw DuplicatedUserNicknameException(signUpRequest.nickname)
         }
-        if (userRepository.existsByEmail(signUpRequest.email!!)) {
+        if (userRepository.existsByEmail(signUpRequest.email)) {
             throw DuplicatedUserEmailException(signUpRequest.email)
         }
         val encodedPassword = passwordEncoder.encode(signUpRequest.password)
@@ -34,6 +40,9 @@ class AuthService(
             phoneNumber = signUpRequest.phoneNumber!!,
             nickname = signUpRequest.nickname,
         )
-        return userRepository.save(user)
+
+        val userObject = userRepository.save(user)
+        verifyTokenRepository.delete(verificationToken)
+        return userObject
     }
 }

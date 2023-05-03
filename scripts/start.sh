@@ -11,5 +11,5 @@ cp /home/ubuntu/build/$JAR_NAME /home/ubuntu/deploy/
 echo "[Deploy] : Running new application"
 
 nohup java -jar -Dspring.profiles.active=prod \
-        -Dspring.config.additional-location=$RESOURCES_PATH/application-production.yml,$RESOURCES_PATH/application-s3.yml \
+        -Dspring.config.additional-location=$RESOURCES_PATH/application-production.yml,$RESOURCES_PATH/application-s3.yml,$RESOURCES_PATH/application-mail.yml \
         /home/ubuntu/deploy/$JAR_NAME > /home/ubuntu/deploy/nohup.out 2>&1 &

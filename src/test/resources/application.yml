@@ -43,3 +43,12 @@ spring:
             ddl-auto: create-drop
         show-sql: true
         database: postgresql
+    mail:
+        host: "smtp.gmail.com"
+        port: 587
+        properties:
+            auth: "true"
+            starttls:
+                enable: "true"
+        username: "umjari.register@gmail.com"
+        password: "test-password"
