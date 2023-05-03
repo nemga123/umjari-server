@@ -3,6 +3,8 @@ package com.umjari.server.utils
 import com.jayway.jsonpath.JsonPath
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.mailverification.model.VerifyToken
+import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.model.User
@@ -33,7 +35,17 @@ class TestUtils {
             return groupRepository.save(group)
         }
 
-        fun createDummyUser(mockMvc: MockMvc, userRepository: UserRepository): Pair<User, String> {
+        fun createDummyUser(
+            mockMvc: MockMvc,
+            userRepository: UserRepository,
+            verifyTokenRepository: VerifyTokenRepository,
+        ): Pair<User, String> {
+            val verificationToken = VerifyToken(
+                token = "TOKEN1",
+                email = "email@email.com",
+                confirmed = true,
+            )
+            verifyTokenRepository.save(verificationToken)
             val signUpRequest = """
                 {
                     "userId": "id",
