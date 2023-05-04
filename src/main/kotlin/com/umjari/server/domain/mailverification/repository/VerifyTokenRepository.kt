@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface VerifyTokenRepository : JpaRepository<VerifyToken, Long?> {
     fun findByTokenAndEmail(token: String, email: String): VerifyToken?
 
-    fun findByEmailAndConfirmedIsTrue(email: String): VerifyToken?
+    fun findTopByEmailOrderByCreatedAtDesc(email: String): VerifyToken?
+
+    fun deleteAllByEmail(email: String)
 }

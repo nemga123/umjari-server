@@ -8,8 +8,11 @@ import com.umjari.server.domain.user.exception.DuplicatedUserIdException
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
+import jakarta.transaction.Transactional
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 @Service
 class AuthService(
@@ -17,9 +20,17 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val verifyTokenRepository: VerifyTokenRepository,
 ) {
+    @Transactional
     fun signUp(signUpRequest: AuthDto.SignUpRequest): User {
-        val verificationToken = verifyTokenRepository.findByEmailAndConfirmedIsTrue(signUpRequest.email!!)
+        val verificationToken = verifyTokenRepository.findTopByEmailOrderByCreatedAtDesc(signUpRequest.email!!)
             ?: throw EmailNotVerifiedException()
+        if (!verificationToken.confirmed || ChronoUnit.SECONDS.between(
+                verificationToken.updatedAt!!,
+                LocalDateTime.now(),
+            ) > 600
+        ) {
+            throw EmailNotVerifiedException()
+        }
 
         if (userRepository.existsByUserId(signUpRequest.userId!!)) {
             throw DuplicatedUserIdException(signUpRequest.userId)
@@ -41,7 +52,7 @@ class AuthService(
         )
 
         val userObject = userRepository.save(user)
-        verifyTokenRepository.delete(verificationToken)
+        verifyTokenRepository.deleteAllByEmail(signUpRequest.email)
         return userObject
     }
 }
