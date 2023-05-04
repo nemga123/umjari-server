@@ -37,7 +37,6 @@ class AuthService(
             name = signUpRequest.name!!,
             email = signUpRequest.email,
             intro = signUpRequest.intro,
-            phoneNumber = signUpRequest.phoneNumber!!,
             nickname = signUpRequest.nickname,
         )
 
