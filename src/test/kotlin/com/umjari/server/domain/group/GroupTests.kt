@@ -32,9 +32,6 @@ class GroupTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @Autowired
-    private lateinit var groupRepository: GroupRepository
-
     companion object {
         private lateinit var token: String
 
