@@ -12,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +32,8 @@ class SecurityConfig(
         httpSecurity
             .httpBasic().disable()
             .csrf().disable()
+            .cors()
+            .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -76,5 +81,17 @@ class SecurityConfig(
             .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
             .anyRequest().authenticated()
         return httpSecurity.build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = mutableListOf("http://localhost", "https://umjari.co.kr")
+        configuration.allowedMethods = mutableListOf("*")
+        configuration.allowedHeaders = mutableListOf("Content-Type", "Authorization")
+        configuration.allowCredentials = true
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 }
