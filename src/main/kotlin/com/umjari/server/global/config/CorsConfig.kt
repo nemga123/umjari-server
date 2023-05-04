@@ -11,5 +11,6 @@ class CorsConfig : WebMvcConfigurer {
             .allowedOrigins("http://localhost", "https://umjari.co.kr")
             .allowedMethods("*")
             .allowedHeaders("Authorization")
+            .allowCredentials(true)
     }
 }
