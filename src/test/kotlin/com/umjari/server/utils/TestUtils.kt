@@ -53,8 +53,7 @@ class TestUtils {
                     "name":"홍길동",
                     "email": "email@email.com",
                     "nickname": "nickname",
-                    "intro": "intro",
-                    "phoneNumber": "01012345678"
+                    "intro": "intro"
                 }
             """.trimIndent()
 
