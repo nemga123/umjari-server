@@ -2,7 +2,6 @@ package com.umjari.server.domain.auth.dto
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 
 class AuthDto {
@@ -28,7 +27,5 @@ class AuthDto {
         val nickname: String?,
         @field:Size(max = 255)
         val intro: String? = null,
-        @field:Pattern(regexp = "^[0-9]{11}$")
-        val phoneNumber: String?,
     )
 }
