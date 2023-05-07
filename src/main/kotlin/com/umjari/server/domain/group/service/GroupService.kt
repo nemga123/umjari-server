@@ -46,13 +46,20 @@ class GroupService(
         )
 
         groupRepository.save(group)
-        return GroupDto.GroupDetailResponse(group)
+        return GroupDto.GroupDetailResponse(group, GroupMember.MemberRole.NON_MEMBER)
     }
 
-    fun getGroup(groupId: Long): GroupDto.GroupDetailResponse {
+    fun getGroup(groupId: Long, user: User?): GroupDto.GroupDetailResponse {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
-        return GroupDto.GroupDetailResponse(group)
+        val memberStatus = user?.let {
+            groupMemberRepository.findByGroup_IdAndUser_Id(
+                groupId = group.id,
+                userId = it.id,
+            )
+        }
+        val memberType = memberStatus?.let { it.role } ?: GroupMember.MemberRole.NON_MEMBER
+        return GroupDto.GroupDetailResponse(group, memberType)
     }
 
     fun getGroupRecruitDetail(groupId: Long): GroupDto.GroupRecruitDetailResponse {
