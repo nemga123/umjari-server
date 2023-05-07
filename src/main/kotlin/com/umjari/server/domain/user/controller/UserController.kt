@@ -1,6 +1,6 @@
 package com.umjari.server.domain.user.controller
 
-import com.umjari.server.domain.auth.dto.UserDto
+import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -25,11 +25,16 @@ class UserController(
         return UserDto.UserInfoResponse(user)
     }
 
+    @GetMapping("/my-group/")
+    fun getMyGroupList(@CurrentUser user: User): UserDto.UserGroupListResponse {
+        return userService.getJoinGroupList(user)
+    }
+
     @PostMapping("/nickname/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun checkDuplicatedNickname(
         @Valid @RequestBody
-        nicknameRequest: com.umjari.server.domain.user.dto.UserDto.NicknameRequest,
+        nicknameRequest: UserDto.NicknameRequest,
     ) {
         userService.checkDuplicatedNickname(nicknameRequest)
     }

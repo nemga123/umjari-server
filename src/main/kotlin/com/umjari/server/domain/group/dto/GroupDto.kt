@@ -112,4 +112,18 @@ class GroupDto {
             recruitDetail = if (group.recruit) group.recruitDetail else null,
         )
     }
+
+    data class GroupUserResponse(
+        val groupId: Long,
+        val groupName: String,
+        val joinedAt: String,
+        val memberType: String,
+    ) {
+        constructor(groupMember: GroupMember) : this(
+            groupId = groupMember.group.id,
+            groupName = groupMember.group.name,
+            joinedAt = groupMember.createdAt.toString(),
+            memberType = groupMember.role.toString(),
+        )
+    }
 }
