@@ -40,8 +40,8 @@ class GroupController(
 
     @GetMapping("/{group_id}/")
     @ResponseStatus(HttpStatus.OK)
-    fun getGroup(@PathVariable("group_id") groupId: Long): GroupDto.GroupDetailResponse {
-        return groupService.getGroup(groupId)
+    fun getGroup(@PathVariable("group_id") groupId: Long, @CurrentUser user: User?): GroupDto.GroupDetailResponse {
+        return groupService.getGroup(groupId, user)
     }
 
     @GetMapping("/{group_id}/recruit/")

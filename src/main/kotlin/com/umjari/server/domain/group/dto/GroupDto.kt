@@ -1,6 +1,7 @@
 package com.umjari.server.domain.group.dto
 
 import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.model.Instrument
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -79,8 +80,9 @@ class GroupDto {
         val homepage: String?,
         val detailIntro: String?,
         val recruit: Boolean,
+        val memberType: String,
     ) {
-        constructor(group: Group) : this(
+        constructor(group: Group, memberType: GroupMember.MemberRole) : this(
             id = group.id,
             name = group.name,
             logo = group.logo,
@@ -93,6 +95,7 @@ class GroupDto {
             homepage = group.homepage,
             detailIntro = group.detailIntro,
             recruit = group.recruit,
+            memberType = memberType.toString(),
         )
     }
 
