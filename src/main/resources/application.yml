@@ -3,6 +3,10 @@ spring:
         active: local
     config:
         import: optional:application-s3.yml, optional:application-mail.yml
+    data:
+      web:
+        pageable:
+            one-indexed-parameters: true
 ---
 app:
     jwt:
