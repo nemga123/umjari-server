@@ -1,6 +1,5 @@
 package com.umjari.server.global.auth
 
-import com.umjari.server.domain.group.GroupTests
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
@@ -73,7 +72,7 @@ class AuthTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
+                .content(content),
         ).andExpect(
             MockMvcResultMatchers.status().isUnauthorized,
         )
@@ -85,6 +84,5 @@ class AuthTests {
         ).andExpect(
             MockMvcResultMatchers.status().isUnauthorized,
         )
-
     }
 }

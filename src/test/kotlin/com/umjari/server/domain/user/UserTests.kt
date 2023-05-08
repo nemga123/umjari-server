@@ -1,7 +1,6 @@
 package com.umjari.server.domain.user
 
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
-import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
 import org.junit.jupiter.api.BeforeAll
@@ -15,12 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultHandler
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,7 +28,7 @@ class UserTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    companion object{
+    companion object {
         private lateinit var token: String
 
         @BeforeAll
@@ -62,7 +59,7 @@ class UserTests {
     fun testNicknameCheck() {
         val duplicatedNicknameContent = """
             {
-                "nickname": "nickname"
+                "nickname": "user"
             }
         """.trimIndent()
 
@@ -77,7 +74,7 @@ class UserTests {
 
         val notDuplicatedNicknameContent = """
             {
-                "nickname": "nickname1"
+                "nickname": "new_user"
             }
         """.trimIndent()
 
@@ -108,7 +105,7 @@ class UserTests {
         ).andExpect(
             MockMvcResultMatchers.status().isBadRequest,
         ).andExpect(
-            jsonPath("$.nickname").value("must not be blank")
+            jsonPath("$.nickname").value("must not be blank"),
         )
 
         val notDuplicatedNicknameContent = """

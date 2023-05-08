@@ -9,7 +9,6 @@ import com.umjari.server.domain.region.model.Region
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -52,7 +51,7 @@ class TestUtils {
                     "password": "password",
                     "name":"홍길동",
                     "email": "user@umjari.co.kr",
-                    "nickname": "nickname",
+                    "nickname": "user",
                     "intro": "intro"
                 }
             """.trimIndent()
@@ -103,7 +102,7 @@ class TestUtils {
                     "password": "password",
                     "name":"관리자",
                     "email": "admin@umjari.co.kr",
-                    "nickname": "nickname",
+                    "nickname": "admin",
                     "intro": "intro"
                 }
             """.trimIndent()

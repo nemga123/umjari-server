@@ -59,7 +59,6 @@ class ConcertTests {
             groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
 
             val adminResult = TestUtils.createDummyAdmin(mockMvc, userRepository, verifyTokenRepository)
-            val admin = adminResult.first
             adminToken = adminResult.second
         }
     }
@@ -90,7 +89,7 @@ class ConcertTests {
             MockMvcRequestBuilders.post("/api/v1/concert/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isCreated,
         )
@@ -100,7 +99,7 @@ class ConcertTests {
             MockMvcRequestBuilders.post("/api/v1/concert/group/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
         )
@@ -137,7 +136,7 @@ class ConcertTests {
             MockMvcRequestBuilders.put("/api/v1/concert/1/info/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
         )
@@ -146,7 +145,7 @@ class ConcertTests {
             MockMvcRequestBuilders.put("/api/v1/concert/100/info/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
         )
@@ -177,7 +176,7 @@ class ConcertTests {
             MockMvcRequestBuilders.put("/api/v1/concert/1/details/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
         )
@@ -186,7 +185,7 @@ class ConcertTests {
             MockMvcRequestBuilders.put("/api/v1/concert/100/details/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
         )

@@ -52,14 +52,20 @@ class GroupService(
     fun getGroup(groupId: Long, user: User?): GroupDto.GroupDetailResponse {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
-        val memberStatus = user?.let {
+        val memberStatus = if (user != null) {
             groupMemberRepository.findByGroup_IdAndUser_Id(
                 groupId = group.id,
-                userId = it.id,
+                userId = user.id,
             )
+        } else {
+            null
         }
-        val memberType = memberStatus?.let { it.role } ?: GroupMember.MemberRole.NON_MEMBER
-        return GroupDto.GroupDetailResponse(group, memberType)
+
+        return if (memberStatus != null) {
+            GroupDto.GroupDetailResponse(group, memberStatus.role)
+        } else {
+            GroupDto.GroupDetailResponse(group, GroupMember.MemberRole.NON_MEMBER)
+        }
     }
 
     fun getGroupRecruitDetail(groupId: Long): GroupDto.GroupRecruitDetailResponse {
@@ -133,8 +139,9 @@ class GroupService(
         val requestUserIds = registerRequest.userIds.toMutableList()
 
         val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
-        val existingUserIds = userRepository.findUserIdsByUserIdIn(requestUserIds)
-        val notEnrolledUsers = if (existingUserIds.isNotEmpty()) {
+        val existingUsers = userRepository.findUserIdsByUserIdIn(requestUserIds)
+        val existingUserIds = existingUsers.map { it.userId }.toSet()
+        val notEnrolledUserIds = if (existingUserIds.isNotEmpty()) {
             groupMemberRepository.findAllUserIdsNotEnrolled(
                 existingUserIds,
                 groupId,
@@ -142,9 +149,12 @@ class GroupService(
         } else {
             emptySet()
         }
-        val notEnrolledUserIds = notEnrolledUsers.map { it.userId }.toSet()
-        notEnrolledUsers.forEach { user ->
-            val groupMember = GroupMember(group = group, user = user, role = role)
+        notEnrolledUserIds.forEach { userId ->
+            val groupMember = GroupMember(
+                group = group,
+                user = existingUsers.find { it.userId == userId }!!,
+                role = role,
+            )
             groupMemberRepository.save(groupMember)
         }
 
