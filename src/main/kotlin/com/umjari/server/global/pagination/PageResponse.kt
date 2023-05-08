@@ -12,6 +12,6 @@ data class PageResponse<T>(
         contents = page.content,
         totalPages = page.totalPages,
         totalElements = page.totalElements,
-        currentPage = currentPage,
+        currentPage = currentPage + 1, // for one-based index
     )
 }
