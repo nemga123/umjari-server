@@ -123,6 +123,13 @@ class GroupTests {
         )
 
         mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/")
+                .header("Authorization", token),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/100/is-recruit/")
                 .header("Authorization", token),
         ).andExpect(
@@ -177,6 +184,13 @@ class GroupTests {
     @Test
     @Order(5)
     fun testGetGroupRecruitInformation() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/")
+                .header("Authorization", token),
+        ).andExpect(
+            status().isNoContent,
+        )
+
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/1/recruit/"),
         ).andExpect(

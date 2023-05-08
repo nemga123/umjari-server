@@ -12,7 +12,6 @@ import java.util.*
 
 class ConcertDto {
     data class CreateConcertRequest(
-
         @field:NotBlank
         @field:Size(max = 255)
         val title: String?,

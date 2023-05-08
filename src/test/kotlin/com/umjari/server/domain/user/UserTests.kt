@@ -1,9 +1,5 @@
 package com.umjari.server.domain.user
 
-import com.umjari.server.domain.group.GroupTests
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.repository.GroupMemberRepository
-import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
@@ -19,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultHandler
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -112,7 +108,7 @@ class UserTests {
         ).andExpect(
             MockMvcResultMatchers.status().isBadRequest,
         ).andExpect(
-            jsonPath()
+            jsonPath("$.nickname").value("must not be blank")
         )
 
         val notDuplicatedNicknameContent = """

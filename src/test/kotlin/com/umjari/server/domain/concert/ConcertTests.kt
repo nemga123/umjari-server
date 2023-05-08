@@ -39,7 +39,8 @@ class ConcertTests {
     private lateinit var concertRepository: ConcertRepository
 
     companion object {
-        private lateinit var token: String
+        private lateinit var userToken: String
+        private lateinit var adminToken: String
 
         @BeforeAll
         @JvmStatic
@@ -52,10 +53,14 @@ class ConcertTests {
             @Autowired verifyTokenRepository: VerifyTokenRepository,
         ) {
             val group = TestUtils.createDummyGroup(regionRepository, groupRepository)
-            val result = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
-            val user = result.first
-            token = result.second
+            val userResult = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
+            val user = userResult.first
+            userToken = userResult.second
             groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
+
+            val adminResult = TestUtils.createDummyAdmin(mockMvc, userRepository, verifyTokenRepository)
+            val admin = adminResult.first
+            adminToken = adminResult.second
         }
     }
 
@@ -196,6 +201,12 @@ class ConcertTests {
             status().isOk,
         ).andExpect(
             jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/100/concerts/"),
+        ).andExpect(
+            status().isNotFound,
         )
     }
 }
