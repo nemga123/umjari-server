@@ -20,6 +20,9 @@ class User(
     var email: String,
 
     @field:NotBlank
+    var profileImage: String,
+
+    @field:NotBlank
     var name: String,
 
     @field:NotBlank
