@@ -26,6 +26,11 @@ class UserDto {
         val career: List<GroupDto.GroupUserResponse>,
     )
 
+    data class ProfileImageRequest(
+        @field:NotBlank
+        val image: String?,
+    )
+
     data class UserInfoResponse(
         val nickname: String,
         val email: String,
