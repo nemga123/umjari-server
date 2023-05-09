@@ -49,6 +49,7 @@ class AuthService(
             email = signUpRequest.email,
             intro = signUpRequest.intro,
             nickname = signUpRequest.nickname,
+            profileImage = signUpRequest.profileImage!!,
         )
 
         val userObject = userRepository.save(user)
