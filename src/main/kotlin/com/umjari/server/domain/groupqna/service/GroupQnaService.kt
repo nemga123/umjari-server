@@ -35,7 +35,7 @@ class GroupQnaService(
             group = group,
             title = createQnaRequest.title!!,
             content = createQnaRequest.content!!,
-            isAnonymous = createQnaRequest.isPrivate!!,
+            isAnonymous = createQnaRequest.isAnonymous!!,
         )
         groupQnaRepository.save(qna)
         return GroupQnaDto.NotAnonymousQnaDetailResponse(qna)
@@ -92,7 +92,7 @@ class GroupQnaService(
         with(qna) {
             title = updateGroupQnaRequest.title!!
             content = updateGroupQnaRequest.content!!
-            isAnonymous = updateGroupQnaRequest.isPrivate!!
+            isAnonymous = updateGroupQnaRequest.isAnonymous!!
         }
         groupQnaRepository.save(qna)
     }
