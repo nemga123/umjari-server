@@ -9,6 +9,7 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -37,5 +38,15 @@ class UserController(
         nicknameRequest: UserDto.NicknameRequest,
     ) {
         userService.checkDuplicatedNickname(nicknameRequest)
+    }
+
+    @PutMapping("/image/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateUserProfileImage(
+        @CurrentUser user: User,
+        @Valid @RequestBody
+        imageRequest: UserDto.ProfileImageRequest,
+    ) {
+        userService.updateProfileImage(user, imageRequest)
     }
 }
