@@ -9,7 +9,6 @@ import com.umjari.server.domain.region.model.Region
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -42,17 +41,17 @@ class TestUtils {
         ): Pair<User, String> {
             val verificationToken = VerifyToken(
                 token = "TOKEN1",
-                email = "email@email.com",
+                email = "user@umjari.co.kr",
                 confirmed = true,
             )
             verifyTokenRepository.save(verificationToken)
             val signUpRequest = """
                 {
-                    "userId": "id",
+                    "userId": "user",
                     "password": "password",
                     "name":"홍길동",
-                    "email": "email@email.com",
-                    "nickname": "nickname",
+                    "email": "user@umjari.co.kr",
+                    "nickname": "user",
                     "intro": "intro"
                 }
             """.trimIndent()
@@ -67,7 +66,7 @@ class TestUtils {
 
             val logInRequest = """
                 {
-                    "userId": "id",
+                    "userId": "user",
                     "password": "password"
                 }
             """.trimIndent()
@@ -81,7 +80,62 @@ class TestUtils {
             ).andReturn()
 
             return Pair(
-                userRepository.findByIdOrNull(1)!!,
+                userRepository.findByUserId("user")!!,
+                JsonPath.read(result.response.contentAsString, "$.accessToken"),
+            )
+        }
+
+        fun createDummyAdmin(
+            mockMvc: MockMvc,
+            userRepository: UserRepository,
+            verifyTokenRepository: VerifyTokenRepository,
+        ): Pair<User, String> {
+            val verificationToken = VerifyToken(
+                token = "TOKEN2",
+                email = "admin@umjari.co.kr",
+                confirmed = true,
+            )
+            verifyTokenRepository.save(verificationToken)
+            val signUpRequest = """
+                {
+                    "userId": "admin",
+                    "password": "password",
+                    "name":"관리자",
+                    "email": "admin@umjari.co.kr",
+                    "nickname": "admin",
+                    "intro": "intro"
+                }
+            """.trimIndent()
+
+            mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/auth/signup/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(signUpRequest),
+            ).andExpect(
+                MockMvcResultMatchers.status().isNoContent,
+            )
+
+            val admin = userRepository.findByUserId("admin")!!
+            admin.roles = "ROLE_USER,ROLE_ADMIN"
+            userRepository.save(admin)
+
+            val logInRequest = """
+                {
+                    "userId": "admin",
+                    "password": "password"
+                }
+            """.trimIndent()
+
+            val result = mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/auth/login/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(logInRequest),
+            ).andExpect(
+                MockMvcResultMatchers.status().isOk,
+            ).andReturn()
+
+            return Pair(
+                userRepository.findByUserId("admin")!!,
                 JsonPath.read(result.response.contentAsString, "$.accessToken"),
             )
         }

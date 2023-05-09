@@ -32,11 +32,9 @@ class GroupTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @Autowired
-    private lateinit var groupRepository: GroupRepository
-
     companion object {
-        private lateinit var token: String
+        private lateinit var userToken: String
+        private lateinit var adminToken: String
 
         @BeforeAll
         @JvmStatic
@@ -49,10 +47,13 @@ class GroupTests {
             @Autowired verifyTokenRepository: VerifyTokenRepository,
         ) {
             val group = TestUtils.createDummyGroup(regionRepository, groupRepository)
-            val result = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
-            val user = result.first
-            token = result.second
+            val userResult = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
+            val user = userResult.first
+            userToken = userResult.second
             groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
+
+            val adminResult = TestUtils.createDummyAdmin(mockMvc, userRepository, verifyTokenRepository)
+            adminToken = adminResult.second
         }
     }
 
@@ -77,7 +78,7 @@ class GroupTests {
             MockMvcRequestBuilders.put("/api/v1/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
         )
@@ -86,7 +87,7 @@ class GroupTests {
             MockMvcRequestBuilders.put("/api/v1/group/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
         )
@@ -109,7 +110,7 @@ class GroupTests {
             MockMvcRequestBuilders.put("/api/v1/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(newRegionContent)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
         )
@@ -120,14 +121,21 @@ class GroupTests {
     fun testUpdateRecruitInformation() {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/")
-                .header("Authorization", token),
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/")
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/100/is-recruit/")
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
         )
@@ -144,7 +152,7 @@ class GroupTests {
             MockMvcRequestBuilders.put("/api/v1/group/1/recruit-detail/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
         )
@@ -153,7 +161,7 @@ class GroupTests {
             MockMvcRequestBuilders.put("/api/v1/group/100/recruit-detail/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-                .header("Authorization", token),
+                .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
         )
@@ -161,13 +169,14 @@ class GroupTests {
 
     @Test
     @Order(4)
-    fun testGetGroup() {
+    fun testGetGroupAsMember() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/group/1/"),
+            MockMvcRequestBuilders.get("/api/v1/group/1/")
+                .header("Authorization", userToken),
         ).andExpect(
             status().isOk,
         ).andExpect(
-            jsonPath("$.name").value("NEW_NAME"),
+            jsonPath("$.memberType").value("ADMIN"),
         )
 
         mockMvc.perform(
@@ -178,8 +187,27 @@ class GroupTests {
     }
 
     @Test
+    @Order(4)
+    fun testGetGroupAsNotMember() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.memberType").value("NON_MEMBER"),
+        )
+    }
+
+    @Test
     @Order(5)
     fun testGetGroupRecruitInformation() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/is-recruit/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/1/recruit/"),
         ).andExpect(
@@ -192,6 +220,124 @@ class GroupTests {
             MockMvcRequestBuilders.get("/api/v1/group/100/recruit/"),
         ).andExpect(
             status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(6)
+    fun testCreateGroupAsAdmin() {
+        val content = """
+            {
+                "name": "GROUP_NAME2",
+                "logo":"GROUP_LOGO",
+                "practiceTime": "12:00",
+                "audition":true,
+                "membershipFee": 0,
+                "monthlyFee": 0,
+                "regionParent": "서울시",
+                "regionChild": "관악구",
+                "regionDetail": "음대",
+                "detailIntro": "음악 동아리",
+                "homepage": "homepage"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isCreated,
+        )
+
+        val contentWithDefaultLogo = """
+            {
+                "name": "GROUP_NAME3",
+                "logo": null,
+                "practiceTime": "12:00",
+                "audition":true,
+                "membershipFee": 0,
+                "monthlyFee": 0,
+                "regionParent": "서울시",
+                "regionChild": "관악구",
+                "regionDetail": "음대",
+                "detailIntro": "음악 동아리",
+                "homepage": "homepage"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(contentWithDefaultLogo)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isCreated,
+        )
+    }
+
+    @Test
+    @Order(7)
+    fun testRegisterGroupAsAdmin() {
+        val content = """
+            {
+              "userIds": [
+                "user"
+              ]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/2/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(0),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/100/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(8)
+    fun testRegisterGroupWithWrongData() {
+        val wrongContent = """
+            {
+              "userIds": [
+                "non-exist-user",
+                "user"
+              ]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/2/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(wrongContent)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(2),
+        ).andExpect(
+            jsonPath("$.failedUsers[0].userId").value("non-exist-user"),
+        ).andExpect(
+            jsonPath("$.failedUsers[0].reason").value("User does not exist."),
+        ).andExpect(
+            jsonPath("$.failedUsers[1].userId").value("user"),
+        ).andExpect(
+            jsonPath("$.failedUsers[1].reason").value("User is already enrolled."),
         )
     }
 }

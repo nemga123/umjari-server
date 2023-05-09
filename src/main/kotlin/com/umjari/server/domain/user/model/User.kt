@@ -31,5 +31,5 @@ class User(
 
     var intro: String?,
 
-    val roles: String = "ROLE_USER",
+    var roles: String = "ROLE_USER",
 ) : BaseTimeEntity()

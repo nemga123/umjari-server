@@ -10,10 +10,10 @@ interface UserRepository : JpaRepository<User, Long?> {
 
     @Query(
         """
-        SELECT u.userId FROM User AS u WHERE u.userId IN :userIds
+        SELECT u FROM User AS u WHERE u.userId IN :userIds
     """,
     )
-    fun findUserIdsByUserIdIn(@Param("userIds") userIds: List<String>): Set<String>
+    fun findUserIdsByUserIdIn(@Param("userIds") userIds: List<String>): Set<User>
 
     fun existsByUserId(userId: String): Boolean
     fun existsByNickname(nickname: String): Boolean
