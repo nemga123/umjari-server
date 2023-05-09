@@ -39,5 +39,29 @@ class ImageService(
         }
 
         s3Service.removeFile(user.userId, image.token, image.fileName)
+        imageRepository.delete(image)
+    }
+
+    data class FileMetaData(
+        val userId: String,
+        val fileToken: String,
+        val fileName: String,
+    )
+    fun removeImageByUrl(url: String) {
+        val fileMetaData = parseS3Url(url)
+        val image = imageRepository.findByToken(fileMetaData.fileToken)
+            ?: throw ImageTokenNotFoundException()
+
+        s3Service.removeFile(fileMetaData.userId, fileMetaData.fileToken, fileMetaData.fileName)
+        imageRepository.delete(image)
+    }
+
+    private fun parseS3Url(url: String): FileMetaData {
+        val urlParts = url.split("/")
+        return FileMetaData(
+            userId = urlParts[4],
+            fileToken = urlParts[5],
+            fileName = urlParts[6],
+        )
     }
 }

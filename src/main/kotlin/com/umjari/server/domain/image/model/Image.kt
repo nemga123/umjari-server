@@ -2,7 +2,6 @@ package com.umjari.server.domain.image.model
 
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseEntity
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -21,7 +20,7 @@ class Image(
     @field:NotBlank
     val fileName: String,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     val owner: User,
 ) : BaseEntity()
