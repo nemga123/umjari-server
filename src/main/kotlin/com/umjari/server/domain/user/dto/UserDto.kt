@@ -8,10 +8,12 @@ class UserDto {
     data class SimpleUserDto(
         val id: Long,
         val name: String,
+        val profileImage: String,
     ) {
         constructor(user: User) : this(
             id = user.id,
             name = user.name,
+            profileImage = user.profileImage,
         )
     }
 

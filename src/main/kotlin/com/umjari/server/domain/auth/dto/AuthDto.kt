@@ -27,5 +27,8 @@ class AuthDto {
         val nickname: String?,
         @field:Size(max = 255)
         val intro: String? = null,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val profileImage: String? = "default_image",
     )
 }
