@@ -123,7 +123,7 @@ class GroupQnaDto {
             id = qna.id,
             title = qna.title,
             isAnonymous = qna.anonymous,
-            author = UserDto.SimpleUserDto(qna.authorId, qna.authorNickname, qna.authorProfileImage),
+            author = UserDto.SimpleUserDto(qna.authorId, qna.authorProfileName, qna.authorProfileImage),
             replyCount = qna.replyCount,
             createAt = qna.createAt!!.toString(),
             updatedAt = qna.updatedAt!!.toString(),
@@ -136,7 +136,7 @@ class GroupQnaDto {
         val anonymous: Boolean
         val nickname: String
         val authorId: Long
-        val authorNickname: String
+        val authorProfileName: String
         val authorProfileImage: String
         val replyCount: Int
         val createAt: LocalDateTime?
