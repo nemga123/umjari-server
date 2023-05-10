@@ -5,6 +5,7 @@ import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.image.service.ImageService
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
+import com.umjari.server.domain.user.exception.UserProfileNameNotFoundException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
@@ -33,5 +34,12 @@ class UserService(
         if (originImageUrl.startsWith("http")) {
             imageService.removeImageByUrl(originImageUrl)
         }
+    }
+
+    fun getUserInformation(profileName: String, currentUser: User?): UserDto.DetailUserInfoResponse {
+        val user = userRepository.findByProfileName(profileName)
+            ?: throw UserProfileNameNotFoundException(profileName)
+
+        return UserDto.DetailUserInfoResponse(user = user, isSelfProfile = (user.id == currentUser?.id))
     }
 }

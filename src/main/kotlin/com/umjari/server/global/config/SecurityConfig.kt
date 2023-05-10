@@ -56,6 +56,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/qna/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/user/profile-name/**/", "GET"),
             ).permitAll()
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),

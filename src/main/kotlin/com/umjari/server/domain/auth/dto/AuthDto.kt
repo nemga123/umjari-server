@@ -19,7 +19,7 @@ class AuthDto {
         val password: String?,
         @field:NotBlank
         @field:Size(max = 255)
-        val name: String?,
+        val profileName: String?,
         @field:NotBlank @field:Email
         val email: String?,
         @field:NotBlank

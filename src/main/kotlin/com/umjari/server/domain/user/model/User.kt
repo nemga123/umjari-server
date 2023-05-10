@@ -22,8 +22,9 @@ class User(
     @field:NotBlank
     var profileImage: String,
 
+    @Column(unique = true)
     @field:NotBlank
-    var name: String,
+    var profileName: String,
 
     @field:NotBlank
     var password: String,

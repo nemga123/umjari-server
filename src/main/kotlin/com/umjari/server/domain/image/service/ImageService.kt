@@ -25,7 +25,7 @@ class ImageService(
             throw InvalidImageFormatException(extension)
         }
 
-        val image = Image(token = fileToken, fileName = "$shortFileName.$extension", owner = user)
+        val image = Image(token = fileToken, fileName = shortFileName, owner = user)
         return s3Service.uploadFile(imageFile, user.nickname, fileToken, fileName)
             .also { imageRepository.save(image) }
     }
