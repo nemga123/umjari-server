@@ -60,8 +60,9 @@ class GroupQnaController(
     fun getQna(
         @PathVariable("group_id") groupId: Long,
         @PathVariable("qna_id") qnaId: Long,
+        @CurrentUser user: User?,
     ): GroupQnaDto.QnaDetailResponse {
-        return groupQnaService.getQna(groupId, qnaId)
+        return groupQnaService.getQna(groupId, qnaId, user)
     }
 
     @PutMapping("/{qna_id}/")
