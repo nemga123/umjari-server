@@ -17,7 +17,7 @@ interface GroupQnaRepository : JpaRepository<GroupQna, Long?> {
             qna.isAnonymous AS anonymous,
             qna.authorNickname AS nickname,
             author.id AS authorId,
-            author.nickname AS authorNickname,
+            author.profileName AS authorProfileName,
             author.profileImage AS authorProfileImage,
             COUNT (reply.id) AS replyCount,
             qna.createdAt AS createAt,
