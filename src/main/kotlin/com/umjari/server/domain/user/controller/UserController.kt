@@ -50,6 +50,16 @@ class UserController(
         return userService.getUserInformation(profileName, currentUser)
     }
 
+    @PutMapping("/info/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateUserInformation(
+        @CurrentUser user: User,
+        @Valid @RequestBody
+        userInfoRequest: UserDto.UpdateUserInfoRequest,
+    ) {
+        userService.updateUserInformation(user, userInfoRequest)
+    }
+
     @PutMapping("/image/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updateUserProfileImage(
