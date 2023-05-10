@@ -49,7 +49,7 @@ class TestUtils {
                 {
                     "userId": "user",
                     "password": "password",
-                    "name":"홍길동",
+                    "profileName":"홍길동",
                     "email": "user@umjari.co.kr",
                     "nickname": "user",
                     "intro": "intro"
@@ -100,7 +100,7 @@ class TestUtils {
                 {
                     "userId": "admin",
                     "password": "password",
-                    "name":"관리자",
+                    "profileName":"관리자",
                     "email": "admin@umjari.co.kr",
                     "nickname": "admin",
                     "intro": "intro"
