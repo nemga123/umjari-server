@@ -7,12 +7,12 @@ import jakarta.validation.constraints.NotBlank
 class UserDto {
     data class SimpleUserDto(
         val id: Long,
-        val name: String,
+        val profileName: String,
         val profileImage: String,
     ) {
         constructor(user: User) : this(
             id = user.id,
-            name = user.name,
+            profileName = user.profileName,
             profileImage = user.profileImage,
         )
     }
@@ -31,15 +31,21 @@ class UserDto {
         val image: String?,
     )
 
-    data class UserInfoResponse(
-        val nickname: String,
+    data class DetailUserInfoResponse(
+        val id: Long,
+        val profileName: String,
+        val profileImage: String,
         val email: String,
         val intro: String?,
+        val isSelfProfile: Boolean,
     ) {
-        constructor(user: User) : this(
-            nickname = user.nickname,
+        constructor(user: User, isSelfProfile: Boolean) : this(
+            id = user.id,
+            profileName = user.profileName,
+            profileImage = user.profileImage,
             email = user.email,
             intro = user.intro,
+            isSelfProfile = isSelfProfile,
         )
     }
 }

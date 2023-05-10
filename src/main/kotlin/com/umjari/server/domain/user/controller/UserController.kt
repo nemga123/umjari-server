@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,8 +23,8 @@ class UserController(
     private val userService: UserService,
 ) {
     @GetMapping("/me/")
-    fun getMyInfo(@CurrentUser user: User): UserDto.UserInfoResponse {
-        return UserDto.UserInfoResponse(user)
+    fun getMyInfo(@CurrentUser user: User): UserDto.DetailUserInfoResponse {
+        return UserDto.DetailUserInfoResponse(user, true)
     }
 
     @GetMapping("/my-group/")
@@ -38,6 +39,15 @@ class UserController(
         nicknameRequest: UserDto.NicknameRequest,
     ) {
         userService.checkDuplicatedNickname(nicknameRequest)
+    }
+
+    @GetMapping("/profile-name/{profile_name}/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserInformation(
+        @PathVariable("profile_name") profileName: String,
+        @CurrentUser currentUser: User?,
+    ): UserDto.DetailUserInfoResponse {
+        return userService.getUserInformation(profileName, currentUser)
     }
 
     @PutMapping("/image/")
