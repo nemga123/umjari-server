@@ -6,6 +6,7 @@ import com.umjari.server.domain.mailverification.repository.VerifyTokenRepositor
 import com.umjari.server.domain.user.exception.DuplicatedUserEmailException
 import com.umjari.server.domain.user.exception.DuplicatedUserIdException
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
+import com.umjari.server.domain.user.exception.DuplicatedUserProfileNameException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import jakarta.transaction.Transactional
@@ -41,11 +42,14 @@ class AuthService(
         if (userRepository.existsByEmail(signUpRequest.email)) {
             throw DuplicatedUserEmailException(signUpRequest.email)
         }
+        if (userRepository.existsByProfileName(signUpRequest.profileName!!)) {
+            throw DuplicatedUserProfileNameException(signUpRequest.profileName)
+        }
         val encodedPassword = passwordEncoder.encode(signUpRequest.password)
         val user = User(
             userId = signUpRequest.userId,
             password = encodedPassword,
-            profileName = signUpRequest.profileName!!,
+            profileName = signUpRequest.profileName,
             email = signUpRequest.email,
             intro = signUpRequest.intro,
             nickname = signUpRequest.nickname,
