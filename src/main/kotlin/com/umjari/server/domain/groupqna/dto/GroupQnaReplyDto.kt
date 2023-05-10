@@ -17,6 +17,7 @@ class GroupQnaReplyDto {
         abstract val createAt: String
         abstract val updatedAt: String
         abstract val isAnonymous: Boolean
+        abstract val isAuthor: Boolean
     }
 
     data class AnonymousQnaReplyResponse(
@@ -26,14 +27,16 @@ class GroupQnaReplyDto {
         override val updatedAt: String,
         override val isAnonymous: Boolean,
         val nickname: String,
+        override val isAuthor: Boolean,
     ) : QnaReplyResponse() {
-        constructor(qnaReply: GroupQnaReply) : this(
+        constructor(qnaReply: GroupQnaReply, isAuthor: Boolean) : this(
             id = qnaReply.id,
             content = qnaReply.content,
             createAt = qnaReply.createdAt!!.toString(),
             updatedAt = qnaReply.updatedAt!!.toString(),
             isAnonymous = qnaReply.isAnonymous,
             nickname = qnaReply.authorNickname,
+            isAuthor = isAuthor,
         )
     }
 
@@ -44,14 +47,16 @@ class GroupQnaReplyDto {
         override val updatedAt: String,
         override val isAnonymous: Boolean,
         val author: UserDto.SimpleUserDto,
+        override val isAuthor: Boolean,
     ) : QnaReplyResponse() {
-        constructor(qnaReply: GroupQnaReply) : this(
+        constructor(qnaReply: GroupQnaReply, isAuthor: Boolean) : this(
             id = qnaReply.id,
             content = qnaReply.content,
             createAt = qnaReply.createdAt!!.toString(),
             updatedAt = qnaReply.updatedAt!!.toString(),
             isAnonymous = qnaReply.isAnonymous,
             author = UserDto.SimpleUserDto(qnaReply.author),
+            isAuthor = isAuthor,
         )
     }
 }
