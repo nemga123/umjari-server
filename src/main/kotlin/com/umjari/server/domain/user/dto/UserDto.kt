@@ -3,6 +3,7 @@ package com.umjari.server.domain.user.dto
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 
 class UserDto {
     data class SimpleUserDto(
@@ -48,4 +49,15 @@ class UserDto {
             isSelfProfile = isSelfProfile,
         )
     }
+
+    data class UpdateUserInfoRequest(
+        @field:NotBlank
+        @field:Size(max = 255)
+        val profileName: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val nickname: String?,
+        @field:Size(max = 255)
+        val intro: String? = null,
+    )
 }
