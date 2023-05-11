@@ -98,11 +98,11 @@ class TestUtils {
             verifyTokenRepository.save(verificationToken)
             val signUpRequest = """
                 {
-                    "userId": "admin",
+                    "userId": "user2",
                     "password": "password",
-                    "profileName":"관리자",
+                    "profileName":"user2",
                     "email": "admin@umjari.co.kr",
-                    "nickname": "admin",
+                    "nickname": "user2",
                     "intro": "intro"
                 }
             """.trimIndent()
@@ -115,13 +115,13 @@ class TestUtils {
                 MockMvcResultMatchers.status().isNoContent,
             )
 
-            val admin = userRepository.findByUserId("admin")!!
+            val admin = userRepository.findByUserId("user2")!!
             admin.roles = "ROLE_USER,ROLE_ADMIN"
             userRepository.save(admin)
 
             val logInRequest = """
                 {
-                    "userId": "admin",
+                    "userId": "user2",
                     "password": "password"
                 }
             """.trimIndent()
@@ -135,7 +135,7 @@ class TestUtils {
             ).andReturn()
 
             return Pair(
-                userRepository.findByUserId("admin")!!,
+                admin,
                 JsonPath.read(result.response.contentAsString, "$.accessToken"),
             )
         }
