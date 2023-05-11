@@ -57,4 +57,5 @@ jobs:
 
     - name: jacoco-badge-generator
       uses: cicirello/jacoco-badge-generator@v2.8.1
-      jacoco-csv-file: build/customJacocoReportDir/test/jacocoTestReport.csv
+      with:
+        jacoco-csv-file: build/customJacocoReportDir/test/jacocoTestReport.csv
