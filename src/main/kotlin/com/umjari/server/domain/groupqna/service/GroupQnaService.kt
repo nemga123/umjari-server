@@ -35,7 +35,7 @@ class GroupQnaService(
             group = group,
             title = createQnaRequest.title!!,
             content = createQnaRequest.content!!,
-            isAnonymous = createQnaRequest.isPrivate!!,
+            isAnonymous = createQnaRequest.isAnonymous!!,
         )
         groupQnaRepository.save(qna)
         return GroupQnaDto.NotAnonymousQnaDetailResponse(qna, true)
@@ -88,11 +88,11 @@ class GroupQnaService(
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
             ?: throw QnaIdNotFoundException(groupId, qnaId)
         if (qna.author.id != user.id) throw QnaIdNotFoundException(groupId, qnaId)
-        if (!groupQnaReplyRepository.existsByQnaId(qna.id)) throw QnaCannotBeUpdatedException(qnaId)
+        if (groupQnaReplyRepository.existsByQnaId(qna.id)) throw QnaCannotBeUpdatedException(qnaId)
         with(qna) {
             title = updateGroupQnaRequest.title!!
             content = updateGroupQnaRequest.content!!
-            isAnonymous = updateGroupQnaRequest.isPrivate!!
+            isAnonymous = updateGroupQnaRequest.isAnonymous!!
         }
         groupQnaRepository.save(qna)
     }

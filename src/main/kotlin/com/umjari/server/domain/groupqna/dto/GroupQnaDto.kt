@@ -13,7 +13,7 @@ class GroupQnaDto {
         @field:Size(max = 255)
         val title: String?,
         @field:NotBlank val content: String?,
-        @field:NotNull val isPrivate: Boolean?,
+        @field:NotNull val isAnonymous: Boolean?,
     )
 
     sealed class QnaDetailResponse {

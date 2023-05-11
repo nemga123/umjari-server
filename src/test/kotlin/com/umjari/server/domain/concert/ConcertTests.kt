@@ -208,4 +208,36 @@ class ConcertTests {
             status().isNotFound,
         )
     }
+
+    @Test
+    @Order(5)
+    fun testGetConcertDashboard() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/dashboard/"),
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/dashboard/")
+                .param("startDate", "2023-01-01")
+                .param("endDate", "2050-12-31")
+                .param("regionParent", "전체")
+                .param("regionChild", "전체")
+                .param("text", "NEW"),
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/dashboard/")
+                .param("startDate", "2023-01-01")
+                .param("endDate", "2050-12-31")
+                .param("regionParent", "서울시")
+                .param("regionChild", "강남구")
+                .param("text", "NEW"),
+        ).andExpect(
+            jsonPath("$.contents.length()").value(0),
+        )
+    }
 }
