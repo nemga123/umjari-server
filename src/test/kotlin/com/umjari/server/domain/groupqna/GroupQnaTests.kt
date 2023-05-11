@@ -135,4 +135,34 @@ class GroupQnaTests {
             status().isNotFound
         )
     }
+
+    @Test
+    @Order(3)
+    fun testUpdateQna() {
+        val updatedQna = """
+            {
+              "title": "NEW_QNA_TITLE",
+              "content": "NEW_QNA_CONTENT",
+              "isAnonymous": false
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedQna)
+                .header("Authorization", userToken)
+        ).andExpect(
+            status().isNoContent
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/100/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedQna)
+                .header("Authorization", userToken)
+        ).andExpect(
+            status().isNotFound
+        )
+    }
 }
