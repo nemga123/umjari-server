@@ -46,7 +46,7 @@ class GroupQnaReplyDto {
         override val createAt: String,
         override val updatedAt: String,
         override val isAnonymous: Boolean,
-        val author: UserDto.SimpleUserDto,
+        val authorInfo: UserDto.SimpleUserDto,
         override val isAuthor: Boolean,
     ) : QnaReplyResponse() {
         constructor(qnaReply: GroupQnaReply, isAuthor: Boolean) : this(
@@ -55,7 +55,7 @@ class GroupQnaReplyDto {
             createAt = qnaReply.createdAt!!.toString(),
             updatedAt = qnaReply.updatedAt!!.toString(),
             isAnonymous = qnaReply.isAnonymous,
-            author = UserDto.SimpleUserDto(qnaReply.author),
+            authorInfo = UserDto.SimpleUserDto(qnaReply.author),
             isAuthor = isAuthor,
         )
     }
