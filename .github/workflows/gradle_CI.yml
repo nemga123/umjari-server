@@ -10,8 +10,7 @@ name: Java CI with Gradle
 on:
   push
 
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   build:
