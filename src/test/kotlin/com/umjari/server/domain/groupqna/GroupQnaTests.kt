@@ -3,8 +3,6 @@ package com.umjari.server.domain.groupqna
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
-import com.umjari.server.domain.groupqna.repository.GroupQnaReplyRepository
-import com.umjari.server.domain.groupqna.repository.GroupQnaRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
@@ -33,12 +31,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class GroupQnaTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var groupQnaRepository: GroupQnaRepository
-
-    @Autowired
-    private lateinit var groupQnaReplyRepository: GroupQnaReplyRepository
 
     companion object {
         private lateinit var userToken: String
