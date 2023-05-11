@@ -1,6 +1,5 @@
 package com.umjari.server.domain.groupqna
 
-import com.umjari.server.domain.concert.ConcertTests
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
@@ -77,9 +76,9 @@ class GroupQnaTests {
             MockMvcRequestBuilders.post("/api/v1/group/1/qna/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(privateQna)
-                .header("Authorization", userToken)
+                .header("Authorization", userToken),
         ).andExpect(
-            status().isCreated
+            status().isCreated,
         )
 
         val notPrivateQna = """
@@ -94,18 +93,18 @@ class GroupQnaTests {
             MockMvcRequestBuilders.post("/api/v1/group/1/qna/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(notPrivateQna)
-                .header("Authorization", userToken)
+                .header("Authorization", userToken),
         ).andExpect(
-            status().isCreated
+            status().isCreated,
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/group/100/qna/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(notPrivateQna)
-                .header("Authorization", userToken)
+                .header("Authorization", userToken),
         ).andExpect(
-            status().isNotFound
+            status().isNotFound,
         )
     }
 
@@ -113,26 +112,26 @@ class GroupQnaTests {
     @Order(2)
     fun testGetGroupQnaByGroupId() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/group/1/qna/")
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/"),
         ).andExpect(
-            status().isOk
+            status().isOk,
         ).andExpect(
-            jsonPath("$.contents.length()").value(2)
+            jsonPath("$.contents.length()").value(2),
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/1/qna/")
-                .param("text", "2")
+                .param("text", "2"),
         ).andExpect(
-            status().isOk
+            status().isOk,
         ).andExpect(
-            jsonPath("$.contents.length()").value(1)
+            jsonPath("$.contents.length()").value(1),
         )
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/group/100/qna/")
+            MockMvcRequestBuilders.get("/api/v1/group/100/qna/"),
         ).andExpect(
-            status().isNotFound
+            status().isNotFound,
         )
     }
 
@@ -151,18 +150,18 @@ class GroupQnaTests {
             MockMvcRequestBuilders.put("/api/v1/group/1/qna/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedQna)
-                .header("Authorization", userToken)
+                .header("Authorization", userToken),
         ).andExpect(
-            status().isNoContent
+            status().isNoContent,
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/group/1/qna/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedQna)
-                .header("Authorization", userToken)
+                .header("Authorization", userToken),
         ).andExpect(
-            status().isNotFound
+            status().isNotFound,
         )
     }
 }
