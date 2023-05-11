@@ -1,4 +1,8 @@
 # Umjari
+![Coverage](.github/badges/jacoco.svg)
+![Branches](.github/badges/branches.svg)
+
+
 
 ## 1. start server
    1. in local
