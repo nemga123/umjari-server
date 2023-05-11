@@ -3,8 +3,6 @@ package com.umjari.server.domain.groupqna
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
-import com.umjari.server.domain.groupqna.repository.GroupQnaReplyRepository
-import com.umjari.server.domain.groupqna.repository.GroupQnaRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
@@ -34,14 +32,9 @@ class GroupQnaTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @Autowired
-    private lateinit var groupQnaRepository: GroupQnaRepository
-
-    @Autowired
-    private lateinit var groupQnaReplyRepository: GroupQnaReplyRepository
-
     companion object {
         private lateinit var userToken: String
+        private lateinit var adminToken: String
 
         @BeforeAll
         @JvmStatic
@@ -58,6 +51,9 @@ class GroupQnaTests {
             val user = userResult.first
             userToken = userResult.second
             groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
+
+            val adminResult = TestUtils.createDummyAdmin(mockMvc, userRepository, verifyTokenRepository)
+            adminToken = adminResult.second
         }
     }
 
@@ -160,6 +156,162 @@ class GroupQnaTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedQna)
                 .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(4)
+    fun testUpdateNotEnableQna() {
+        val updatedQna = """
+            {
+              "title": "NEW_QNA_TITLE",
+              "content": "NEW_QNA_CONTENT",
+              "isAnonymous": false
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedQna)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        val replyContent = """
+            {
+                "content": "REPLY_CONTENT",
+                "isAnonymous": false
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/1/qna/1/reply/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(replyContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        val anonymousReplyContent = """
+            {
+                "content": "REPLY_CONTENT",
+                "isAnonymous": true
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/1/qna/1/reply/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(anonymousReplyContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedQna)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isBadRequest,
+        )
+    }
+
+    @Test
+    @Order(5)
+    fun testGetNotAnonymousQnaById() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/1/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.title").value("NEW_QNA_TITLE"),
+        ).andExpect(
+            jsonPath("$.authorInfo").exists(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/1/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.title").value("NEW_QNA_TITLE"),
+        ).andExpect(
+            jsonPath("$.authorInfo").exists(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(true),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/1/")
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.title").value("NEW_QNA_TITLE"),
+        ).andExpect(
+            jsonPath("$.authorInfo").exists(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+    }
+
+    @Test
+    @Order(5)
+    fun testGetAnonymousQnaById() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/2/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.title").value("QNA_TITLE2"),
+        ).andExpect(
+            jsonPath("$.authorInfo").doesNotExist(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/2/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.title").value("QNA_TITLE2"),
+        ).andExpect(
+            jsonPath("$.authorInfo").doesNotExist(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(true),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/2/")
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.title").value("QNA_TITLE2"),
+        ).andExpect(
+            jsonPath("$.authorInfo").doesNotExist(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+    }
+
+    @Test
+    @Order(6)
+    fun testExceptionsGetQnaById() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/1/qna/100/"),
         ).andExpect(
             status().isNotFound,
         )
