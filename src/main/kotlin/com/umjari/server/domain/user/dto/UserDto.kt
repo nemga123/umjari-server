@@ -2,6 +2,7 @@ package com.umjari.server.domain.user.dto
 
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.user.model.User
+import com.umjari.server.global.validation.KeyWordsBlock
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
@@ -53,9 +54,11 @@ class UserDto {
     data class UpdateUserInfoRequest(
         @field:NotBlank
         @field:Size(max = 255)
+        @field:KeyWordsBlock
         val profileName: String?,
         @field:NotBlank
         @field:Size(max = 255)
+        @field:KeyWordsBlock
         val nickname: String?,
         @field:Size(max = 255)
         val intro: String? = null,
