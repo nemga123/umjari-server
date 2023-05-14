@@ -31,10 +31,10 @@ class MusicController(
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
     fun getMusicList(
-        @RequestParam(required = false) composerEng: String = "",
-        @RequestParam(required = false) composerKor: String = "",
-        @RequestParam(required = false) nameEng: String = "",
-        @RequestParam(required = false) nameKor: String = "",
+        @RequestParam(required = false, defaultValue = "") composerEng: String,
+        @RequestParam(required = false, defaultValue = "") composerKor: String,
+        @RequestParam(required = false, defaultValue = "") nameEng: String,
+        @RequestParam(required = false, defaultValue = "") nameKor: String,
     ): MusicDto.MusicDetailListResponse {
         return musicService.getMusicList(composerEng, composerKor, nameEng, nameKor)
     }
