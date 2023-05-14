@@ -1,10 +1,13 @@
 package com.umjari.server.domain.concert
 
+import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
+import com.umjari.server.domain.music.model.Music
+import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
@@ -65,7 +68,9 @@ class ConcertTests {
 
     @Test
     @Order(1)
-    fun testCreateConcert() {
+    fun testCreateConcert(
+        @Autowired musicRepository: MusicRepository,
+    ) {
         val content = """
             {
               "title": "TITLE",
@@ -92,6 +97,8 @@ class ConcertTests {
                 .header("Authorization", userToken),
         ).andExpect(
             status().isCreated,
+        ).andExpect(
+            jsonPath("$.setList.length()").value(0),
         )
         Assertions.assertEquals(1, concertRepository.count())
 
@@ -99,6 +106,35 @@ class ConcertTests {
             MockMvcRequestBuilders.post("/api/v1/concert/group/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        musicRepository.save(Music(composerEng = "Composer", composerKor = "작곡가", nameKor = "노래", nameEng = "music"))
+        val contentWithMusic = """
+            {
+              "title": "TITLE",
+              "subtitle": "SUBTITLE",
+              "conductor": "CONDUCTOR",
+              "host": "HOST",
+              "support": "SUPPORT",
+              "qna": "QNA",
+              "concertInfo": "INFO",
+              "posterImg": "IMG",
+              "concertDate": "2023-01-01 86:47:35",
+              "concertRunningTime": 100,
+              "fee": 0,
+              "regionParent": "서울시",
+              "regionChild": "관악구",
+              "regionDetail": "음대",
+              "musicIds": [1, 122]
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/concert/group/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(contentWithMusic)
                 .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,
@@ -114,6 +150,8 @@ class ConcertTests {
             status().isOk,
         ).andExpect(
             MockMvcResultMatchers.jsonPath("$.title").value("TITLE"),
+        ).andExpect(
+            jsonPath("$.setList.length()").value(0),
         )
 
         mockMvc.perform(
@@ -183,6 +221,61 @@ class ConcertTests {
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/concert/100/details/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(4)
+    fun testUpdateConcertSetList(
+        @Autowired concertMusicRepository: ConcertMusicRepository,
+    ) {
+        val content = """
+            {
+              "musicIds": [1]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+        assert(concertMusicRepository.existsByConcertIdAndMusicId(1, 1))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+        assert(concertMusicRepository.existsByConcertIdAndMusicId(1, 1))
+
+        val invalidContent = """
+            {
+              "musicIds": [100]
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/100/set-list/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .header("Authorization", userToken),

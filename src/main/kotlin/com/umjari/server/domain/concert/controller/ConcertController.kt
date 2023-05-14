@@ -82,4 +82,15 @@ class ConcertController(
     ) {
         concertService.updateConcertInfo(user, concertId, updateConcertInfoRequest)
     }
+
+    @PutMapping("/{concert_id}/set-list/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateConcertSetList(
+        @PathVariable("concert_id") concertId: Long,
+        @Valid @RequestBody
+        updateConcertSetListRequest: ConcertDto.UpdateConcertSetListRequest,
+        @CurrentUser user: User,
+    ) {
+        concertService.updateConcertSetList(user, concertId, updateConcertSetListRequest)
+    }
 }
