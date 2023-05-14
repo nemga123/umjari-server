@@ -1,5 +1,6 @@
 package com.umjari.server.domain.concert
 
+import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
@@ -216,6 +217,61 @@ class ConcertTests {
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/concert/100/details/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(4)
+    fun testUpdateConcertSetList(
+        @Autowired concertMusicRepository: ConcertMusicRepository,
+    ) {
+        val content = """
+            {
+              "musicIds": [1]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+        assert(concertMusicRepository.existsByConcertIdAndMusicId(1, 1))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+        assert(concertMusicRepository.existsByConcertIdAndMusicId(1, 1))
+
+        val invalidContent = """
+            {
+              "musicIds": [100]
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/100/set-list/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
                 .header("Authorization", userToken),

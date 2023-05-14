@@ -105,6 +105,10 @@ class ConcertDto {
         val concertInfo: String?,
     )
 
+    data class UpdateConcertSetListRequest(
+        val musicIds: ArrayList<Long> = arrayListOf(),
+    )
+
     data class ConcertDetailResponse(
         val id: Long,
         val groupId: Long,

@@ -16,7 +16,6 @@ import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.pagination.PageResponse
-import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -31,7 +30,6 @@ class ConcertService(
     private val regionService: RegionService,
     private val groupRepository: GroupRepository,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
-    private val entityManager: EntityManager,
 ) {
     private final val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
@@ -73,11 +71,11 @@ class ConcertService(
 
         val musicList = musicRepository.findAllByIdIn(createConcertRequest.musicIds)
         val musicMap = musicList.associateBy { it.id }
-        val concertPlayList = createConcertRequest.musicIds.map { id ->
+        val concertSetList = createConcertRequest.musicIds.map { id ->
             val music = musicMap[id] ?: throw MusicIdNotFoundException(id)
             ConcertMusic(concert = concertObject, music = music)
         }
-        concertMusicRepository.saveAll(concertPlayList)
+        concertMusicRepository.saveAll(concertSetList)
         return ConcertDto.ConcertDetailResponse(concertObject)
     }
 
@@ -140,5 +138,24 @@ class ConcertService(
         groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
         concert.concertInfo = updateConcertInfoRequest.concertInfo!!
         concertRepository.save(concert)
+    }
+
+    fun updateConcertSetList(
+        user: User,
+        concertId: Long,
+        updateConcertSetListRequest: ConcertDto.UpdateConcertSetListRequest,
+    ) {
+        val concert = concertRepository.findByIdOrNull(concertId)
+            ?: throw ConcertNotFoundException(concertId)
+
+        val musicList = musicRepository.findAllByIdIn(updateConcertSetListRequest.musicIds)
+        val musicMap = musicList.associateBy { it.id }
+        val concertSetList = updateConcertSetListRequest.musicIds.filter { musicId ->
+            !concertMusicRepository.existsByConcertIdAndMusicId(concert.id, musicId)
+        }.map { id ->
+            val music = musicMap[id] ?: throw MusicIdNotFoundException(id)
+            ConcertMusic(concert = concert, music = music)
+        }
+        concertMusicRepository.saveAll(concertSetList)
     }
 }
