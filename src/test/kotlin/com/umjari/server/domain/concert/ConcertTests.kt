@@ -5,6 +5,8 @@ import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
+import com.umjari.server.domain.music.model.Music
+import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
@@ -65,7 +67,9 @@ class ConcertTests {
 
     @Test
     @Order(1)
-    fun testCreateConcert() {
+    fun testCreateConcert(
+        @Autowired musicRepository: MusicRepository,
+    ) {
         val content = """
             {
               "title": "TITLE",
@@ -99,6 +103,35 @@ class ConcertTests {
             MockMvcRequestBuilders.post("/api/v1/concert/group/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        musicRepository.save(Music(composerEng = "Composer", composerKor = "작곡가", nameKor = "노래", nameEng = "music"))
+        val contentWithMusic = """
+            {
+              "title": "TITLE",
+              "subtitle": "SUBTITLE",
+              "conductor": "CONDUCTOR",
+              "host": "HOST",
+              "support": "SUPPORT",
+              "qna": "QNA",
+              "concertInfo": "INFO",
+              "posterImg": "IMG",
+              "concertDate": "2023-01-01 86:47:35",
+              "concertRunningTime": 100,
+              "fee": 0,
+              "regionParent": "서울시",
+              "regionChild": "관악구",
+              "regionDetail": "음대",
+              "musicIds": [1, 122]
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/concert/group/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(contentWithMusic)
                 .header("Authorization", userToken),
         ).andExpect(
             status().isNotFound,

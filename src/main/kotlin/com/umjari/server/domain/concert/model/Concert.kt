@@ -3,11 +3,13 @@ package com.umjari.server.domain.concert.model
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseTimeEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -64,4 +66,7 @@ class Concert(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     val group: Group,
+
+    @OneToMany(mappedBy = "concert", cascade = [CascadeType.REMOVE])
+    var playList: MutableList<ConcertMusic> = mutableListOf(),
 ) : BaseTimeEntity()

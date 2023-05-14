@@ -33,4 +33,6 @@ interface MusicRepository : JpaRepository<Music, Long?> {
         @Param("nameKor")
         nameKor: String,
     ): List<Music>
+
+    fun findAllByIdIn(id: MutableCollection<Long>): List<Music>
 }

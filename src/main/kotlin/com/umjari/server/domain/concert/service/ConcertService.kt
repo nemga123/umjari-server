@@ -3,30 +3,40 @@ package com.umjari.server.domain.concert.service
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.exception.ConcertNotFoundException
 import com.umjari.server.domain.concert.model.Concert
+import com.umjari.server.domain.concert.model.ConcertMusic
+import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.concert.specification.ConcertSpecification
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.group.service.GroupMemberAuthorityService
+import com.umjari.server.domain.music.exception.MusicIdNotFoundException
+import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.pagination.PageResponse
+import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.text.SimpleDateFormat
 
 @Service
 class ConcertService(
     private val concertRepository: ConcertRepository,
+    private val concertMusicRepository: ConcertMusicRepository,
+    private val musicRepository: MusicRepository,
     private val regionService: RegionService,
     private val groupRepository: GroupRepository,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
+    private val entityManager: EntityManager,
 ) {
     private final val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
 
+    @Transactional
     fun createConcert(
         user: User,
         createConcertRequest: ConcertDto.CreateConcertRequest,
@@ -59,9 +69,16 @@ class ConcertService(
             group = group,
         )
 
-        concertRepository.save(concert)
+        val concertObject = concertRepository.save(concert)
 
-        return ConcertDto.ConcertDetailResponse(concert)
+        val musicList = musicRepository.findAllByIdIn(createConcertRequest.musicIds)
+        val musicMap = musicList.associateBy { it.id }
+        val concertPlayList = createConcertRequest.musicIds.map { id ->
+            val music = musicMap[id] ?: throw MusicIdNotFoundException(id)
+            ConcertMusic(concert = concertObject, music = music)
+        }
+        concertMusicRepository.saveAll(concertPlayList)
+        return ConcertDto.ConcertDetailResponse(concertObject)
     }
 
     fun getConcert(concertId: Long): ConcertDto.ConcertDetailResponse {

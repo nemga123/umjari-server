@@ -54,6 +54,7 @@ class ConcertDto {
         @field:NotBlank
         @field:Size(max = 255)
         val regionDetail: String?,
+        val musicIds: ArrayList<Long> = arrayListOf(),
     )
 
     data class UpdateConcertDetailRequest(

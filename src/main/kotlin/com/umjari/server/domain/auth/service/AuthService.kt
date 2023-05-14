@@ -9,9 +9,9 @@ import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
 import com.umjari.server.domain.user.exception.DuplicatedUserProfileNameException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
-import jakarta.transaction.Transactional
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
