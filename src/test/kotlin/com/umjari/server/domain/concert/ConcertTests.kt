@@ -97,6 +97,8 @@ class ConcertTests {
                 .header("Authorization", userToken),
         ).andExpect(
             status().isCreated,
+        ).andExpect(
+            jsonPath("$.setList.length()").value(0),
         )
         Assertions.assertEquals(1, concertRepository.count())
 
@@ -148,6 +150,8 @@ class ConcertTests {
             status().isOk,
         ).andExpect(
             MockMvcResultMatchers.jsonPath("$.title").value("TITLE"),
+        ).andExpect(
+            jsonPath("$.setList.length()").value(0),
         )
 
         mockMvc.perform(

@@ -1,6 +1,8 @@
 package com.umjari.server.domain.concert.dto
 
 import com.umjari.server.domain.concert.model.Concert
+import com.umjari.server.domain.music.dto.MusicDto
+import com.umjari.server.domain.music.model.Music
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
@@ -126,8 +128,9 @@ class ConcertDto {
         val fee: Int,
         val region: String,
         val regionDetail: String,
+        val setList: List<MusicDto.MusicDetailResponse>,
     ) {
-        constructor(concert: Concert) : this(
+        constructor(concert: Concert, setList: List<Music>) : this(
             id = concert.id,
             groupId = concert.group.id,
             title = concert.title,
@@ -144,6 +147,7 @@ class ConcertDto {
             fee = concert.fee,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
+            setList = setList.map { MusicDto.MusicDetailResponse(it) },
         )
     }
 
