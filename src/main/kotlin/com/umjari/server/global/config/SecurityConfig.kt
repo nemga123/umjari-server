@@ -72,6 +72,8 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/image/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/user/my-group/", "GET"),
                 AntPathRequestMatcher("/api/v1/user/info/", "PUT"),
+                AntPathRequestMatcher("/api/v1/music/", "POST"),
+                AntPathRequestMatcher("/api/v1/music/", "GET"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
