@@ -37,6 +37,7 @@ class UserDto {
         val id: Long,
         val profileName: String,
         val profileImage: String,
+        val nickname: String?,
         val email: String,
         val intro: String?,
         val isSelfProfile: Boolean,
@@ -48,6 +49,7 @@ class UserDto {
             email = user.email,
             intro = user.intro,
             isSelfProfile = isSelfProfile,
+            nickname = if (isSelfProfile) user.nickname else null,
         )
     }
 
