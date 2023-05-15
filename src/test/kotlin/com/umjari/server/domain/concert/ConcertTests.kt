@@ -285,7 +285,103 @@ class ConcertTests {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
+    fun testRegisterConcertParticipants(
+        @Autowired concertMusicRepository: ConcertMusicRepository,
+    ) {
+        val content = """
+            {
+              "userIds": ["user"]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/concert-music/1/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(0),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/concert-music/100/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        val alreadyEnrolledContent = """
+            {
+              "userIds": ["user"]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/concert-music/1/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(alreadyEnrolledContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(1),
+        )
+
+        val notUserContent = """
+            {
+              "userIds": ["NOT_USER"]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/concert-music/1/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(notUserContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(1),
+        )
+    }
+
+    @Test
+    @Order(6)
+    fun testRemoveConcertParticipants(
+        @Autowired concertMusicRepository: ConcertMusicRepository,
+    ) {
+        val content = """
+            {
+              "userIds": ["user"]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/concert/1/concert-music/1/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/concert/1/concert-music/100/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(7)
     fun testGetConcertListByGroupId() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/1/concerts/"),
@@ -303,7 +399,7 @@ class ConcertTests {
     }
 
     @Test
-    @Order(5)
+    @Order(7)
     fun testGetConcertDashboard() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/concert/dashboard/"),

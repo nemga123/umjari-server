@@ -140,6 +140,7 @@ class GroupService(
 
         val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         val existingUsers = userRepository.findUserIdsByUserIdIn(requestUserIds)
+        val userMap = existingUsers.associateBy { it.userId }
         val existingUserIds = existingUsers.map { it.userId }.toSet()
         val notEnrolledUserIds = if (existingUserIds.isNotEmpty()) {
             groupMemberRepository.findAllUserIdsNotEnrolled(
@@ -152,7 +153,7 @@ class GroupService(
         notEnrolledUserIds.forEach { userId ->
             val groupMember = GroupMember(
                 group = group,
-                user = existingUsers.find { it.userId == userId }!!,
+                user = userMap[userId]!!,
                 role = role,
             )
             groupMemberRepository.save(groupMember)

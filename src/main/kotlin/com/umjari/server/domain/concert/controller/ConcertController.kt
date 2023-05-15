@@ -1,6 +1,8 @@
 package com.umjari.server.domain.concert.controller
 
 import com.umjari.server.domain.concert.dto.ConcertDto
+import com.umjari.server.domain.concert.dto.ConcertPerformerDto
+import com.umjari.server.domain.concert.service.ConcertMusicService
 import com.umjari.server.domain.concert.service.ConcertService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/concert")
 class ConcertController(
     private val concertService: ConcertService,
+    private val concertMusicService: ConcertMusicService,
 ) {
     @PostMapping("/group/{group_id}/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -92,5 +96,34 @@ class ConcertController(
         @CurrentUser user: User,
     ) {
         concertService.updateConcertSetList(user, concertId, updateConcertSetListRequest)
+    }
+
+    @PutMapping("/{concert_id}/concert-music/{concert_music_id}/participant/")
+    @ResponseStatus(HttpStatus.OK)
+    fun registerConcertParticipants(
+        @PathVariable("concert_id") concertId: Long,
+        @PathVariable("concert_music_id") concertMusicId: Long,
+        @Valid @RequestBody
+        concertParticipantsRequest: ConcertPerformerDto.ConcertParticipantsRequest,
+        @CurrentUser user: User,
+    ): ConcertPerformerDto.ConcertParticipantsResponse {
+        return concertMusicService.registerConcertParticipant(
+            user,
+            concertId,
+            concertMusicId,
+            concertParticipantsRequest,
+        )
+    }
+
+    @DeleteMapping("/{concert_id}/concert-music/{concert_music_id}/participant/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun removeConcertParticipants(
+        @PathVariable("concert_id") concertId: Long,
+        @PathVariable("concert_music_id") concertMusicId: Long,
+        @Valid @RequestBody
+        concertParticipantsRequest: ConcertPerformerDto.ConcertParticipantsRequest,
+        @CurrentUser user: User,
+    ) {
+        concertMusicService.removeConcertParticipant(user, concertId, concertMusicId, concertParticipantsRequest)
     }
 }

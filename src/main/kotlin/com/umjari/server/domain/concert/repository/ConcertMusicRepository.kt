@@ -16,4 +16,11 @@ interface ConcertMusicRepository : JpaRepository<ConcertMusic, Long?> {
     """,
     )
     fun getMusicListByConcertId(@Param("concertId") concertId: Long): List<Music>
+
+    @Query(
+        """
+        SELECT cm FROM ConcertMusic AS cm JOIN FETCH cm.concert WHERE cm.concert.id = :concertId AND cm.id = :id
+    """,
+    )
+    fun findByConcertIdAndId(@Param("concertId") concertId: Long, @Param("id") id: Long): ConcertMusic?
 }
