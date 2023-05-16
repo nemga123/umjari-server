@@ -39,8 +39,8 @@ class S3Service(
             } ?: throw ImageNotUploadedException()
     }
 
-    fun removeFile(userId: String, fileToken: String, fileName: String) {
-        val keyName = "images/$userId/$fileToken/$fileName"
+    fun removeFile(userId: String, fileName: String) {
+        val keyName = "images/$userId/$fileName"
         amazonS3.deleteObject(bucketName, keyName)
     }
 }
