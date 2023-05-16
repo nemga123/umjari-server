@@ -5,6 +5,7 @@ import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.dto.GroupRegisterDto
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
+import com.umjari.server.domain.group.exception.GroupRoleNotAuthorizedException
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
@@ -16,6 +17,7 @@ import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.text.SimpleDateFormat
 
 @Service
 class GroupService(
@@ -26,6 +28,8 @@ class GroupService(
     private val userRepository: UserRepository,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
 ) {
+    private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
+
     fun createGroup(createGroupRequest: GroupDto.CreateGroupRequest): GroupDto.GroupDetailResponse {
         val region = regionService.getOrCreateRegion(
             createGroupRequest.regionParent!!,
@@ -126,6 +130,33 @@ class GroupService(
         val concerts = concertRepository.getConcertsByGroupId(groupId, pageable)
         val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
         return PageResponse(concertResponses, pageable.pageNumber)
+    }
+
+    fun updateGroupMemberTimestamp(
+        user: User,
+        groupId: Long,
+        updateGroupMemberTimestampRequest: GroupRegisterDto.UpdateGroupMemberTimestampRequest,
+    ) {
+        val groupMember = groupMemberRepository.findByGroup_IdAndUser_Id(groupId, user.id)
+            ?: throw GroupRoleNotAuthorizedException(GroupMember.MemberRole.MEMBER)
+
+        with(groupMember) {
+            joinedAt = if (updateGroupMemberTimestampRequest.joinedAt == null) {
+                null
+            } else {
+                dateFormatter.parse(
+                    updateGroupMemberTimestampRequest.joinedAt,
+                )
+            }
+            leavedAt = if (updateGroupMemberTimestampRequest.leavedAt == null) {
+                null
+            } else {
+                dateFormatter.parse(
+                    updateGroupMemberTimestampRequest.leavedAt,
+                )
+            }
+        }
+        groupMemberRepository.save(groupMember)
     }
 
     fun registerGroupMember(

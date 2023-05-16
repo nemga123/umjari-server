@@ -94,6 +94,18 @@ class GroupController(
         return groupService.getConcertListByGroupId(groupId, pageable)
     }
 
+    @PutMapping("/{group_id}/register/timestamp/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateRegisterTimestamp(
+        @PathVariable("group_id") groupId: Long,
+        @Valid @RequestBody
+        updateGroupMemberTimestampRequest: GroupRegisterDto.UpdateGroupMemberTimestampRequest,
+        @CurrentUser
+        user: User,
+    ) {
+        groupService.updateGroupMemberTimestamp(user, groupId, updateGroupMemberTimestampRequest)
+    }
+
     @PostMapping("/{group_id}/register/")
     @ResponseStatus(HttpStatus.OK)
     fun registerGroupMember(

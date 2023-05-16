@@ -1,7 +1,7 @@
 package com.umjari.server.domain.group.model
 
 import com.umjari.server.domain.user.model.User
-import com.umjari.server.global.model.BaseTimeEntity
+import com.umjari.server.global.model.BaseEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import java.util.Date
 
 @Entity
 @Table(
@@ -28,7 +29,11 @@ class GroupMember(
 
     @Enumerated(EnumType.ORDINAL)
     val role: MemberRole = MemberRole.MEMBER,
-) : BaseTimeEntity() {
+
+    var joinedAt: Date? = null,
+
+    var leavedAt: Date? = null,
+) : BaseEntity() {
     enum class MemberRole {
         NON_MEMBER, MEMBER, ADMIN,
     }
