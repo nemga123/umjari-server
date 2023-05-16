@@ -352,6 +352,49 @@ class ConcertTests {
 
     @Test
     @Order(6)
+    fun testGetConcertParticipantsList() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.participants.length()").value(1),
+        ).andExpect(
+            jsonPath("$.participants[0].isSelfProfile").value(true),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.participants.length()").value(1),
+        ).andExpect(
+            jsonPath("$.participants[0].isSelfProfile").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/")
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.participants.length()").value(1),
+        ).andExpect(
+            jsonPath("$.participants[0].isSelfProfile").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/100/participant/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(7)
     fun testRemoveConcertParticipants(
         @Autowired concertMusicRepository: ConcertMusicRepository,
     ) {
@@ -381,7 +424,7 @@ class ConcertTests {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     fun testGetConcertListByGroupId() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/1/concerts/"),
@@ -399,7 +442,7 @@ class ConcertTests {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     fun testGetConcertDashboard() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/concert/dashboard/"),

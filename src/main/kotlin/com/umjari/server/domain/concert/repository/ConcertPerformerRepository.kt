@@ -24,4 +24,12 @@ interface ConcertPerformerRepository : JpaRepository<ConcertPerformer, Long?> {
     ): Set<String>
 
     fun deleteAllByConcertMusicIdAndPerformer_UserIdIn(concertMusicId: Long, performerUserId: List<String>)
+
+    @Query(
+        """
+            SELECT concert_performer FROM ConcertPerformer AS concert_performer JOIN FETCH concert_performer.performer
+                WHERE concert_performer.concertMusic.id = :concertMusicId
+        """,
+    )
+    fun findParticipantsByConcertMusicId(@Param("concertMusicId") concertMusicId: Long): List<ConcertPerformer>
 }

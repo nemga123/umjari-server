@@ -7,8 +7,9 @@ import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertPerformerRepository
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.service.GroupMemberAuthorityService
+import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
-import com.umjari.server.domain.user.repository.UserRepository
+import com.umjari.server.domain.user.service.UserService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,15 +17,15 @@ import org.springframework.transaction.annotation.Transactional
 class ConcertMusicService(
     private val concertMusicRepository: ConcertMusicRepository,
     private val concertPerformerRepository: ConcertPerformerRepository,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
 ) {
     fun registerConcertParticipant(
         user: User,
         concertId: Long,
         concertMusicId: Long,
-        concertParticipantsRequest: ConcertPerformerDto.ConcertParticipantsRequest,
-    ): ConcertPerformerDto.ConcertParticipantsResponse {
+        registerConcertParticipantsRequest: ConcertPerformerDto.RegisterConcertParticipantsRequest,
+    ): ConcertPerformerDto.RegisterConcertParticipantsResponse {
         val concertMusic = concertMusicRepository.findByConcertIdAndId(concertId, concertMusicId)
             ?: throw ConcertMusicIdNotFoundException(concertMusicId)
 
@@ -34,12 +35,10 @@ class ConcertMusicService(
             user.id,
         )
 
-        val requestUserIds = concertParticipantsRequest.userIds.toMutableList()
+        val requestUserIds = registerConcertParticipantsRequest.userIds.toMutableList()
 
         val failedUsers = mutableListOf<ConcertPerformerDto.FailedUser>()
-        val existingUsers = userRepository.findUserIdsByUserIdIn(requestUserIds)
-        val userMap = existingUsers.associateBy { it.userId }
-        val existingUserIds = existingUsers.map { it.userId }.toSet()
+        val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
         val notEnrolledUserIds = if (existingUserIds.isNotEmpty()) {
             concertPerformerRepository.findAllUserIdsNotEnrolled(
                 existingUserIds,
@@ -66,7 +65,7 @@ class ConcertMusicService(
             failedUsers.add(ConcertPerformerDto.FailedUser(it, "User is already enrolled."))
         }
 
-        return ConcertPerformerDto.ConcertParticipantsResponse(failedUsers)
+        return ConcertPerformerDto.RegisterConcertParticipantsResponse(failedUsers)
     }
 
     @Transactional
@@ -74,7 +73,7 @@ class ConcertMusicService(
         user: User,
         concertId: Long,
         concertMusicId: Long,
-        concertParticipantsRequest: ConcertPerformerDto.ConcertParticipantsRequest,
+        registerConcertParticipantsRequest: ConcertPerformerDto.RegisterConcertParticipantsRequest,
     ) {
         val concertMusic = concertMusicRepository.findByConcertIdAndId(concertId, concertMusicId)
             ?: throw ConcertMusicIdNotFoundException(concertMusicId)
@@ -87,7 +86,27 @@ class ConcertMusicService(
 
         concertPerformerRepository.deleteAllByConcertMusicIdAndPerformer_UserIdIn(
             concertMusicId,
-            concertParticipantsRequest.userIds,
+            registerConcertParticipantsRequest.userIds,
         )
+    }
+
+    fun getConcertParticipantsList(
+        user: User?,
+        concertId: Long,
+        concertMusicId: Long,
+    ): ConcertPerformerDto.ConcertParticipantsListResponse {
+        if (!concertMusicRepository.existsByConcertIdAndMusicId(concertId, concertMusicId)) {
+            throw ConcertMusicIdNotFoundException(concertMusicId)
+        }
+
+        val concertParticipants = concertPerformerRepository.findParticipantsByConcertMusicId(concertMusicId)
+        val participantDetailList = concertParticipants.map { concertPerformer ->
+            UserDto.DetailUserInfoResponse(
+                concertPerformer.performer,
+                concertPerformer.performer.id == user?.id,
+            )
+        }
+
+        return ConcertPerformerDto.ConcertParticipantsListResponse(participantDetailList)
     }
 }

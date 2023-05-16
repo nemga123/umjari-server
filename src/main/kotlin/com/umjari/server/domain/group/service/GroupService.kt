@@ -12,7 +12,7 @@ import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
-import com.umjari.server.domain.user.repository.UserRepository
+import com.umjari.server.domain.user.service.UserService
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +25,7 @@ class GroupService(
     private val groupMemberRepository: GroupMemberRepository,
     private val concertRepository: ConcertRepository,
     private val regionService: RegionService,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
 ) {
     private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
@@ -170,9 +170,7 @@ class GroupService(
         val requestUserIds = registerRequest.userIds.toMutableList()
 
         val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
-        val existingUsers = userRepository.findUserIdsByUserIdIn(requestUserIds)
-        val userMap = existingUsers.associateBy { it.userId }
-        val existingUserIds = existingUsers.map { it.userId }.toSet()
+        val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
         val notEnrolledUserIds = if (existingUserIds.isNotEmpty()) {
             groupMemberRepository.findAllUserIdsNotEnrolled(
                 existingUserIds,
