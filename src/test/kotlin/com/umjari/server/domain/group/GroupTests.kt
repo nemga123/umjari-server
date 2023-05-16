@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.text.SimpleDateFormat
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -312,10 +313,32 @@ class GroupTests {
     @Test
     @Order(8)
     fun testRegisterGroupWithWrongData() {
-        val wrongContent = """
+        val noExistContent = """
             {
               "userIds": [
-                "non-exist-user",
+                "non-exist-user"
+              ]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/group/2/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(noExistContent)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(1),
+        ).andExpect(
+            jsonPath("$.failedUsers[0].userId").value("non-exist-user"),
+        ).andExpect(
+            jsonPath("$.failedUsers[0].reason").value("User does not exist."),
+        )
+
+        val alreadyEnrolledContent = """
+            {
+              "userIds": [
                 "user"
               ]
             }
@@ -324,20 +347,73 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/group/2/register/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(wrongContent)
+                .content(alreadyEnrolledContent)
                 .header("Authorization", adminToken),
         ).andExpect(
             status().isOk,
         ).andExpect(
-            jsonPath("$.failedUsers.length()").value(2),
+            jsonPath("$.failedUsers.length()").value(1),
         ).andExpect(
-            jsonPath("$.failedUsers[0].userId").value("non-exist-user"),
+            jsonPath("$.failedUsers[0].userId").value("user"),
         ).andExpect(
-            jsonPath("$.failedUsers[0].reason").value("User does not exist."),
+            jsonPath("$.failedUsers[0].reason").value("User is already enrolled."),
+        )
+    }
+
+    @Test
+    @Order(9)
+    fun testUpdateGroupRegisterTimestamp(
+        @Autowired groupMemberRepository: GroupMemberRepository,
+    ) {
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
+
+        val notNullContent = """
+            {
+                "joinedAt": "2023-01-01",
+                "leavedAt": "2050-12-31"
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/2/register/timestamp/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(notNullContent)
+                .header("Authorization", userToken),
         ).andExpect(
-            jsonPath("$.failedUsers[1].userId").value("user"),
+            status().isNoContent,
+        )
+
+        var groupMember = groupMemberRepository.findByGroup_IdAndUser_Id(2, 1)!!
+        assert(dateFormatter.format(groupMember.joinedAt) == "2023-01-01")
+        assert(dateFormatter.format(groupMember.leavedAt) == "2050-12-31")
+
+        val nullContent = """
+            {
+                "joinedAt": null,
+                "leavedAt": null
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/2/register/timestamp/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(nullContent)
+                .header("Authorization", userToken),
         ).andExpect(
-            jsonPath("$.failedUsers[1].reason").value("User is already enrolled."),
+            status().isNoContent,
+        )
+
+        groupMember = groupMemberRepository.findByGroup_IdAndUser_Id(2, 1)!!
+        assert(groupMember.joinedAt == null)
+        assert(groupMember.leavedAt == null)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/200/register/timestamp/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(notNullContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isForbidden,
         )
     }
 }
