@@ -18,15 +18,15 @@ class ImageService(
 ) {
     fun uploadImage(imageFile: MultipartFile, user: User): ImageDto.ImageUrlResponse {
         val fileToken = UUID.randomUUID().toString()
-        val fileName = imageFile.originalFilename!!
-        val extension = fileName.split(".").last()
+        val originalFileName = imageFile.originalFilename!!
+        val extension = originalFileName.split(".").last()
         val fileSaveName = "$fileToken.$extension"
         if (listOf("jpg", "jpeg", "png").none { it.equals(extension, ignoreCase = true) }) {
             throw InvalidImageFormatException(extension)
         }
 
         val image = Image(token = fileToken, fileName = fileSaveName, owner = user)
-        return s3Service.uploadFile(imageFile, user.nickname, fileToken, fileName)
+        return s3Service.uploadFile(imageFile, user.nickname, fileToken, fileSaveName)
             .also { imageRepository.save(image) }
     }
 
