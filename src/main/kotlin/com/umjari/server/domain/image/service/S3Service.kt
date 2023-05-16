@@ -22,7 +22,7 @@ class S3Service(
         fileToken: String,
         fileName: String,
     ): ImageDto.ImageUrlResponse {
-        val keyName = "images/$userId/$fileToken/$fileName"
+        val keyName = "images/$userId/$fileName"
         val inputStream = file.inputStream
         val contentType = file.contentType
         val meta = ObjectMetadata()
