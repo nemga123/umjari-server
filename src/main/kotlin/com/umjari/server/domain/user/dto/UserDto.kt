@@ -30,6 +30,7 @@ class UserDto {
 
     data class ProfileImageRequest(
         @field:NotBlank
+        @field:Size(max = 255)
         val image: String?,
     )
 
