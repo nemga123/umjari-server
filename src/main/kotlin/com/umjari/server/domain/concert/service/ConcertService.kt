@@ -5,6 +5,7 @@ import com.umjari.server.domain.concert.exception.ConcertNotFoundException
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
+import com.umjari.server.domain.concert.repository.ConcertPerformerRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.concert.specification.ConcertSpecification
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
@@ -15,6 +16,7 @@ import com.umjari.server.domain.music.exception.MusicIdNotFoundException
 import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
+import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -26,9 +28,11 @@ import java.text.SimpleDateFormat
 class ConcertService(
     private val concertRepository: ConcertRepository,
     private val concertMusicRepository: ConcertMusicRepository,
+    private val concertPerformerRepository: ConcertPerformerRepository,
     private val musicRepository: MusicRepository,
     private val regionService: RegionService,
     private val groupRepository: GroupRepository,
+    private val userRepository: UserRepository,
     private val groupMemberAuthorityService: GroupMemberAuthorityService,
 ) {
     private final val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

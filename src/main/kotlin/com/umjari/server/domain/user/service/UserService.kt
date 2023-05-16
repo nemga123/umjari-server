@@ -61,4 +61,11 @@ class UserService(
 
         return UserDto.DetailUserInfoResponse(user = user, isSelfProfile = (user.id == currentUser?.id))
     }
+
+    fun getUserIdToUserMapInUserIds(userIds: List<String>): Pair<Set<String>, Map<String, User>> {
+        val existingUsers = userRepository.findUserIdsByUserIdIn(userIds)
+        val userMap = existingUsers.associateBy { it.userId }
+        val existingUserIds = existingUsers.map { it.userId }.toSet()
+        return Pair(existingUserIds, userMap)
+    }
 }
