@@ -116,13 +116,15 @@ class GroupDto {
     data class GroupUserResponse(
         val groupId: Long,
         val groupName: String,
-        val joinedAt: String,
+        val joinedAt: String?,
+        val leavedAt: String?,
         val memberType: String,
     ) {
         constructor(groupMember: GroupMember) : this(
             groupId = groupMember.group.id,
             groupName = groupMember.group.name,
-            joinedAt = groupMember.createdAt.toString(),
+            joinedAt = groupMember.joinedAt?.toString() ?: null,
+            leavedAt = groupMember.leavedAt?.toString() ?: null,
             memberType = groupMember.role.toString(),
         )
     }
