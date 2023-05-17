@@ -1,7 +1,6 @@
 package com.umjari.server.domain.concert.repository
 
 import com.umjari.server.domain.concert.model.ConcertMusic
-import com.umjari.server.domain.concert.model.ConcertPerformer
 import com.umjari.server.domain.music.model.Music
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -24,12 +23,4 @@ interface ConcertMusicRepository : JpaRepository<ConcertMusic, Long?> {
         """,
     )
     fun findByConcertIdAndId(@Param("concertId") concertId: Long, @Param("id") id: Long): ConcertMusic?
-
-    @Query(
-        """
-            SELECT concert_performer FROM ConcertPerformer AS concert_performer JOIN FETCH concert_performer.performer
-                WHERE concert_performer.concertMusic.id = :concertMusicId
-        """,
-    )
-    fun findParticipantsByConcertMusicId(@Param("concertMusicId") concertMusicId: Long): List<ConcertPerformer>
 }

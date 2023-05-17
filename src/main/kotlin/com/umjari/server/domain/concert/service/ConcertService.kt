@@ -80,14 +80,14 @@ class ConcertService(
             ConcertMusic(concert = concertObject, music = music)
         }
         concertMusicRepository.saveAll(concertSetList)
-        return ConcertDto.ConcertDetailResponse(concertObject, musicList)
+        return ConcertDto.ConcertDetailResponse(concertObject, concertSetList.sortedBy { it.id })
     }
 
     fun getConcert(concertId: Long): ConcertDto.ConcertDetailResponse {
-        val concert = concertRepository.findByIdOrNull(concertId)
+        val concert = concertRepository.getConcertByIdFetchJoinConcertMusic(concertId)
             ?: throw ConcertNotFoundException(concertId)
-        val musicList = concertMusicRepository.getMusicListByConcertId(concertId)
-        return ConcertDto.ConcertDetailResponse(concert, musicList)
+
+        return ConcertDto.ConcertDetailResponse(concert, concert.playList.sortedBy { it.id })
     }
 
     fun getConcertDashboard(
