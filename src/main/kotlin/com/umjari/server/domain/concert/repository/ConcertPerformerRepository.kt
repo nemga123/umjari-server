@@ -29,6 +29,7 @@ interface ConcertPerformerRepository : JpaRepository<ConcertPerformer, Long?> {
         """
             SELECT concert_performer FROM ConcertPerformer AS concert_performer JOIN FETCH concert_performer.performer
                 WHERE concert_performer.concertMusic.id = :concertMusicId
+                ORDER BY concert_performer.performer.id
         """,
     )
     fun findParticipantsByConcertMusicId(@Param("concertMusicId") concertMusicId: Long): List<ConcertPerformer>

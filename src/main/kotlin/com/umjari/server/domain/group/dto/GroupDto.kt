@@ -123,8 +123,8 @@ class GroupDto {
         constructor(groupMember: GroupMember) : this(
             groupId = groupMember.group.id,
             groupName = groupMember.group.name,
-            joinedAt = groupMember.joinedAt?.toString() ?: null,
-            leavedAt = groupMember.leavedAt?.toString() ?: null,
+            joinedAt = groupMember.joinedAt?.toString(),
+            leavedAt = groupMember.leavedAt?.toString(),
             memberType = groupMember.role.toString(),
         )
     }
