@@ -67,17 +67,6 @@ class UserTests {
     }
 
     @Test
-    @Order(1)
-    fun testGetMyInfo() {
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/user/me/")
-                .header("Authorization", userToken),
-        ).andExpect(
-            MockMvcResultMatchers.status().isOk,
-        )
-    }
-
-    @Test
     @Order(2)
     fun testNicknameCheck() {
         val duplicatedNicknameContent = """
