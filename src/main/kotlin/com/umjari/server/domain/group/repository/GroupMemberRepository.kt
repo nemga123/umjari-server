@@ -24,7 +24,9 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long?> {
 
     @Query(
         """
-            SELECT groupMember FROM GroupMember AS groupMember JOIN FETCH groupMember.group WHERE groupMember.user.id = :userId
+            SELECT groupMember FROM GroupMember AS groupMember JOIN FETCH groupMember.group
+                WHERE groupMember.user.id = :userId
+                ORDER BY groupMember.group.id ASC
         """,
     )
     fun findGroupListByUserId(@Param("userId") userId: Long): List<GroupMember>
