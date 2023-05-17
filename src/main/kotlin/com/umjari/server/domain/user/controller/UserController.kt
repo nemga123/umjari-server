@@ -22,12 +22,6 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
 ) {
-    @GetMapping("/me/")
-    @ResponseStatus(HttpStatus.OK)
-    fun getMyInfo(@CurrentUser user: User): UserDto.DetailUserInfoResponse {
-        return UserDto.DetailUserInfoResponse(user, true)
-    }
-
     @GetMapping("/my-group/")
     @ResponseStatus(HttpStatus.OK)
     fun getMyGroupList(@CurrentUser user: User): UserDto.UserGroupListResponse {

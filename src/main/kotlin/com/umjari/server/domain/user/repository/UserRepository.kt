@@ -20,7 +20,13 @@ interface UserRepository : JpaRepository<User, Long?> {
     fun existsByEmail(email: String): Boolean
     fun existsByProfileName(profileName: String): Boolean
 
-    fun findByProfileName(profileName: String): User?
+    @Query(
+        """
+            SELECT user FROM User AS user
+                LEFT JOIN FETCH user.career AS gm JOIN FETCH gm.group WHERE user.profileName = :profileName
+        """,
+    )
+    fun findByProfileName(@Param("profileName") profileName: String): User?
 
     fun existsByNicknameAndIdNot(nickname: String, id: Long): Boolean
     fun existsByProfileNameAndIdNot(profileName: String, id: Long): Boolean
