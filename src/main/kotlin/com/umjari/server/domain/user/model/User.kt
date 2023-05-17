@@ -1,8 +1,12 @@
 package com.umjari.server.domain.user.model
 
+import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.global.model.BaseTimeEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
@@ -36,4 +40,8 @@ class User(
     var intro: String?,
 
     var roles: String = "ROLE_USER",
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE])
+    @OrderBy("id ASC")
+    var career: MutableList<GroupMember> = mutableListOf(),
 ) : BaseTimeEntity()
