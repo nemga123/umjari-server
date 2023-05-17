@@ -7,6 +7,7 @@ import com.umjari.server.global.auth.annotation.CurrentUser
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -44,5 +45,16 @@ class PostReplyController(
         @CurrentUser user: User,
     ) {
         communityPostReplyService.updateReplyOnPost(boardName, postId, replyId, createReplyRequest, user)
+    }
+
+    @DeleteMapping("/{reply_id}/")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun deletePostReply(
+        @PathVariable("inst_name") boardName: String,
+        @PathVariable("post_id") postId: Long,
+        @PathVariable("reply_id") replyId: Long,
+        @CurrentUser user: User,
+    ) {
+        communityPostReplyService.deleteReplyOnPost(boardName, postId, replyId, user)
     }
 }

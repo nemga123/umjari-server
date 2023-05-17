@@ -21,7 +21,7 @@ class PostReplyDto {
         abstract val isAuthor: Boolean
     }
 
-    data class AnonymousQnaReplyResponse(
+    data class AnonymousPostReplyResponse(
         override val id: Long,
         override val content: String,
         override val createAt: String,
@@ -41,7 +41,7 @@ class PostReplyDto {
         )
     }
 
-    data class NotAnonymousQnaReplyResponse(
+    data class NotAnonymousPostReplyResponse(
         override val id: Long,
         override val content: String,
         override val createAt: String,

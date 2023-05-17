@@ -3,11 +3,14 @@ package com.umjari.server.domain.post.model
 import com.umjari.server.domain.group.model.Instrument
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseTimeEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -34,4 +37,8 @@ class CommunityPost(
 
     @field:NotBlank
     val authorNickname: String,
+
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
+    @OrderBy("createdAt ASC")
+    var replies: MutableList<CommunityPostReply> = mutableListOf(),
 ) : BaseTimeEntity()

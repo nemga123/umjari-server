@@ -1,7 +1,6 @@
 package com.umjari.server.domain.post.controller
 
 import com.umjari.server.domain.post.dto.CommunityPostDto
-import com.umjari.server.domain.post.dto.PostReplyDto
 import com.umjari.server.domain.post.service.CommunityPostReplyService
 import com.umjari.server.domain.post.service.CommunityPostService
 import com.umjari.server.domain.user.model.User

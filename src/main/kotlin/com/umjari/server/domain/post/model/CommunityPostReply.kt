@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
 @Entity
-class CommunityPostReply (
+class CommunityPostReply(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     val author: User,
@@ -29,4 +29,7 @@ class CommunityPostReply (
 
     @field:NotNull
     var isAnonymous: Boolean,
-): BaseTimeEntity()
+
+    @field:NotNull
+    var isDeleted: Boolean = false,
+) : BaseTimeEntity()

@@ -78,6 +78,13 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/music/", "POST"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/concert-music/{\\d+}/participant/", "PUT"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/concert-music/{\\d+}/participant/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/board/**/post/", "POST"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "PUT"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/", "POST"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/{\\d+}/", "PUT"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/{\\d+}/", "DELETE"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
