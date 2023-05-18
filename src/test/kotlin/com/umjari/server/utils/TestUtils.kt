@@ -38,20 +38,24 @@ class TestUtils {
             mockMvc: MockMvc,
             userRepository: UserRepository,
             verifyTokenRepository: VerifyTokenRepository,
+            email: String = "user@umjari.co.kr",
+            userId: String = "user",
+            profileName: String = "홍길동",
+            nickname: String = "user",
         ): Pair<User, String> {
             val verificationToken = VerifyToken(
                 token = "TOKEN1",
-                email = "user@umjari.co.kr",
+                email = email,
                 confirmed = true,
             )
             verifyTokenRepository.save(verificationToken)
             val signUpRequest = """
                 {
-                    "userId": "user",
+                    "userId": "$userId",
                     "password": "password",
-                    "profileName":"홍길동",
-                    "email": "user@umjari.co.kr",
-                    "nickname": "user",
+                    "profileName":"$profileName",
+                    "email": "$email",
+                    "nickname": "$nickname",
                     "intro": "intro"
                 }
             """.trimIndent()
@@ -66,7 +70,7 @@ class TestUtils {
 
             val logInRequest = """
                 {
-                    "userId": "user",
+                    "userId": "$userId",
                     "password": "password"
                 }
             """.trimIndent()
@@ -80,7 +84,7 @@ class TestUtils {
             ).andReturn()
 
             return Pair(
-                userRepository.findByUserId("user")!!,
+                userRepository.findByUserId("$userId")!!,
                 JsonPath.read(result.response.contentAsString, "$.accessToken"),
             )
         }

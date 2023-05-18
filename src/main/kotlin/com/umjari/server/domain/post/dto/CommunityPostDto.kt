@@ -20,7 +20,7 @@ class CommunityPostDto {
     )
 
     data class UpdateCommunityPostRequest(
-        @field:NotBlank
+        @field:NotNull
         val board: Instrument,
         @field:NotBlank
         @field:Size(max = 255)

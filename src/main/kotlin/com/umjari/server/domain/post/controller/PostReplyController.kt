@@ -35,7 +35,7 @@ class PostReplyController(
     }
 
     @PutMapping("/{reply_id}/")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updatePostReply(
         @PathVariable("inst_name") boardName: String,
         @PathVariable("post_id") postId: Long,
@@ -48,7 +48,7 @@ class PostReplyController(
     }
 
     @DeleteMapping("/{reply_id}/")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deletePostReply(
         @PathVariable("inst_name") boardName: String,
         @PathVariable("post_id") postId: Long,
