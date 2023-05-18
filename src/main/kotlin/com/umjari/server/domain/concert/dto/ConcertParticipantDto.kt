@@ -2,7 +2,6 @@ package com.umjari.server.domain.concert.dto
 
 import com.umjari.server.domain.concert.model.ConcertParticipant
 import com.umjari.server.domain.user.dto.UserDto
-import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
@@ -41,20 +40,16 @@ class ConcertParticipantDto {
 
     data class ConcertParticipantsListResponse(
         val participants: List<ConcertParticipantResponse>,
-    ) {
-        constructor(concertParticipantList: List<ConcertParticipant>, currentUser: User?) : this(
-            participants = concertParticipantList.map { ConcertParticipantResponse(it, currentUser) },
-        )
-    }
+    )
 
     data class ConcertParticipantResponse(
-        val participant: UserDto.DetailUserInfoResponse,
+        val participant: UserDto.SimpleUserDto,
         val part: String,
         val detailPart: String,
         val role: ConcertParticipant.ParticipantRole,
     ) {
-        constructor(concertParticipant: ConcertParticipant, currentUser: User?) : this(
-            participant = UserDto.DetailUserInfoResponse(concertParticipant.performer, currentUser),
+        constructor(concertParticipant: ConcertParticipant) : this(
+            participant = UserDto.SimpleUserDto(concertParticipant.performer),
             part = concertParticipant.part,
             detailPart = concertParticipant.detailPart,
             role = concertParticipant.role,

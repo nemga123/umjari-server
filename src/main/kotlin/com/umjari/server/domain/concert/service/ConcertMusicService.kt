@@ -93,7 +93,6 @@ class ConcertMusicService(
     }
 
     fun getConcertParticipantsList(
-        user: User?,
         concertId: Long,
         concertMusicId: Long,
     ): ConcertParticipantDto.ConcertParticipantsListResponse {
@@ -102,7 +101,7 @@ class ConcertMusicService(
         }
 
         val concertParticipants = concertParticipantRepository.findParticipantsByConcertMusicId(concertMusicId)
-
-        return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipants, user)
+        val participantResponseList = concertParticipants.map { ConcertParticipantDto.ConcertParticipantResponse(it) }
+        return ConcertParticipantDto.ConcertParticipantsListResponse(participantResponseList)
     }
 }
