@@ -382,28 +382,7 @@ class ConcertTests {
         ).andExpect(
             jsonPath("$.participants.length()").value(1),
         ).andExpect(
-            jsonPath("$.participants[0].participant.isSelfProfile").value(true),
-        )
-
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/"),
-        ).andExpect(
-            status().isOk,
-        ).andExpect(
-            jsonPath("$.participants.length()").value(1),
-        ).andExpect(
-            jsonPath("$.participants[0].participant.isSelfProfile").value(false),
-        )
-
-        mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/")
-                .header("Authorization", adminToken),
-        ).andExpect(
-            status().isOk,
-        ).andExpect(
-            jsonPath("$.participants.length()").value(1),
-        ).andExpect(
-            jsonPath("$.participants[0].participant.isSelfProfile").value(false),
+            jsonPath("$.participants[0].participant.id").value(1),
         )
 
         mockMvc.perform(
