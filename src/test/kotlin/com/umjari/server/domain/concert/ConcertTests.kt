@@ -291,7 +291,14 @@ class ConcertTests {
     ) {
         val content = """
             {
-              "userIds": ["user"]
+              "participantList": [
+                {
+                  "userId": "user",
+                  "part": "PART",
+                  "detailPart": "DETAIL_PART",
+                  "role": "MEMBER"
+                }
+              ]
             }
         """.trimIndent()
 
@@ -317,7 +324,14 @@ class ConcertTests {
 
         val alreadyEnrolledContent = """
             {
-              "userIds": ["user"]
+              "participantList": [
+                {
+                  "userId": "user",
+                  "part": "NEW_PART",
+                  "detailPart": "DETAIL_PART",
+                  "role": "MEMBER"
+                }
+              ]
             }
         """.trimIndent()
 
@@ -329,12 +343,19 @@ class ConcertTests {
         ).andExpect(
             status().isOk,
         ).andExpect(
-            jsonPath("$.failedUsers.length()").value(1),
+            jsonPath("$.failedUsers.length()").value(0),
         )
 
         val notUserContent = """
             {
-              "userIds": ["NOT_USER"]
+              "participantList": [
+                {
+                  "userId": "NOT_USER",
+                  "part": "NEW_PART",
+                  "detailPart": "DETAIL_PART",
+                  "role": "MEMBER"
+                }
+              ]
             }
         """.trimIndent()
 
@@ -361,7 +382,7 @@ class ConcertTests {
         ).andExpect(
             jsonPath("$.participants.length()").value(1),
         ).andExpect(
-            jsonPath("$.participants[0].isSelfProfile").value(true),
+            jsonPath("$.participants[0].participant.isSelfProfile").value(true),
         )
 
         mockMvc.perform(
@@ -371,7 +392,7 @@ class ConcertTests {
         ).andExpect(
             jsonPath("$.participants.length()").value(1),
         ).andExpect(
-            jsonPath("$.participants[0].isSelfProfile").value(false),
+            jsonPath("$.participants[0].participant.isSelfProfile").value(false),
         )
 
         mockMvc.perform(
@@ -382,7 +403,7 @@ class ConcertTests {
         ).andExpect(
             jsonPath("$.participants.length()").value(1),
         ).andExpect(
-            jsonPath("$.participants[0].isSelfProfile").value(false),
+            jsonPath("$.participants[0].participant.isSelfProfile").value(false),
         )
 
         mockMvc.perform(

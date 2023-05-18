@@ -1,6 +1,6 @@
 package com.umjari.server.domain.concert.controller
 
-import com.umjari.server.domain.concert.dto.ConcertPerformerDto
+import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.concert.service.ConcertMusicService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -28,7 +28,7 @@ class ConcertMusicController(
         @PathVariable("concert_id") concertId: Long,
         @PathVariable("concert_music_id") concertMusicId: Long,
         @CurrentUser user: User?,
-    ): ConcertPerformerDto.ConcertParticipantsListResponse {
+    ): ConcertParticipantDto.ConcertParticipantsListResponse {
         return concertMusicService.getConcertParticipantsList(user, concertId, concertMusicId)
     }
 
@@ -38,14 +38,14 @@ class ConcertMusicController(
         @PathVariable("concert_id") concertId: Long,
         @PathVariable("concert_music_id") concertMusicId: Long,
         @Valid @RequestBody
-        registerConcertParticipantsRequest: ConcertPerformerDto.RegisterConcertParticipantsRequest,
+        registerConcertParticipantListRequest: ConcertParticipantDto.RegisterConcertParticipantListRequest,
         @CurrentUser user: User,
-    ): ConcertPerformerDto.RegisterConcertParticipantsResponse {
+    ): ConcertParticipantDto.RegisterConcertParticipantsResponse {
         return concertMusicService.registerConcertParticipant(
             user,
             concertId,
             concertMusicId,
-            registerConcertParticipantsRequest,
+            registerConcertParticipantListRequest,
         )
     }
 
@@ -55,14 +55,14 @@ class ConcertMusicController(
         @PathVariable("concert_id") concertId: Long,
         @PathVariable("concert_music_id") concertMusicId: Long,
         @Valid @RequestBody
-        registerConcertParticipantsRequest: ConcertPerformerDto.RegisterConcertParticipantsRequest,
+        removeConcertParticipantListRequest: ConcertParticipantDto.RemoveConcertParticipantListRequest,
         @CurrentUser user: User,
     ) {
         concertMusicService.removeConcertParticipant(
             user,
             concertId,
             concertMusicId,
-            registerConcertParticipantsRequest,
+            removeConcertParticipantListRequest,
         )
     }
 }

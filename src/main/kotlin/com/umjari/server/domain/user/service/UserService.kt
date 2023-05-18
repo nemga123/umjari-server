@@ -59,7 +59,7 @@ class UserService(
         val user = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        return UserDto.DetailUserInfoResponse(user = user, isSelfProfile = (user.id == currentUser?.id))
+        return UserDto.DetailUserInfoResponse(user = user, currentUser = currentUser)
     }
 
     fun getUserIdToUserMapInUserIds(userIds: List<String>): Pair<Set<String>, Map<String, User>> {
