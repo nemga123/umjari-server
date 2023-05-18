@@ -48,8 +48,7 @@ class JwtTokenProvider(
         return tokenPrefix + token
     }
 
-    fun generateToken(authentication: Authentication): String {
-        val userPrincipal = authentication.principal as UserPrincipal
+    fun generateToken(userPrincipal: UserPrincipal): String {
         return generateToken(userPrincipal.user.userId)
     }
 
