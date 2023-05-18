@@ -27,9 +27,8 @@ class ConcertMusicController(
     fun getConcertParticipantsList(
         @PathVariable("concert_id") concertId: Long,
         @PathVariable("concert_music_id") concertMusicId: Long,
-        @CurrentUser user: User?,
     ): ConcertParticipantDto.ConcertParticipantsListResponse {
-        return concertMusicService.getConcertParticipantsList(user, concertId, concertMusicId)
+        return concertMusicService.getConcertParticipantsList(concertId, concertMusicId)
     }
 
     @PutMapping("/{concert_music_id}/participant/")
