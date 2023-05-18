@@ -60,9 +60,13 @@ class MusicTests {
         val content = """
             {
               "composerEng": "COMPOSER",
+              "shortComposerEng": "COM",
               "composerKor": "작곡가",
+              "shortComposerKor": "작.곡",
               "nameEng": "song",
-              "nameKor": "노래"
+              "shortNameEng": "so",
+              "nameKor": "노래",
+              "shortNameKor": "놀"
             }
         """.trimIndent()
         mockMvc.perform(

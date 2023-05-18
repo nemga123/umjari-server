@@ -23,9 +23,13 @@ class MusicService(
 
         val musicObject = Music(
             composerEng = registerMusicRequest.composerEng,
+            shortComposerEng = registerMusicRequest.shortComposerEng!!,
             composerKor = registerMusicRequest.composerKor,
+            shortComposerKor = registerMusicRequest.shortComposerKor!!,
             nameEng = registerMusicRequest.nameEng,
+            shortNameEng = registerMusicRequest.shortNameEng!!,
             nameKor = registerMusicRequest.nameKor,
+            shortNameKor = registerMusicRequest.shortNameKor!!,
         )
         musicRepository.save(musicObject)
         return MusicDto.MusicDetailResponse(musicObject)
