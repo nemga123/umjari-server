@@ -111,7 +111,18 @@ class ConcertTests {
             status().isNotFound,
         )
 
-        musicRepository.save(Music(composerEng = "Composer", composerKor = "작곡가", nameKor = "노래", nameEng = "music"))
+        musicRepository.save(
+            Music(
+                composerEng = "Composer",
+                composerKor = "작곡가",
+                nameKor = "노래",
+                nameEng = "music",
+                shortComposerEng = "c",
+                shortComposerKor = "작",
+                shortNameEng = "m",
+                shortNameKor = "음",
+            ),
+        )
         val contentWithMusic = """
             {
               "title": "TITLE",
@@ -127,7 +138,7 @@ class ConcertTests {
               "fee": 0,
               "regionParent": "서울시",
               "regionChild": "관악구",
-              "regionDetail": "음대",
+             "regionDetail": "음대",
               "musicIds": [1, 122]
             }
         """.trimIndent()
