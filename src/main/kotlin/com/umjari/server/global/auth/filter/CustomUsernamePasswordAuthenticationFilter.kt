@@ -3,6 +3,7 @@ package com.umjari.server.global.auth.filter
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.umjari.server.domain.auth.JwtTokenProvider
 import com.umjari.server.domain.auth.dto.AuthDto
+import com.umjari.server.domain.auth.model.UserPrincipal
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -35,8 +36,12 @@ class CustomUsernamePasswordAuthenticationFilter(
     }
 
     private fun createAccessToken(authResult: Authentication): String {
-        val accessToken = mapOf("accessToken" to jwtTokenProvider.generateToken(authResult))
-        return ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(accessToken)
+        val userPrincipal = authResult.principal as UserPrincipal
+        val content = mapOf(
+            "accessToken" to jwtTokenProvider.generateToken(userPrincipal),
+            "profileName" to userPrincipal.user.profileName,
+        )
+        return ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(content)
     }
 
     override fun unsuccessfulAuthentication(
