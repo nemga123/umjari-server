@@ -44,14 +44,14 @@ class UserDto {
         val isSelfProfile: Boolean,
         val career: List<GroupDto.GroupUserResponse>,
     ) {
-        constructor(user: User, isSelfProfile: Boolean) : this(
+        constructor(user: User, currentUser: User?) : this(
             id = user.id,
             profileName = user.profileName,
             profileImage = user.profileImage,
             email = user.email,
             intro = user.intro,
-            isSelfProfile = isSelfProfile,
-            nickname = if (isSelfProfile) user.nickname else null,
+            isSelfProfile = user.id == currentUser?.id,
+            nickname = if (user.id == currentUser?.id) user.nickname else null,
             career = user.career.map { GroupDto.GroupUserResponse(it) },
         )
     }

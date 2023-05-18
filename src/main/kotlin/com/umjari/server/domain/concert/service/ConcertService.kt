@@ -5,7 +5,7 @@ import com.umjari.server.domain.concert.exception.ConcertNotFoundException
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
-import com.umjari.server.domain.concert.repository.ConcertPerformerRepository
+import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.concert.specification.ConcertSpecification
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat
 class ConcertService(
     private val concertRepository: ConcertRepository,
     private val concertMusicRepository: ConcertMusicRepository,
-    private val concertPerformerRepository: ConcertPerformerRepository,
+    private val concertParticipantRepository: ConcertParticipantRepository,
     private val musicRepository: MusicRepository,
     private val regionService: RegionService,
     private val groupRepository: GroupRepository,
