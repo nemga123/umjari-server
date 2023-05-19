@@ -23,7 +23,7 @@ interface UserRepository : JpaRepository<User, Long?> {
     @Query(
         """
             SELECT user FROM User AS user
-                LEFT JOIN FETCH user.career AS gm JOIN FETCH gm.group WHERE user.profileName = :profileName
+                LEFT JOIN FETCH user.career AS gm LEFT JOIN FETCH gm.group WHERE user.profileName = :profileName
         """,
     )
     fun findByProfileName(@Param("profileName") profileName: String): User?
