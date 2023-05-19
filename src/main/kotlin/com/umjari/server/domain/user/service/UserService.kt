@@ -30,6 +30,7 @@ class UserService(
 
     fun updateProfileImage(user: User, imageRequest: UserDto.ProfileImageRequest) {
         val originImageUrl = user.profileImage
+        if (originImageUrl == imageRequest.image) return
         user.profileImage = imageRequest.image!!
         userRepository.save(user)
         if (originImageUrl.startsWith("http")) {

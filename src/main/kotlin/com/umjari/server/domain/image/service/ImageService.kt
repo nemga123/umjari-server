@@ -44,12 +44,11 @@ class ImageService(
 
     data class FileMetaData(
         val userId: String,
-        val fileToken: String,
         val fileName: String,
     )
     fun removeImageByUrl(url: String) {
         val fileMetaData = parseS3Url(url)
-        val image = imageRepository.findByToken(fileMetaData.fileToken)
+        val image = imageRepository.findByFileName(fileMetaData.fileName)
             ?: throw ImageTokenNotFoundException()
 
         s3Service.removeFile(fileMetaData.userId, fileMetaData.fileName)
@@ -60,8 +59,7 @@ class ImageService(
         val urlParts = url.split("/")
         return FileMetaData(
             userId = urlParts[4],
-            fileToken = urlParts[5],
-            fileName = urlParts[6],
+            fileName = urlParts[5],
         )
     }
 }
