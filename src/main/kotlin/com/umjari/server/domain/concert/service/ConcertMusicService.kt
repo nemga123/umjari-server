@@ -96,12 +96,20 @@ class ConcertMusicService(
         concertId: Long,
         concertMusicId: Long,
     ): ConcertParticipantDto.ConcertParticipantsListResponse {
-        if (!concertMusicRepository.existsByConcertIdAndMusicId(concertId, concertMusicId)) {
+        if (!concertMusicRepository.existsByConcertIdAndId(concertId, concertMusicId)) {
             throw ConcertMusicIdNotFoundException(concertMusicId)
         }
 
         val concertParticipants = concertParticipantRepository.findParticipantsByConcertMusicId(concertMusicId)
-        val participantResponseList = concertParticipants.map { ConcertParticipantDto.ConcertParticipantResponse(it) }
-        return ConcertParticipantDto.ConcertParticipantsListResponse(participantResponseList)
+
+        val partNameToParticipants = concertParticipants.groupBy { it.part }
+        val concertParticipantByPartList = partNameToParticipants.map { (partName, partParticipants) ->
+            val partResponse = ConcertParticipantDto.ConcertParticipantsByPartResponse(partName)
+            partParticipants.forEach { concertParticipant ->
+                partResponse.add(concertParticipant)
+            }
+            partResponse
+        }
+        return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipantByPartList)
     }
 }

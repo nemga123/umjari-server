@@ -445,7 +445,7 @@ class ConcertTests {
         ).andExpect(
             jsonPath("$.participants.length()").value(1),
         ).andExpect(
-            jsonPath("$.participants[0].participant.id").value(1),
+            jsonPath("$.participants[0].member.length()").value(1),
         )
 
         mockMvc.perform(

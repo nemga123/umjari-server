@@ -39,20 +39,31 @@ class ConcertParticipantDto {
     )
 
     data class ConcertParticipantsListResponse(
-        val participants: List<ConcertParticipantResponse>,
+        val participants: List<ConcertParticipantsByPartResponse>,
     )
 
-    data class ConcertParticipantResponse(
-        val participant: UserDto.SimpleUserDto,
+    data class ConcertParticipantsByPartResponse(
         val part: String,
-        val detailPart: String,
-        val role: ConcertParticipant.ParticipantRole,
+        val master: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
+        val principal: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
+        val assistantPrincipal: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
+        val member: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
     ) {
-        constructor(concertParticipant: ConcertParticipant) : this(
-            participant = UserDto.SimpleUserDto(concertParticipant.performer),
-            part = concertParticipant.part,
-            detailPart = concertParticipant.detailPart,
-            role = concertParticipant.role,
-        )
+        fun add(concertParticipant: ConcertParticipant) {
+            when (concertParticipant.role) {
+                ConcertParticipant.ParticipantRole.MASTER -> master.add(
+                    UserDto.SimpleUserDto(concertParticipant.performer),
+                )
+                ConcertParticipant.ParticipantRole.PRINCIPAL -> principal.add(
+                    UserDto.SimpleUserDto(concertParticipant.performer),
+                )
+                ConcertParticipant.ParticipantRole.ASSISTANT_PRINCIPAL -> assistantPrincipal.add(
+                    UserDto.SimpleUserDto(concertParticipant.performer),
+                )
+                ConcertParticipant.ParticipantRole.MEMBER -> member.add(
+                    UserDto.SimpleUserDto(concertParticipant.performer),
+                )
+            }
+        }
     }
 }
