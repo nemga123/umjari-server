@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param
 interface ConcertMusicRepository : JpaRepository<ConcertMusic, Long?> {
     fun existsByConcertIdAndMusicId(concertId: Long, musicId: Long): Boolean
 
+    fun existsByConcertIdAndId(concertId: Long, id: Long): Boolean
+
     @Query(
         """
             SELECT music FROM ConcertMusic AS cm JOIN Music AS music ON cm.music.id = music.id
