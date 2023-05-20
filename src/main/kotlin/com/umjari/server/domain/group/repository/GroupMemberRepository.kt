@@ -30,4 +30,15 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long?> {
         """,
     )
     fun findGroupListByUserId(@Param("userId") userId: Long): List<GroupMember>
+
+    @Query(
+        """
+            SELECT DISTINCT gm FROM GroupMember AS gm JOIN FETCH gm.user AS user
+                WHERE user.userId IN (:userIds) AND gm.group.id = :groupId
+        """,
+    )
+    fun findAllAlreadyEnrolled(
+        @Param("userIds") userIds: Set<String>,
+        @Param("groupId") groupId: Long,
+    ): Set<GroupMember>
 }
