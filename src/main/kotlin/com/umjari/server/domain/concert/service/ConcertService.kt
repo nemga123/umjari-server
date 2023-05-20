@@ -153,6 +153,12 @@ class ConcertService(
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
 
+        groupMemberAuthorityService.checkMemberAuthorities(
+            GroupMember.MemberRole.ADMIN,
+            concert.group.id,
+            user.id,
+        )
+
         val musicList = musicRepository.findAllByIdIn(updateConcertSetListRequest.musicIds)
         val musicMap = musicList.associateBy { it.id }
         val concertSetList = updateConcertSetListRequest.musicIds.filter { musicId ->
