@@ -28,7 +28,7 @@ class GroupMember(
     val user: User,
 
     @Enumerated(EnumType.ORDINAL)
-    val role: MemberRole = MemberRole.MEMBER,
+    var role: MemberRole = MemberRole.MEMBER,
 
     var joinedAt: Date? = null,
 

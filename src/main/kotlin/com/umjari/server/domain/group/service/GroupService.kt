@@ -171,31 +171,27 @@ class GroupService(
 
         val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
-        val notEnrolledUserIds = if (existingUserIds.isNotEmpty()) {
-            groupMemberRepository.findAllUserIdsNotEnrolled(
-                existingUserIds,
-                groupId,
-            )
-        } else {
-            emptySet()
+        val alreadyEnrolledUser = groupMemberRepository.findAllAlreadyEnrolled(existingUserIds, groupId)
+        val alreadyEnrolledUserMap = alreadyEnrolledUser.associateBy { it.user.userId }
+        val objectList = existingUserIds.map { userId ->
+            if (alreadyEnrolledUserMap.containsKey(userId)) {
+                val groupMember = alreadyEnrolledUserMap[userId]!!
+                groupMember.role = role
+                groupMember
+            } else {
+                GroupMember(
+                    group = group,
+                    user = userMap[userId]!!,
+                    role = role,
+                )
+            }
         }
-        notEnrolledUserIds.forEach { userId ->
-            val groupMember = GroupMember(
-                group = group,
-                user = userMap[userId]!!,
-                role = role,
-            )
-            groupMemberRepository.save(groupMember)
-        }
+
+        groupMemberRepository.saveAll(objectList)
 
         val notExistingUserIds = requestUserIds.subtract(existingUserIds)
         notExistingUserIds.forEach {
             failedUsers.add(GroupRegisterDto.FailedUser(it, "User does not exist."))
-        }
-
-        val alreadyEnrolledUserIds = existingUserIds.subtract(notEnrolledUserIds)
-        alreadyEnrolledUserIds.forEach {
-            failedUsers.add(GroupRegisterDto.FailedUser(it, "User is already enrolled."))
         }
 
         return GroupRegisterDto.GroupRegisterResponse(failedUsers)

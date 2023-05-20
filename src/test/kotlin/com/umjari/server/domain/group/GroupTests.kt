@@ -36,6 +36,7 @@ class GroupTests {
     companion object {
         private lateinit var userToken: String
         private lateinit var adminToken: String
+        private lateinit var userToken3: String
 
         @BeforeAll
         @JvmStatic
@@ -55,6 +56,17 @@ class GroupTests {
 
             val adminResult = TestUtils.createDummyAdmin(mockMvc, userRepository, verifyTokenRepository)
             adminToken = adminResult.second
+
+            val userResult3 = TestUtils.createDummyUser(
+                mockMvc,
+                userRepository,
+                verifyTokenRepository,
+                "user3@email.com",
+                "user3",
+                "profileName3",
+                "nickname3",
+            )
+            userToken3 = userResult3.second
         }
     }
 
@@ -280,7 +292,7 @@ class GroupTests {
 
     @Test
     @Order(7)
-    fun testRegisterGroupAsAdmin() {
+    fun testRegisterGroupAMember() {
         val content = """
             {
               "userIds": [
@@ -335,33 +347,34 @@ class GroupTests {
         ).andExpect(
             jsonPath("$.failedUsers[0].reason").value("User does not exist."),
         )
+    }
 
-        val alreadyEnrolledContent = """
+    @Test
+    @Order(9)
+    fun testRegisterGroupMemberAsAdmin() {
+        val noExistContent = """
             {
               "userIds": [
-                "user"
+                "user",
+                "user3"
               ]
             }
         """.trimIndent()
 
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/group/2/register/")
+            MockMvcRequestBuilders.post("/api/v1/group/2/register/admin/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(alreadyEnrolledContent)
+                .content(noExistContent)
                 .header("Authorization", adminToken),
         ).andExpect(
             status().isOk,
         ).andExpect(
-            jsonPath("$.failedUsers.length()").value(1),
-        ).andExpect(
-            jsonPath("$.failedUsers[0].userId").value("user"),
-        ).andExpect(
-            jsonPath("$.failedUsers[0].reason").value("User is already enrolled."),
+            jsonPath("$.failedUsers.length()").value(0),
         )
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     fun testUpdateGroupRegisterTimestamp(
         @Autowired groupMemberRepository: GroupMemberRepository,
     ) {
