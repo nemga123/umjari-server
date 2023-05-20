@@ -44,6 +44,8 @@ class ConcertTests {
     companion object {
         private lateinit var userToken: String
         private lateinit var adminToken: String
+        private lateinit var userToken3: String
+        private lateinit var userToken4: String
 
         @BeforeAll
         @JvmStatic
@@ -63,6 +65,29 @@ class ConcertTests {
 
             val adminResult = TestUtils.createDummyAdmin(mockMvc, userRepository, verifyTokenRepository)
             adminToken = adminResult.second
+
+            val userResult3 = TestUtils.createDummyUser(
+                mockMvc,
+                userRepository,
+                verifyTokenRepository,
+                "user3@email.com",
+                "user3",
+                "profileName3",
+                "nickname3",
+            )
+            userToken3 = userResult3.second
+
+            val userResult4 = TestUtils.createDummyUser(
+                mockMvc,
+                userRepository,
+                verifyTokenRepository,
+                "user4@email.com",
+                "user4",
+                "profileName4",
+                "nickname4",
+            )
+            groupMemberRepository.save(GroupMember(group, userResult4.first, GroupMember.MemberRole.MEMBER))
+            userToken4 = userResult4.second
         }
     }
 
@@ -228,6 +253,33 @@ class ConcertTests {
                 .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/details/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/details/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken3),
+        ).andExpect(
+            status().isForbidden,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/details/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken4),
+        ).andExpect(
+            status().isForbidden,
         )
 
         mockMvc.perform(
