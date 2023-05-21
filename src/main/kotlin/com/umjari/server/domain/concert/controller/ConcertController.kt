@@ -1,6 +1,7 @@
 package com.umjari.server.domain.concert.controller
 
 import com.umjari.server.domain.concert.dto.ConcertDto
+import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.concert.service.ConcertService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -92,5 +93,13 @@ class ConcertController(
         @CurrentUser user: User,
     ) {
         concertService.updateConcertSetList(user, concertId, updateConcertSetListRequest)
+    }
+
+    @GetMapping("/{concert_id}/participant/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getConcertSetParticipants(
+        @PathVariable("concert_id") concertId: Long,
+    ): ConcertParticipantDto.ConcertParticipantsListResponse {
+        return concertService.getConcertParticipantsList(concertId)
     }
 }
