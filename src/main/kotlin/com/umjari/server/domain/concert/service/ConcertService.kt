@@ -1,10 +1,12 @@
 package com.umjari.server.domain.concert.service
 
 import com.umjari.server.domain.concert.dto.ConcertDto
+import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.concert.exception.ConcertNotFoundException
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
+import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.concert.specification.ConcertSpecification
 import com.umjari.server.domain.group.exception.GroupIdNotFoundException
@@ -26,6 +28,7 @@ import java.text.SimpleDateFormat
 class ConcertService(
     private val concertRepository: ConcertRepository,
     private val concertMusicRepository: ConcertMusicRepository,
+    private val concertParticipantRepository: ConcertParticipantRepository,
     private val musicRepository: MusicRepository,
     private val regionService: RegionService,
     private val groupRepository: GroupRepository,
@@ -164,5 +167,25 @@ class ConcertService(
             ConcertMusic(concert = concert, music = music)
         }
         concertMusicRepository.saveAll(concertSetList)
+    }
+
+    fun getConcertParticipantsList(
+        concertId: Long,
+    ): ConcertParticipantDto.ConcertParticipantsListResponse {
+        if (!concertRepository.existsById(concertId)) {
+            throw ConcertNotFoundException(concertId)
+        }
+
+        val concertParticipants = concertParticipantRepository.findParticipantsByConcertId(concertId)
+
+        val partNameToParticipants = concertParticipants.groupBy { it.part }
+        val concertParticipantByPartList = partNameToParticipants.map { (partName, partParticipants) ->
+            val partResponse = ConcertParticipantDto.ConcertParticipantsByPartResponse(partName)
+            partParticipants.forEach { concertParticipant ->
+                partResponse.add(concertParticipant)
+            }
+            partResponse
+        }
+        return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipantByPartList)
     }
 }

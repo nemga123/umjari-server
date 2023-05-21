@@ -438,8 +438,7 @@ class ConcertTests {
     @Order(6)
     fun testGetConcertParticipantsList() {
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/")
-                .header("Authorization", userToken),
+            MockMvcRequestBuilders.get("/api/v1/concert/1/participant/"),
         ).andExpect(
             status().isOk,
         ).andExpect(
@@ -449,8 +448,23 @@ class ConcertTests {
         )
 
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/100/participant/")
-                .header("Authorization", userToken),
+            MockMvcRequestBuilders.get("/api/v1/concert/100/participant/"),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/1/participant/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.participants.length()").value(1),
+        ).andExpect(
+            jsonPath("$.participants[0].member.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/1/concert-music/100/participant/"),
         ).andExpect(
             status().isNotFound,
         )

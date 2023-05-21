@@ -2,6 +2,7 @@ package com.umjari.server.domain.concert.dto
 
 import com.umjari.server.domain.concert.model.ConcertParticipant
 import com.umjari.server.domain.user.dto.UserDto
+import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
@@ -49,21 +50,35 @@ class ConcertParticipantDto {
         val assistantPrincipal: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
         val member: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
     ) {
+        fun add(concertParticipantInterface: ConcertParticipantSqlSimpleInterface) {
+            add(concertParticipantInterface.performer, concertParticipantInterface.role)
+        }
+
         fun add(concertParticipant: ConcertParticipant) {
-            when (concertParticipant.role) {
+            add(concertParticipant.performer, concertParticipant.role)
+        }
+
+        private fun add(performer: User, role: ConcertParticipant.ParticipantRole) {
+            when (role) {
                 ConcertParticipant.ParticipantRole.MASTER -> master.add(
-                    UserDto.SimpleUserDto(concertParticipant.performer),
+                    UserDto.SimpleUserDto(performer),
                 )
                 ConcertParticipant.ParticipantRole.PRINCIPAL -> principal.add(
-                    UserDto.SimpleUserDto(concertParticipant.performer),
+                    UserDto.SimpleUserDto(performer),
                 )
                 ConcertParticipant.ParticipantRole.ASSISTANT_PRINCIPAL -> assistantPrincipal.add(
-                    UserDto.SimpleUserDto(concertParticipant.performer),
+                    UserDto.SimpleUserDto(performer),
                 )
                 ConcertParticipant.ParticipantRole.MEMBER -> member.add(
-                    UserDto.SimpleUserDto(concertParticipant.performer),
+                    UserDto.SimpleUserDto(performer),
                 )
             }
         }
+    }
+
+    interface ConcertParticipantSqlSimpleInterface {
+        val performer: User
+        val role: ConcertParticipant.ParticipantRole
+        val part: String
     }
 }
