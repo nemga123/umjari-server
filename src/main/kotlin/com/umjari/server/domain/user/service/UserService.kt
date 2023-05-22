@@ -47,7 +47,7 @@ class UserService(
             ?: throw UserProfileNameNotFoundException(profileName)
 
         val concertList = concertParticipantRepository.findConcertListByJoinedUserIdWithPoster(user.id)
-        val listGroupByConcertId = concertList.groupBy { Pair(it.id, it.concertPoster) }
+        val listGroupByConcertId = concertList.groupBy { it.id }
         return ConcertParticipantDto.ParticipatedConcertsGroupByConcertIdListResponse(listGroupByConcertId)
     }
 
