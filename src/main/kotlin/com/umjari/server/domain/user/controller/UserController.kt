@@ -1,5 +1,6 @@
 package com.umjari.server.domain.user.controller
 
+import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -25,7 +26,23 @@ class UserController(
     @GetMapping("/my-group/")
     @ResponseStatus(HttpStatus.OK)
     fun getMyGroupList(@CurrentUser user: User): UserDto.UserGroupListResponse {
-        return userService.getJoinGroupList(user)
+        return userService.getJoinedGroupList(user)
+    }
+
+    @GetMapping("/profile-name/{profile_name}/joined-concert/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getJoinedConcertList(
+        @PathVariable("profile_name") profileName: String,
+    ): ConcertParticipantDto.ParticipatedConcertListResponse {
+        return userService.getJoinedConcertList(profileName)
+    }
+
+    @GetMapping("/profile-name/{profile_name}/joined-concert/poster/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getJoinedConcertListGroupByConcertId(
+        @PathVariable("profile_name") profileName: String,
+    ): ConcertParticipantDto.ParticipatedConcertsGroupByConcertIdListResponse {
+        return userService.getJoinedConcertListGroupByConcertId(profileName)
     }
 
     @PostMapping("/nickname/")
