@@ -1,5 +1,7 @@
 package com.umjari.server.domain.user.service
 
+import com.umjari.server.domain.concert.dto.ConcertParticipantDto
+import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.image.service.ImageService
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service
 class UserService(
     private val userRepository: UserRepository,
     private val groupMemberRepository: GroupMemberRepository,
+    private val concertParticipantRepository: ConcertParticipantRepository,
     private val imageService: ImageService,
 ) {
     fun checkDuplicatedNickname(nicknameRequest: UserDto.NicknameRequest) {
@@ -22,10 +25,30 @@ class UserService(
             throw DuplicatedUserNicknameException(nicknameRequest.nickname)
         }
     }
-    fun getJoinGroupList(user: User): UserDto.UserGroupListResponse {
+    fun getJoinedGroupList(user: User): UserDto.UserGroupListResponse {
         val groupList = groupMemberRepository.findGroupListByUserId(user.id)
         val career = groupList.map { GroupDto.GroupUserResponse(it) }
         return UserDto.UserGroupListResponse(career = career)
+    }
+
+    fun getJoinedConcertList(profileName: String): ConcertParticipantDto.ParticipatedConcertListResponse {
+        val user = userRepository.findByProfileName(profileName)
+            ?: throw UserProfileNameNotFoundException(profileName)
+
+        val concertList = concertParticipantRepository.findConcertListByJoinedUserId(user.id)
+        val response = concertList.map { ConcertParticipantDto.ParticipatedConcertResponse(it) }
+        return ConcertParticipantDto.ParticipatedConcertListResponse(response)
+    }
+
+    fun getJoinedConcertListGroupByConcertId(
+        profileName: String,
+    ): ConcertParticipantDto.ParticipatedConcertsGroupByConcertIdListResponse {
+        val user = userRepository.findByProfileName(profileName)
+            ?: throw UserProfileNameNotFoundException(profileName)
+
+        val concertList = concertParticipantRepository.findConcertListByJoinedUserIdWithPoster(user.id)
+        val listGroupByConcertId = concertList.groupBy { Pair(it.id, it.concertPoster) }
+        return ConcertParticipantDto.ParticipatedConcertsGroupByConcertIdListResponse(listGroupByConcertId)
     }
 
     fun updateProfileImage(user: User, imageRequest: UserDto.ProfileImageRequest) {

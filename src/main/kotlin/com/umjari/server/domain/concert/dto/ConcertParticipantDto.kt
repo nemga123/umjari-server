@@ -81,4 +81,83 @@ class ConcertParticipantDto {
         val role: ConcertParticipant.ParticipantRole
         val part: String
     }
+
+    interface ConcertPartSqlSimpleInterface {
+        val id: Long
+        val shortComposerEng: String
+        val nameEng: String
+        val part: String
+        val detailPart: String
+        val groupName: String
+    }
+
+    data class ParticipatedConcertResponse(
+        val id: Long,
+        val shortComposerEng: String,
+        val nameEng: String,
+        val part: String,
+        val detailPart: String,
+        val groupName: String,
+    ) {
+        constructor(concertPart: ConcertPartSqlSimpleInterface) : this(
+            id = concertPart.id,
+            shortComposerEng = concertPart.shortComposerEng,
+            nameEng = concertPart.nameEng,
+            part = concertPart.part,
+            detailPart = concertPart.detailPart,
+            groupName = concertPart.groupName,
+        )
+    }
+
+    data class ParticipatedConcertListResponse(
+        val participatedConcerts: List<ParticipatedConcertResponse>,
+    )
+
+    interface ConcertPartSqlWithImageInterface : ConcertPartSqlSimpleInterface {
+        val concertPoster: String
+    }
+
+    data class ParticipatedConcertSimpleResponse(
+        val shortComposerEng: String,
+        val nameEng: String,
+        val part: String,
+        val detailPart: String,
+        val groupName: String,
+    ) {
+        constructor(concertPart: ConcertPartSqlWithImageInterface) : this(
+            shortComposerEng = concertPart.shortComposerEng,
+            nameEng = concertPart.nameEng,
+            part = concertPart.part,
+            detailPart = concertPart.detailPart,
+            groupName = concertPart.groupName,
+        )
+    }
+
+    data class ParticipatedConcertsGroupByConcertIdResponse(
+        val id: Long,
+        val concertPoster: String,
+        val participatedList: List<ParticipatedConcertSimpleResponse>,
+    ) {
+        constructor(
+            idPosterPair: Pair<Long, String>,
+            participatedList: List<ConcertPartSqlWithImageInterface>,
+        ) : this(
+            id = idPosterPair.first,
+            concertPoster = idPosterPair.second,
+            participatedList = participatedList.map { ParticipatedConcertSimpleResponse(it) },
+        )
+    }
+
+    data class ParticipatedConcertsGroupByConcertIdListResponse(
+        val participatedConcerts: List<ParticipatedConcertsGroupByConcertIdResponse>,
+    ) {
+        constructor(listGroupByConcertId: Map<Pair<Long, String>, List<ConcertPartSqlWithImageInterface>>) : this(
+            participatedConcerts = listGroupByConcertId.map { (pair, list) ->
+                ParticipatedConcertsGroupByConcertIdResponse(
+                    idPosterPair = pair,
+                    participatedList = list,
+                )
+            },
+        )
+    }
 }

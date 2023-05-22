@@ -45,4 +45,49 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
         """,
     )
     fun findParticipantsByConcertMusicId(@Param("concertMusicId") concertMusicId: Long): List<ConcertParticipant>
+
+    @Query(
+        """
+            SELECT
+                concert.id AS id,
+                music.shortComposerEng AS shortComposerEng,
+                music.nameEng AS nameEng,
+                cp.part AS part,
+                cp.detailPart AS detailPart,
+                group.name AS groupName
+            FROM ConcertParticipant AS cp
+                JOIN ConcertMusic AS cm ON cp.concertMusic.id = cm.id
+                JOIN Music AS music ON cm.music.id = music.id
+                JOIN Concert AS concert ON cm.concert.id = concert.id
+                JOIN Group AS group ON concert.group.id = group.id
+            WHERE
+                cp.performer.id = :userId
+        """,
+    )
+    fun findConcertListByJoinedUserId(
+        @Param("userId") userId: Long,
+    ): List<ConcertParticipantDto.ConcertPartSqlSimpleInterface>
+
+    @Query(
+        """
+            SELECT
+                concert.id AS id,
+                music.shortComposerEng AS shortComposerEng,
+                music.nameEng AS nameEng,
+                cp.part AS part,
+                concert.posterImg AS concertPoster,
+                cp.detailPart AS detailPart,
+                group.name AS groupName
+            FROM ConcertParticipant AS cp
+                JOIN ConcertMusic AS cm ON cp.concertMusic.id = cm.id
+                JOIN Music AS music ON cm.music.id = music.id
+                JOIN Concert AS concert ON cm.concert.id = concert.id
+                JOIN Group AS group ON concert.group.id = group.id
+            WHERE
+                cp.performer.id = :userId
+        """,
+    )
+    fun findConcertListByJoinedUserIdWithPoster(
+        @Param("userId") userId: Long,
+    ): List<ConcertParticipantDto.ConcertPartSqlWithImageInterface>
 }
