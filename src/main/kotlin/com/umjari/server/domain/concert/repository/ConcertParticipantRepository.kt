@@ -76,6 +76,9 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
                 music.nameEng AS nameEng,
                 cp.part AS part,
                 concert.posterImg AS concertPoster,
+                concert.subtitle AS subtitle,
+                concert.concertDate AS concertDate,
+                concert.regionDetail AS regionDetail,
                 cp.detailPart AS detailPart,
                 group.name AS groupName
             FROM ConcertParticipant AS cp

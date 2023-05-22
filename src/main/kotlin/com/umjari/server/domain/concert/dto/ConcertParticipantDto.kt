@@ -6,6 +6,7 @@ import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
+import java.util.Date
 
 class ConcertParticipantDto {
     data class RegisterConcertParticipantListRequest(
@@ -115,6 +116,9 @@ class ConcertParticipantDto {
 
     interface ConcertPartSqlWithImageInterface : ConcertPartSqlSimpleInterface {
         val concertPoster: String
+        val subtitle: String
+        val concertDate: Date
+        val regionDetail: String
     }
 
     data class ParticipatedConcertSimpleResponse(
@@ -136,14 +140,20 @@ class ConcertParticipantDto {
     data class ParticipatedConcertsGroupByConcertIdResponse(
         val id: Long,
         val concertPoster: String,
+        val subtitle: String,
+        val concertDate: String,
+        val regionDetail: String,
         val participatedList: List<ParticipatedConcertSimpleResponse>,
     ) {
         constructor(
-            idPosterPair: Pair<Long, String>,
+            concertId: Long,
             participatedList: List<ConcertPartSqlWithImageInterface>,
         ) : this(
-            id = idPosterPair.first,
-            concertPoster = idPosterPair.second,
+            id = concertId,
+            concertPoster = participatedList[0].concertPoster,
+            subtitle = participatedList[0].subtitle,
+            concertDate = participatedList[0].concertDate.toString(),
+            regionDetail = participatedList[0].regionDetail,
             participatedList = participatedList.map { ParticipatedConcertSimpleResponse(it) },
         )
     }
@@ -151,10 +161,10 @@ class ConcertParticipantDto {
     data class ParticipatedConcertsGroupByConcertIdListResponse(
         val participatedConcerts: List<ParticipatedConcertsGroupByConcertIdResponse>,
     ) {
-        constructor(listGroupByConcertId: Map<Pair<Long, String>, List<ConcertPartSqlWithImageInterface>>) : this(
-            participatedConcerts = listGroupByConcertId.map { (pair, list) ->
+        constructor(listGroupByConcertId: Map<Long, List<ConcertPartSqlWithImageInterface>>) : this(
+            participatedConcerts = listGroupByConcertId.map { (id, list) ->
                 ParticipatedConcertsGroupByConcertIdResponse(
-                    idPosterPair = pair,
+                    concertId = id,
                     participatedList = list,
                 )
             },
