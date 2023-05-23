@@ -35,7 +35,7 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
     )
     fun findParticipantsByConcertId(
         @Param("concertId") concertId: Long,
-    ): ArrayList<ConcertParticipantDto.ConcertParticipantSqlSimpleInterface>
+    ): ArrayList<ConcertParticipantDto.ConcertParticipantSqlShortInterface>
 
     @Query(
         """
@@ -53,6 +53,9 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
                 music.shortComposerEng AS shortComposerEng,
                 music.nameEng AS nameEng,
                 cp.part AS part,
+                concert.concertDate AS concertDate,
+                cm.id AS concertMusicId,
+                cp.role AS role,
                 cp.detailPart AS detailPart,
                 group.name AS groupName
             FROM ConcertParticipant AS cp
@@ -66,7 +69,7 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
     )
     fun findConcertListByJoinedUserId(
         @Param("userId") userId: Long,
-    ): List<ConcertParticipantDto.ConcertPartSqlSimpleInterface>
+    ): List<ConcertParticipantDto.ConcertHistorySqlSimpleInterface>
 
     @Query(
         """
@@ -92,5 +95,5 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
     )
     fun findConcertListByJoinedUserIdWithPoster(
         @Param("userId") userId: Long,
-    ): List<ConcertParticipantDto.ConcertPartSqlWithImageInterface>
+    ): List<ConcertParticipantDto.ConcertHistorySqlWithImageInterface>
 }

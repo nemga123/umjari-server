@@ -51,7 +51,7 @@ class ConcertParticipantDto {
         val assistantPrincipal: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
         val member: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
     ) {
-        fun add(concertParticipantInterface: ConcertParticipantSqlSimpleInterface) {
+        fun add(concertParticipantInterface: ConcertParticipantSqlShortInterface) {
             add(concertParticipantInterface.performer, concertParticipantInterface.role)
         }
 
@@ -77,31 +77,43 @@ class ConcertParticipantDto {
         }
     }
 
-    interface ConcertParticipantSqlSimpleInterface {
+    interface ConcertParticipantSqlShortInterface {
         val performer: User
         val role: ConcertParticipant.ParticipantRole
         val part: String
     }
 
-    interface ConcertPartSqlSimpleInterface {
+    interface ConcertHistorySqlInterface {
         val id: Long
         val shortComposerEng: String
         val nameEng: String
         val part: String
+        val concertDate: Date
         val detailPart: String
         val groupName: String
     }
 
+    interface ConcertHistorySqlSimpleInterface : ConcertHistorySqlInterface {
+        val concertMusicId: Long
+        val role: ConcertParticipant.ParticipantRole
+    }
+
     data class ParticipatedConcertResponse(
         val id: Long,
+        val concertMusicId: Long,
+        val role: ConcertParticipant.ParticipantRole,
+        val concertDate: String,
         val shortComposerEng: String,
         val nameEng: String,
         val part: String,
         val detailPart: String,
         val groupName: String,
     ) {
-        constructor(concertPart: ConcertPartSqlSimpleInterface) : this(
+        constructor(concertPart: ConcertHistorySqlSimpleInterface) : this(
             id = concertPart.id,
+            concertMusicId = concertPart.concertMusicId,
+            role = concertPart.role,
+            concertDate = concertPart.concertDate.toString(),
             shortComposerEng = concertPart.shortComposerEng,
             nameEng = concertPart.nameEng,
             part = concertPart.part,
@@ -114,10 +126,9 @@ class ConcertParticipantDto {
         val participatedConcerts: List<ParticipatedConcertResponse>,
     )
 
-    interface ConcertPartSqlWithImageInterface : ConcertPartSqlSimpleInterface {
+    interface ConcertHistorySqlWithImageInterface : ConcertHistorySqlInterface {
         val concertPoster: String
         val subtitle: String
-        val concertDate: Date
         val regionDetail: String
     }
 
@@ -128,7 +139,7 @@ class ConcertParticipantDto {
         val detailPart: String,
         val groupName: String,
     ) {
-        constructor(concertPart: ConcertPartSqlWithImageInterface) : this(
+        constructor(concertPart: ConcertHistorySqlWithImageInterface) : this(
             shortComposerEng = concertPart.shortComposerEng,
             nameEng = concertPart.nameEng,
             part = concertPart.part,
@@ -147,7 +158,7 @@ class ConcertParticipantDto {
     ) {
         constructor(
             concertId: Long,
-            participatedList: List<ConcertPartSqlWithImageInterface>,
+            participatedList: List<ConcertHistorySqlWithImageInterface>,
         ) : this(
             id = concertId,
             concertPoster = participatedList[0].concertPoster,
@@ -161,7 +172,7 @@ class ConcertParticipantDto {
     data class ParticipatedConcertsGroupByConcertIdListResponse(
         val participatedConcerts: List<ParticipatedConcertsGroupByConcertIdResponse>,
     ) {
-        constructor(listGroupByConcertId: Map<Long, List<ConcertPartSqlWithImageInterface>>) : this(
+        constructor(listGroupByConcertId: Map<Long, List<ConcertHistorySqlWithImageInterface>>) : this(
             participatedConcerts = listGroupByConcertId.map { (id, list) ->
                 ParticipatedConcertsGroupByConcertIdResponse(
                     concertId = id,
