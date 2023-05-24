@@ -91,11 +91,11 @@ class ConcertParticipantDto {
         val concertDate: Date
         val detailPart: String
         val groupName: String
+        val role: ConcertParticipant.ParticipantRole
     }
 
     interface ConcertHistorySqlSimpleInterface : ConcertHistorySqlInterface {
         val concertMusicId: Long
-        val role: ConcertParticipant.ParticipantRole
     }
 
     data class ParticipatedConcertResponse(
@@ -128,7 +128,7 @@ class ConcertParticipantDto {
 
     interface ConcertHistorySqlWithImageInterface : ConcertHistorySqlInterface {
         val concertPoster: String
-        val subtitle: String
+        val title: String
         val regionDetail: String
     }
 
@@ -136,6 +136,7 @@ class ConcertParticipantDto {
         val shortComposerEng: String,
         val nameEng: String,
         val part: String,
+        val role: ConcertParticipant.ParticipantRole,
         val detailPart: String,
         val groupName: String,
     ) {
@@ -143,6 +144,7 @@ class ConcertParticipantDto {
             shortComposerEng = concertPart.shortComposerEng,
             nameEng = concertPart.nameEng,
             part = concertPart.part,
+            role = concertPart.role,
             detailPart = concertPart.detailPart,
             groupName = concertPart.groupName,
         )
@@ -151,7 +153,7 @@ class ConcertParticipantDto {
     data class ParticipatedConcertsGroupByConcertIdResponse(
         val id: Long,
         val concertPoster: String,
-        val subtitle: String,
+        val title: String,
         val concertDate: String,
         val regionDetail: String,
         val participatedList: List<ParticipatedConcertSimpleResponse>,
@@ -162,7 +164,7 @@ class ConcertParticipantDto {
         ) : this(
             id = concertId,
             concertPoster = participatedList[0].concertPoster,
-            subtitle = participatedList[0].subtitle,
+            title = participatedList[0].title,
             concertDate = participatedList[0].concertDate.toString(),
             regionDetail = participatedList[0].regionDetail,
             participatedList = participatedList.map { ParticipatedConcertSimpleResponse(it) },

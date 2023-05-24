@@ -79,7 +79,8 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
                 music.nameEng AS nameEng,
                 cp.part AS part,
                 concert.posterImg AS concertPoster,
-                concert.subtitle AS subtitle,
+                concert.title AS title,
+                cp.role AS role,
                 concert.concertDate AS concertDate,
                 concert.regionDetail AS regionDetail,
                 cp.detailPart AS detailPart,
@@ -91,6 +92,7 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
                 JOIN Group AS group ON concert.group.id = group.id
             WHERE
                 cp.performer.id = :userId
+            ORDER BY cm.id ASC
         """,
     )
     fun findConcertListByJoinedUserIdWithPoster(
