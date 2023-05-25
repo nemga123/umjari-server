@@ -144,6 +144,7 @@ class ConcertService(
         concertRepository.save(concert)
     }
 
+    @Transactional
     fun updateConcertSetList(
         user: User,
         concertId: Long,
@@ -158,10 +159,12 @@ class ConcertService(
             user.id,
         )
 
+        concertMusicRepository.deleteAllByConcertIdAndMusicIdNotIn(concertId, updateConcertSetListRequest.musicIds)
         val musicList = musicRepository.findAllByIdIn(updateConcertSetListRequest.musicIds)
         val musicMap = musicList.associateBy { it.id }
+        val existingIdSet = concertMusicRepository.findMusicIdAllByConcertId(concertId)
         val concertSetList = updateConcertSetListRequest.musicIds.filter { musicId ->
-            !concertMusicRepository.existsByConcertIdAndMusicId(concert.id, musicId)
+            !existingIdSet.contains(musicId)
         }.map { id ->
             val music = musicMap[id] ?: throw MusicIdNotFoundException(id)
             ConcertMusic(concert = concert, music = music)
