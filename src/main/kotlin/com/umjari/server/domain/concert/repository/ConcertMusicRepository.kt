@@ -3,6 +3,7 @@ package com.umjari.server.domain.concert.repository
 import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.music.model.Music
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
@@ -25,4 +26,14 @@ interface ConcertMusicRepository : JpaRepository<ConcertMusic, Long?> {
         """,
     )
     fun findByConcertIdAndId(@Param("concertId") concertId: Long, @Param("id") id: Long): ConcertMusic?
+
+    @Modifying
+    fun deleteAllByConcertIdAndMusicIdNotIn(concertId: Long, musicIds: ArrayList<Long>)
+
+    @Query(
+        """
+            SELECT cm.music.id FROM ConcertMusic AS cm WHERE cm.concert.id = :concertId
+        """,
+    )
+    fun findMusicIdAllByConcertId(@Param("concertId") concertId: Long): Set<Long>
 }
