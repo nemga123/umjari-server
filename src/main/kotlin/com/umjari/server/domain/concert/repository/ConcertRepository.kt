@@ -13,7 +13,7 @@ interface ConcertRepository : JpaRepository<Concert, Long?>, JpaSpecificationExe
         value = """
             SELECT concert FROM Concert AS concert
                 LEFT JOIN FETCH concert.playList AS concertMusic
-                JOIN FETCH concertMusic.music
+                LEFT JOIN FETCH concertMusic.music
                 JOIN FETCH concert.region
             WHERE concert.group.id = :groupId
         """,
@@ -27,7 +27,7 @@ interface ConcertRepository : JpaRepository<Concert, Long?>, JpaSpecificationExe
         """
             SELECT concert FROM Concert AS concert
                 LEFT JOIN FETCH concert.playList AS concertMusic
-                JOIN FETCH concertMusic.music
+                LEFT JOIN FETCH concertMusic.music
                 JOIN FETCH concert.region
             WHERE concert.id = :id
         """,
