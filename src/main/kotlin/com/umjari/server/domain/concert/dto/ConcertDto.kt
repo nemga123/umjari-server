@@ -162,7 +162,23 @@ class ConcertDto {
         val fee: Int,
         val region: String,
         val regionDetail: String,
+        val setList: List<ConcertMusicDto.ConcertSetResponse>,
     ) {
+        constructor(concert: Concert, playList: List<ConcertMusic>) : this(
+            id = concert.id,
+            groupId = concert.group.id,
+            title = concert.title,
+            subtitle = concert.subtitle,
+            posterImg = concert.posterImg,
+            concertDate = SimpleDateFormat("yyyy-MM-dd").format(concert.concertDate),
+            concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
+            concertRunningTime = concert.concertRunningTime,
+            fee = concert.fee,
+            region = concert.region.toString(),
+            regionDetail = concert.regionDetail,
+            setList = playList.map { ConcertMusicDto.ConcertSetResponse(it) },
+        )
+
         constructor(concert: Concert) : this(
             id = concert.id,
             groupId = concert.group.id,
@@ -175,6 +191,7 @@ class ConcertDto {
             fee = concert.fee,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
+            setList = concert.playList.sortedBy { it.id }.map { ConcertMusicDto.ConcertSetResponse(it) },
         )
     }
 }
