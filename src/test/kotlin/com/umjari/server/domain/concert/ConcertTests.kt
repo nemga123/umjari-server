@@ -509,6 +509,8 @@ class ConcertTests {
             status().isOk,
         ).andExpect(
             jsonPath("$.contents.length()").value(1),
+        ).andExpect(
+            jsonPath("$.contents[0].setList.length()").value(1),
         )
 
         mockMvc.perform(

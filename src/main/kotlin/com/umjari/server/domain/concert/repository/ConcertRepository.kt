@@ -9,11 +9,27 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface ConcertRepository : JpaRepository<Concert, Long?>, JpaSpecificationExecutor<Concert> {
-    fun getConcertsByGroupId(groupId: Long, pageable: Pageable): Page<Concert>
+    @Query(
+        value = """
+            SELECT concert FROM Concert AS concert
+                LEFT JOIN FETCH concert.playList AS concertMusic
+                LEFT JOIN FETCH concertMusic.music
+                JOIN FETCH concert.region
+            WHERE concert.group.id = :groupId
+        """,
+        countQuery = """
+            SELECT COUNT (concert) FROM Concert AS concert WHERE concert.group.id = :groupId
+        """,
+    )
+    fun getConcertsByGroupId(@Param("groupId") groupId: Long, pageable: Pageable): Page<Concert>
 
     @Query(
         """
-            SELECT concert FROM Concert AS concert LEFT JOIN FETCH concert.playList WHERE concert.id = :id
+            SELECT concert FROM Concert AS concert
+                LEFT JOIN FETCH concert.playList AS concertMusic
+                LEFT JOIN FETCH concertMusic.music
+                JOIN FETCH concert.region
+            WHERE concert.id = :id
         """,
     )
     fun getConcertByIdFetchJoinConcertMusic(@Param("id") id: Long): Concert?
