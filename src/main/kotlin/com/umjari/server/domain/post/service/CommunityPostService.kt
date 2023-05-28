@@ -8,6 +8,8 @@ import com.umjari.server.domain.post.exception.PostPermissionNotAuthorizedExcept
 import com.umjari.server.domain.post.model.CommunityPost
 import com.umjari.server.domain.post.repository.CommunityPostRepository
 import com.umjari.server.domain.user.model.User
+import com.umjari.server.global.pagination.PageResponse
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.IllegalArgumentException
@@ -79,6 +81,22 @@ class CommunityPostService(
         } else {
             CommunityPostDto.NotAnonymousPostDetailResponse(post, user)
         }
+    }
+
+    fun getCommunityPostListByBoard(
+        boardName: String,
+        pageable: Pageable,
+        currentUser: User?,
+    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
+        val postList = communityPostRepository.findByBoard(boardNameToBoardType(boardName), pageable)
+        val postResponses = postList.map {
+            if (it.isAnonymous) {
+                CommunityPostDto.AnonymousPostSimpleResponse(it, currentUser)
+            } else {
+                CommunityPostDto.NotAnonymousPostSimpleResponse(it, currentUser)
+            }
+        }
+        return PageResponse(postResponses, pageable.pageNumber)
     }
 
     private fun boardNameToBoardType(boardName: String): BoardType {

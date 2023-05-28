@@ -4,8 +4,12 @@ import com.umjari.server.domain.post.dto.CommunityPostDto
 import com.umjari.server.domain.post.service.CommunityPostService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
+import com.umjari.server.global.pagination.PageResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -64,5 +68,19 @@ class PostController(
         @CurrentUser user: User,
     ): CommunityPostDto.PostDetailResponse {
         return communityPostService.getCommunityPost(boardName, postId, user)
+    }
+
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getCommunityPost(
+        @PathVariable("board_type") boardName: String,
+        @PageableDefault(
+            size = 20,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+        @CurrentUser user: User?,
+    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
+        return communityPostService.getCommunityPostListByBoard(boardName, pageable, user)
     }
 }

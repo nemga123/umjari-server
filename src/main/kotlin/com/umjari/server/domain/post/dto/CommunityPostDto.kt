@@ -30,6 +30,55 @@ class CommunityPostDto {
         val isAnonymous: Boolean,
     )
 
+    sealed class PostSimpleResponse {
+        abstract val id: Long
+        abstract val board: String
+        abstract val title: String
+        abstract val replyCount: Int
+        abstract val isAnonymous: Boolean
+        abstract val isAuthor: Boolean
+    }
+
+    data class AnonymousPostSimpleResponse(
+        override val id: Long,
+        override val board: String,
+        override val title: String,
+        override val replyCount: Int,
+        override val isAnonymous: Boolean,
+        override val isAuthor: Boolean,
+        val nickname: String,
+    ) : PostSimpleResponse() {
+        constructor(post: CommunityPost, currentUser: User?) : this(
+            id = post.id,
+            board = post.board.boardType,
+            title = post.title,
+            replyCount = post.replies.size,
+            isAnonymous = post.isAnonymous,
+            isAuthor = post.author.id == currentUser?.id,
+            nickname = post.authorNickname,
+        )
+    }
+
+    data class NotAnonymousPostSimpleResponse(
+        override val id: Long,
+        override val board: String,
+        override val title: String,
+        override val replyCount: Int,
+        override val isAnonymous: Boolean,
+        override val isAuthor: Boolean,
+        val authorInfo: UserDto.SimpleUserDto,
+    ) : PostSimpleResponse() {
+        constructor(post: CommunityPost, currentUser: User?) : this(
+            id = post.id,
+            board = post.board.boardType,
+            title = post.title,
+            replyCount = post.replies.size,
+            isAnonymous = post.isAnonymous,
+            isAuthor = post.author.id == currentUser?.id,
+            authorInfo = UserDto.SimpleUserDto(post.author),
+        )
+    }
+
     sealed class PostDetailResponse {
         abstract val id: Long
         abstract val board: String

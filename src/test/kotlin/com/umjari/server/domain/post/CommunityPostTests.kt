@@ -163,6 +163,15 @@ class CommunityPostTests {
             status().isCreated,
         )
 
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/board/VIOLIN/post/2/reply/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(anonymousReply)
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isCreated,
+        )
+
         val notAnonymousReply = """
             {
               "content": "CONTENT",
@@ -172,6 +181,15 @@ class CommunityPostTests {
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/board/VIOLIN/post/1/reply/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(notAnonymousReply)
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isCreated,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/board/VIOLIN/post/2/reply/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(notAnonymousReply)
                 .header("Authorization", userToken1),
@@ -214,6 +232,28 @@ class CommunityPostTests {
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/100/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(4)
+    fun testGetPostList() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(2),
+        ).andExpect(
+            jsonPath("$.contents[1].replyCount").value(2),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/NOT_FOUND/post/")
                 .header("Authorization", userToken1),
         ).andExpect(
             status().isNotFound,

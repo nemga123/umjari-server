@@ -62,6 +62,8 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/participant/", "GET"),
                 AntPathRequestMatcher("/api/v1/user/profile-name/**/joined-concert/", "GET"),
                 AntPathRequestMatcher("/api/v1/user/profile-name/**/joined-concert/poster/", "GET"),
+                AntPathRequestMatcher("/api/v1/board/**/post/", "GET"),
+                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "GET"),
             ).permitAll()
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
@@ -82,7 +84,6 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/concert-music/{\\d+}/participant/", "PUT"),
                 AntPathRequestMatcher("/api/v1/concert/{\\d+}/concert-music/{\\d+}/participant/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/board/**/post/", "POST"),
-                AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "PUT"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/", "POST"),
