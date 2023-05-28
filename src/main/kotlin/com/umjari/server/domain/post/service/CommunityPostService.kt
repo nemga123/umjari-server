@@ -1,6 +1,6 @@
 package com.umjari.server.domain.post.service
 
-import com.umjari.server.domain.group.model.Instrument
+import com.umjari.server.domain.post.dto.BoardType
 import com.umjari.server.domain.post.dto.CommunityPostDto
 import com.umjari.server.domain.post.exception.BoardNameNotFoundException
 import com.umjari.server.domain.post.exception.PostIdNotFoundException
@@ -23,7 +23,7 @@ class CommunityPostService(
     ): CommunityPostDto.PostDetailResponse {
         val post = CommunityPost(
             author = user,
-            board = boardNameToInstrumentEnum(boardName),
+            board = boardNameToBoardType(boardName),
             authorNickname = user.nickname,
             title = createCommunityPostRequest.title!!,
             content = createCommunityPostRequest.content!!,
@@ -45,7 +45,7 @@ class CommunityPostService(
         updateCommunityPostRequest: CommunityPostDto.UpdateCommunityPostRequest,
         user: User,
     ) {
-        val post = communityPostRepository.findByBoardAndId(boardNameToInstrumentEnum(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
         if (post.author.id != user.id) throw PostPermissionNotAuthorizedException()
@@ -62,7 +62,7 @@ class CommunityPostService(
 
     @Transactional
     fun deleteCommunityPost(boardName: String, postId: Long, user: User) {
-        val post = communityPostRepository.findByBoardAndId(boardNameToInstrumentEnum(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
         if (post.author.id != user.id) throw PostPermissionNotAuthorizedException()
@@ -71,7 +71,7 @@ class CommunityPostService(
     }
 
     fun getCommunityPost(boardName: String, postId: Long, user: User): CommunityPostDto.PostDetailResponse {
-        val post = communityPostRepository.findByBoardAndId(boardNameToInstrumentEnum(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
         return if (post.isAnonymous) {
@@ -81,9 +81,9 @@ class CommunityPostService(
         }
     }
 
-    private fun boardNameToInstrumentEnum(boardName: String): Instrument {
+    private fun boardNameToBoardType(boardName: String): BoardType {
         try {
-            return Instrument.valueOf(boardName.uppercase())
+            return BoardType.valueOf(boardName.uppercase())
         } catch (e: IllegalArgumentException) {
             throw BoardNameNotFoundException(boardName.uppercase())
         }

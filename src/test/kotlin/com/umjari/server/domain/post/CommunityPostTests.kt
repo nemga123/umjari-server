@@ -256,6 +256,15 @@ class CommunityPostTests {
         ).andExpect(
             status().isNotFound,
         )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/NOT_BOARD/post/1/reply/100/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateReply)
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNotFound,
+        )
     }
 
     @Test

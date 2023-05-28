@@ -1,6 +1,6 @@
 package com.umjari.server.domain.post.model
 
-import com.umjari.server.domain.group.model.Instrument
+import com.umjari.server.domain.post.dto.BoardType
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseTimeEntity
 import jakarta.persistence.CascadeType
@@ -23,7 +23,7 @@ class CommunityPost(
     val author: User,
 
     @field:NotNull
-    var board: Instrument,
+    var board: BoardType,
 
     @field:NotBlank
     var title: String,

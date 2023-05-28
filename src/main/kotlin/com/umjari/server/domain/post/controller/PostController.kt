@@ -1,7 +1,6 @@
 package com.umjari.server.domain.post.controller
 
 import com.umjari.server.domain.post.dto.CommunityPostDto
-import com.umjari.server.domain.post.service.CommunityPostReplyService
 import com.umjari.server.domain.post.service.CommunityPostService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -20,15 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "community post", description = "커뮤니티 게시글 APIs")
 @RestController
-@RequestMapping("/api/v1/board/{inst_name}/post")
+@RequestMapping("/api/v1/board/{board_type}/post")
 class PostController(
     private val communityPostService: CommunityPostService,
-    private val communityPostReplyService: CommunityPostReplyService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun createCommunityPost(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @Valid @RequestBody
         createCommunityPostRequest: CommunityPostDto.CreateCommunityPostRequest,
         @CurrentUser user: User,
@@ -39,7 +37,7 @@ class PostController(
     @PutMapping("/{post_id}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updateCommunityPost(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
         @Valid @RequestBody
         updateCommunityPostRequest: CommunityPostDto.UpdateCommunityPostRequest,
@@ -51,7 +49,7 @@ class PostController(
     @DeleteMapping("/{post_id}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteCommunityPost(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
         @CurrentUser user: User,
     ) {
@@ -61,7 +59,7 @@ class PostController(
     @GetMapping("/{post_id}/")
     @ResponseStatus(HttpStatus.OK)
     fun getCommunityPost(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
         @CurrentUser user: User,
     ): CommunityPostDto.PostDetailResponse {
