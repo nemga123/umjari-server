@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "community post reply", description = "커뮤니티 댓글 APIs")
 @RestController
-@RequestMapping("/api/v1/board/{inst_name}/post/{post_id}/reply")
+@RequestMapping("/api/v1/board/{board_type}/post/{post_id}/reply")
 class PostReplyController(
     private val communityPostReplyService: CommunityPostReplyService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun createPostReply(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
         @Valid @RequestBody
         createReplyRequest: PostReplyDto.CreateReplyRequest,
@@ -37,7 +37,7 @@ class PostReplyController(
     @PutMapping("/{reply_id}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updatePostReply(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
         @PathVariable("reply_id") replyId: Long,
         @Valid @RequestBody
@@ -50,7 +50,7 @@ class PostReplyController(
     @DeleteMapping("/{reply_id}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deletePostReply(
-        @PathVariable("inst_name") boardName: String,
+        @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
         @PathVariable("reply_id") replyId: Long,
         @CurrentUser user: User,

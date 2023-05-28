@@ -1,6 +1,6 @@
 package com.umjari.server.domain.post.repository
 
-import com.umjari.server.domain.group.model.Instrument
+import com.umjari.server.domain.post.dto.BoardType
 import com.umjari.server.domain.post.model.CommunityPost
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -13,5 +13,5 @@ interface CommunityPostRepository : JpaRepository<CommunityPost, Long?> {
                 WHERE post.board = :board AND post.id = :id
         """,
     )
-    fun findByBoardAndId(@Param("board") board: Instrument, @Param("id") id: Long): CommunityPost?
+    fun findByBoardAndId(@Param("board") board: BoardType, @Param("id") id: Long): CommunityPost?
 }

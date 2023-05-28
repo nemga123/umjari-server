@@ -1,6 +1,5 @@
 package com.umjari.server.domain.post.dto
 
-import com.umjari.server.domain.group.model.Instrument
 import com.umjari.server.domain.post.model.CommunityPost
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
@@ -21,7 +20,7 @@ class CommunityPostDto {
 
     data class UpdateCommunityPostRequest(
         @field:NotNull
-        val board: Instrument,
+        val board: BoardType,
         @field:NotBlank
         @field:Size(max = 255)
         val title: String?,
@@ -57,7 +56,7 @@ class CommunityPostDto {
     ) : PostDetailResponse() {
         constructor(post: CommunityPost, user: User) : this(
             id = post.id,
-            board = post.board.instrumentName,
+            board = post.board.boardType,
             title = post.title,
             content = post.content,
             isAnonymous = post.isAnonymous,
@@ -79,7 +78,7 @@ class CommunityPostDto {
 
         constructor(post: CommunityPost, user: User, replies: List<PostReplyDto.PostReplyResponse>) : this(
             id = post.id,
-            board = post.board.instrumentName,
+            board = post.board.boardType,
             title = post.title,
             content = post.content,
             isAnonymous = post.isAnonymous,
@@ -105,7 +104,7 @@ class CommunityPostDto {
     ) : PostDetailResponse() {
         constructor(post: CommunityPost, user: User) : this(
             id = post.id,
-            board = post.board.instrumentName,
+            board = post.board.boardType,
             title = post.title,
             content = post.content,
             isAnonymous = post.isAnonymous,
@@ -127,7 +126,7 @@ class CommunityPostDto {
 
         constructor(post: CommunityPost, user: User, replies: List<PostReplyDto.PostReplyResponse>) : this(
             id = post.id,
-            board = post.board.instrumentName,
+            board = post.board.boardType,
             title = post.title,
             content = post.content,
             isAnonymous = post.isAnonymous,
