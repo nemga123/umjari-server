@@ -41,23 +41,16 @@ class ImageService(
         imageRepository.delete(image)
     }
 
-    data class FileMetaData(
-        val userId: String,
-        val fileName: String,
-    )
     fun removeImageByUrl(url: String) {
-        val fileMetaData = parseS3Url(url)
-        val image = imageRepository.findByFileName(fileMetaData.fileName)
+        val fileName = urlToFileName(url)
+        val image = imageRepository.findByFileName(fileName)
             ?: throw ImageTokenNotFoundException()
 
         imageRepository.delete(image)
     }
 
-    private fun parseS3Url(url: String): FileMetaData {
+    private fun urlToFileName(url: String): String {
         val urlParts = url.split("/")
-        return FileMetaData(
-            userId = urlParts[4],
-            fileName = urlParts[5],
-        )
+        return urlParts[5]
     }
 }

@@ -33,7 +33,7 @@ class ImageController(
     }
 
     @DeleteMapping("/")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun removeImage(
         @Valid @RequestBody
         token: ImageDto.ImageTokenRequest,

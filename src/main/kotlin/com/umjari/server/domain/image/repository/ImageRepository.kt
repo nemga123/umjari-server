@@ -8,16 +8,23 @@ import org.springframework.data.repository.query.Param
 interface ImageRepository : JpaRepository<Image, Long?> {
     @Query(
         """
-        SELECT image FROM Image AS image JOIN FETCH image.owner.userId WHERE image.token = :token
-    """,
+            SELECT image FROM Image AS image JOIN FETCH image.owner WHERE image.token = :token
+        """,
     )
     fun findByToken(@Param("token") token: String): Image?
+
+    @Query(
+        """
+            SELECT image FROM Image AS image JOIN FETCH image.owner WHERE image.id = :id
+        """,
+    )
+    fun findById(@Param("id") id: Int): Image?
 
     fun findAllByTokenIn(token: List<String>): List<Image>
 
     @Query(
         """
-        SELECT image FROM Image AS image JOIN FETCH image.owner.userId WHERE image.fileName = :fileName
+        SELECT image FROM Image AS image JOIN FETCH image.owner WHERE image.fileName = :fileName
     """,
     )
     fun findByFileName(@Param("fileName") fileName: String): Image?

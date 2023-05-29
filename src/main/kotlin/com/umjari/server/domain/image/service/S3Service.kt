@@ -8,6 +8,7 @@ import com.umjari.server.domain.image.exception.ImageNotUploadedException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.lang.Exception
 
 @Service
 class S3Service(
@@ -30,13 +31,15 @@ class S3Service(
         meta.contentLength = inputStream.available().toLong()
 
         val putObjectRequest = PutObjectRequest(bucketName, keyName, inputStream, meta)
-        amazonS3.putObject(putObjectRequest)
-            ?.let {
-                return ImageDto.ImageUrlResponse(
-                    url = amazonS3.getUrl(bucketName, keyName).toString(),
-                    token = fileToken,
-                )
-            } ?: throw ImageNotUploadedException()
+        try {
+            amazonS3.putObject(putObjectRequest)
+        } catch (e: Exception) {
+            throw ImageNotUploadedException()
+        }
+        return ImageDto.ImageUrlResponse(
+            url = amazonS3.getUrl(bucketName, keyName).toString(),
+            token = fileToken,
+        )
     }
 
     fun removeFile(userId: String, fileName: String) {
