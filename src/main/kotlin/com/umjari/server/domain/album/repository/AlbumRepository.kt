@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param
 interface AlbumRepository : JpaRepository<Album, Long?> {
     fun existsByOwnerIdAndTitle(ownerId: Long, title: String): Boolean
 
+    fun findByIdAndOwnerId(id: Long, ownerId: Long): Album?
+
     @Query(
         value = """
             SELECT album FROM Album AS album

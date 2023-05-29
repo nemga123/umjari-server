@@ -2,7 +2,6 @@ package com.umjari.server.domain.album.service
 
 import com.umjari.server.domain.album.dto.AlbumDto
 import com.umjari.server.domain.album.exception.AlbumIdNotFoundException
-import com.umjari.server.domain.album.exception.AlbumPermissionNotAuthorizedException
 import com.umjari.server.domain.album.exception.DuplicatedUserAlbumTitleException
 import com.umjari.server.domain.album.model.Album
 import com.umjari.server.domain.album.repository.AlbumRepository
@@ -11,7 +10,6 @@ import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -47,24 +45,16 @@ class AlbumService(
     }
 
     fun updateAlbumTitle(albumId: Long, updateAlbumRequest: AlbumDto.CreateAlbumRequest, user: User) {
-        val album = albumRepository.findByIdOrNull(albumId)
+        val album = albumRepository.findByIdAndOwnerId(albumId, user.id)
             ?: throw AlbumIdNotFoundException(albumId)
-
-        if (album.owner.id != user.id) {
-            throw AlbumPermissionNotAuthorizedException()
-        }
 
         album.title = updateAlbumRequest.title
         albumRepository.save(album)
     }
 
     fun deleteAlbum(albumId: Long, user: User) {
-        val album = albumRepository.findByIdOrNull(albumId)
+        val album = albumRepository.findByIdAndOwnerId(albumId, user.id)
             ?: throw AlbumIdNotFoundException(albumId)
-
-        if (album.owner.id != user.id) {
-            throw AlbumPermissionNotAuthorizedException()
-        }
 
         albumRepository.delete(album)
     }

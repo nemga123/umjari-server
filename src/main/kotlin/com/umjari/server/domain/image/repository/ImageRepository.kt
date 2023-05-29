@@ -13,6 +13,8 @@ interface ImageRepository : JpaRepository<Image, Long?> {
     )
     fun findByToken(@Param("token") token: String): Image?
 
+    fun findAllByTokenIn(token: List<String>): List<Image>
+
     @Query(
         """
         SELECT image FROM Image AS image JOIN FETCH image.owner.userId WHERE image.fileName = :fileName
