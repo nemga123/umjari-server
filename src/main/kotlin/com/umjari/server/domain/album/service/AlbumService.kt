@@ -48,6 +48,10 @@ class AlbumService(
         val album = albumRepository.findByIdAndOwnerId(albumId, user.id)
             ?: throw AlbumIdNotFoundException(albumId)
 
+        if (albumRepository.existsByOwnerIdAndTitle(user.id, updateAlbumRequest.title)) {
+            throw DuplicatedUserAlbumTitleException(updateAlbumRequest.title)
+        }
+
         album.title = updateAlbumRequest.title
         albumRepository.save(album)
     }

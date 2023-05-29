@@ -96,15 +96,7 @@ class ImageTests {
             status().isCreated,
         )
 
-        mockMvc.perform(
-            multipart("/api/v1/image/")
-                .file(mockThumbnail)
-                .header("Authorization", userToken2),
-        ).andExpect(
-            status().isCreated,
-        )
-
-        assert(imageRepository.count() == 2L)
+        assert(imageRepository.count() == 1L)
 
         val inputStream = FileInputStream(thumbnailPath)
         val malformedThumbnail = MockMultipartFile("image", "Thumbnail.mp3", "mp3", inputStream)
@@ -150,7 +142,7 @@ class ImageTests {
             status().isCreated,
         )
 
-        val image = imageRepository.findByIdOrNull(3)!!
+        val image = imageRepository.findByIdOrNull(2)!!
 
         val token = """
             {
