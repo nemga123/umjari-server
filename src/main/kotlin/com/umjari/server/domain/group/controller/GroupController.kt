@@ -86,7 +86,7 @@ class GroupController(
     fun getConcertListByGroupId(
         @PathVariable("group_id") groupId: Long,
         @PageableDefault(
-            size = 20,
+            size = 10,
             sort = ["createdAt"],
             direction = Direction.DESC,
         ) pageable: Pageable,
