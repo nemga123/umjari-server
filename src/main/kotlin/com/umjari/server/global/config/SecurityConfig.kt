@@ -64,6 +64,8 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/user/profile-name/**/joined-concert/poster/", "GET"),
                 AntPathRequestMatcher("/api/v1/board/**/post/", "GET"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "GET"),
+                AntPathRequestMatcher("/api/v1/album/profile-name/**/", "GET"),
+                AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "GET"),
             ).permitAll()
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
@@ -89,6 +91,11 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/", "POST"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/{\\d+}/", "PUT"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/reply/{\\d+}/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/album/", "POST"),
+                AntPathRequestMatcher("/api/v1/album/{\\d+}/", "PUT"),
+                AntPathRequestMatcher("/api/v1/album/{\\d+}/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "POST"),
+                AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "DELETE"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
