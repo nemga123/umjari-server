@@ -38,7 +38,6 @@ class ImageService(
             throw ImagePermissionNotAuthorizedException()
         }
 
-        s3Service.removeFile(user.userId, image.fileName)
         imageRepository.delete(image)
     }
 
@@ -51,7 +50,6 @@ class ImageService(
         val image = imageRepository.findByFileName(fileMetaData.fileName)
             ?: throw ImageTokenNotFoundException()
 
-        s3Service.removeFile(fileMetaData.userId, fileMetaData.fileName)
         imageRepository.delete(image)
     }
 
