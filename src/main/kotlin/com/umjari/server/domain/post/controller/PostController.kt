@@ -65,7 +65,7 @@ class PostController(
     fun getCommunityPost(
         @PathVariable("board_type") boardName: String,
         @PathVariable("post_id") postId: Long,
-        @CurrentUser user: User,
+        @CurrentUser user: User?,
     ): CommunityPostDto.PostDetailResponse {
         return communityPostService.getCommunityPost(boardName, postId, user)
     }

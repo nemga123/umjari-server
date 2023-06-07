@@ -30,14 +30,14 @@ class PostReplyDto {
         val nickname: String,
         override val isAuthor: Boolean,
     ) : PostReplyResponse() {
-        constructor(reply: CommunityPostReply, user: User) : this(
+        constructor(reply: CommunityPostReply, user: User?) : this(
             id = reply.id,
             content = reply.content,
             createAt = reply.createdAt!!.toString(),
             updatedAt = reply.updatedAt!!.toString(),
             isAnonymous = reply.isAnonymous,
             nickname = reply.authorNickname,
-            isAuthor = reply.author.id == user.id,
+            isAuthor = reply.author.id == user?.id,
         )
     }
 
@@ -50,14 +50,14 @@ class PostReplyDto {
         val authorInfo: UserDto.SimpleUserDto,
         override val isAuthor: Boolean,
     ) : PostReplyResponse() {
-        constructor(reply: CommunityPostReply, user: User) : this(
+        constructor(reply: CommunityPostReply, user: User?) : this(
             id = reply.id,
             content = reply.content,
             createAt = reply.createdAt!!.toString(),
             updatedAt = reply.updatedAt!!.toString(),
             isAnonymous = reply.isAnonymous,
             authorInfo = UserDto.SimpleUserDto(reply.author),
-            isAuthor = reply.author.id == user.id,
+            isAuthor = reply.author.id == user?.id,
         )
     }
 }
