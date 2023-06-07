@@ -231,6 +231,41 @@ class CommunityPostTests {
         )
 
         mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/1/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.nickname").exists(),
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/2/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/1/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/2/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.isAuthor").value(false),
+        )
+
+        mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/100/")
                 .header("Authorization", userToken1),
         ).andExpect(
@@ -250,6 +285,31 @@ class CommunityPostTests {
             jsonPath("$.contents.length()").value(2),
         ).andExpect(
             jsonPath("$.contents[1].replyCount").value(2),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(2),
+        ).andExpect(
+            jsonPath("$.contents[0].isAuthor").value(false),
+        ).andExpect(
+            jsonPath("$.contents[1].isAuthor").value(false),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(2),
+        ).andExpect(
+            jsonPath("$.contents[0].isAuthor").value(false),
+        ).andExpect(
+            jsonPath("$.contents[1].isAuthor").value(false),
         )
 
         mockMvc.perform(

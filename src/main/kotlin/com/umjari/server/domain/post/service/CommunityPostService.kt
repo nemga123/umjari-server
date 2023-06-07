@@ -35,9 +35,9 @@ class CommunityPostService(
         val postObject = communityPostRepository.save(post)
 
         return if (postObject.isAnonymous) {
-            CommunityPostDto.AnonymousPostDetailResponse(postObject, user, emptyList())
+            CommunityPostDto.AnonymousPostDetailResponse(postObject, emptyList())
         } else {
-            CommunityPostDto.NotAnonymousPostDetailResponse(postObject, user, emptyList())
+            CommunityPostDto.NotAnonymousPostDetailResponse(postObject, emptyList())
         }
     }
 
@@ -72,7 +72,7 @@ class CommunityPostService(
         communityPostRepository.delete(post)
     }
 
-    fun getCommunityPost(boardName: String, postId: Long, user: User): CommunityPostDto.PostDetailResponse {
+    fun getCommunityPost(boardName: String, postId: Long, user: User?): CommunityPostDto.PostDetailResponse {
         val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 

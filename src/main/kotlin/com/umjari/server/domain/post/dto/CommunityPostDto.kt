@@ -103,7 +103,7 @@ class CommunityPostDto {
         val nickname: String,
         override val replies: List<PostReplyDto.PostReplyResponse>,
     ) : PostDetailResponse() {
-        constructor(post: CommunityPost, user: User) : this(
+        constructor(post: CommunityPost, user: User?) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -111,7 +111,7 @@ class CommunityPostDto {
             isAnonymous = post.isAnonymous,
             createAt = post.createdAt.toString(),
             updatedAt = post.updatedAt.toString(),
-            isAuthor = post.author.id == user.id,
+            isAuthor = post.author.id == user?.id,
             nickname = post.authorNickname,
             replies = post.replies.map {
                 if (it.isAnonymous) {
@@ -125,7 +125,7 @@ class CommunityPostDto {
             },
         )
 
-        constructor(post: CommunityPost, user: User, replies: List<PostReplyDto.PostReplyResponse>) : this(
+        constructor(post: CommunityPost, replies: List<PostReplyDto.PostReplyResponse>) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -133,7 +133,7 @@ class CommunityPostDto {
             isAnonymous = post.isAnonymous,
             createAt = post.createdAt.toString(),
             updatedAt = post.updatedAt.toString(),
-            isAuthor = post.author.id == user.id,
+            isAuthor = true,
             nickname = post.authorNickname,
             replies = replies,
         )
@@ -151,7 +151,7 @@ class CommunityPostDto {
         val authorInfo: UserDto.SimpleUserDto,
         override val replies: List<PostReplyDto.PostReplyResponse>,
     ) : PostDetailResponse() {
-        constructor(post: CommunityPost, user: User) : this(
+        constructor(post: CommunityPost, user: User?) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -159,7 +159,7 @@ class CommunityPostDto {
             isAnonymous = post.isAnonymous,
             createAt = post.createdAt.toString(),
             updatedAt = post.updatedAt.toString(),
-            isAuthor = post.author.id == user.id,
+            isAuthor = post.author.id == user?.id,
             authorInfo = UserDto.SimpleUserDto(post.author),
             replies = post.replies.map {
                 if (it.isAnonymous) {
@@ -173,7 +173,7 @@ class CommunityPostDto {
             },
         )
 
-        constructor(post: CommunityPost, user: User, replies: List<PostReplyDto.PostReplyResponse>) : this(
+        constructor(post: CommunityPost, replies: List<PostReplyDto.PostReplyResponse>) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -181,7 +181,7 @@ class CommunityPostDto {
             isAnonymous = post.isAnonymous,
             createAt = post.createdAt.toString(),
             updatedAt = post.updatedAt.toString(),
-            isAuthor = post.author.id == user.id,
+            isAuthor = true,
             authorInfo = UserDto.SimpleUserDto(post.author),
             replies = replies,
         )
