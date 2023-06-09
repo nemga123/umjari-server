@@ -19,6 +19,7 @@ class PostReplyDto {
         abstract val updatedAt: String
         abstract val isAnonymous: Boolean
         abstract val isAuthor: Boolean
+        abstract val isDeleted: Boolean
     }
 
     data class AnonymousPostReplyResponse(
@@ -29,15 +30,17 @@ class PostReplyDto {
         override val isAnonymous: Boolean,
         val nickname: String,
         override val isAuthor: Boolean,
+        override val isDeleted: Boolean,
     ) : PostReplyResponse() {
         constructor(reply: CommunityPostReply, user: User?) : this(
             id = reply.id,
-            content = reply.content,
+            content = if (reply.isDeleted) "삭제된 댓글입니다." else reply.content,
             createAt = reply.createdAt!!.toString(),
             updatedAt = reply.updatedAt!!.toString(),
             isAnonymous = reply.isAnonymous,
             nickname = reply.authorNickname,
             isAuthor = reply.author.id == user?.id,
+            isDeleted = reply.isDeleted,
         )
     }
 
@@ -49,15 +52,17 @@ class PostReplyDto {
         override val isAnonymous: Boolean,
         val authorInfo: UserDto.SimpleUserDto,
         override val isAuthor: Boolean,
+        override val isDeleted: Boolean,
     ) : PostReplyResponse() {
         constructor(reply: CommunityPostReply, user: User?) : this(
             id = reply.id,
-            content = reply.content,
+            content = if (reply.isDeleted) "삭제된 댓글입니다." else reply.content,
             createAt = reply.createdAt!!.toString(),
             updatedAt = reply.updatedAt!!.toString(),
             isAnonymous = reply.isAnonymous,
             authorInfo = UserDto.SimpleUserDto(reply.author),
             isAuthor = reply.author.id == user?.id,
+            isDeleted = reply.isDeleted,
         )
     }
 }

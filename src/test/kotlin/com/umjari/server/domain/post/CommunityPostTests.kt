@@ -388,10 +388,28 @@ class CommunityPostTests {
         assert(communityPostReplyRepository.findByIdOrNull(1)!!.isDeleted)
 
         mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/board/VIOLIN/post/1/reply/3/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+        assert(communityPostReplyRepository.findByIdOrNull(3)!!.isDeleted)
+
+        mockMvc.perform(
             MockMvcRequestBuilders.delete("/api/v1/board/VIOLIN/post/1/reply/1/")
                 .header("Authorization", userToken2),
         ).andExpect(
             status().isForbidden,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/1/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.replies[0].isDeleted").value(true),
+        ).andExpect(
+            jsonPath("$.replies[1].isDeleted").value(true),
         )
     }
 
