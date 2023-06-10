@@ -88,7 +88,34 @@ class CommunityPostService(
         pageable: Pageable,
         currentUser: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
+        if (boardName.uppercase() == "ALL") {
+            return getCommunityAllPostList(pageable, currentUser)
+        } else {
+            return getCommunityBoardPostList(boardName, pageable, currentUser)
+        }
+    }
+
+    private fun getCommunityBoardPostList(
+        boardName: String,
+        pageable: Pageable,
+        currentUser: User?,
+    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
         val postList = communityPostRepository.findByBoard(boardNameToBoardType(boardName), pageable)
+        val postResponses = postList.map {
+            if (it.isAnonymous) {
+                CommunityPostDto.AnonymousPostSimpleResponse(it, currentUser)
+            } else {
+                CommunityPostDto.NotAnonymousPostSimpleResponse(it, currentUser)
+            }
+        }
+        return PageResponse(postResponses, pageable.pageNumber)
+    }
+
+    private fun getCommunityAllPostList(
+        pageable: Pageable,
+        currentUser: User?,
+    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
+        val postList = communityPostRepository.findAll(pageable)
         val postResponses = postList.map {
             if (it.isAnonymous) {
                 CommunityPostDto.AnonymousPostSimpleResponse(it, currentUser)

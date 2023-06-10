@@ -318,6 +318,14 @@ class CommunityPostTests {
         ).andExpect(
             status().isNotFound,
         )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/ALL/post/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(2),
+        )
     }
 
     @Test
