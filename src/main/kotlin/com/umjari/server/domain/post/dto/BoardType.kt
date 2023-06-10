@@ -1,5 +1,8 @@
 package com.umjari.server.domain.post.dto
 
+import com.umjari.server.domain.post.exception.BoardNameNotFoundException
+import java.lang.IllegalArgumentException
+
 enum class BoardType(
     val boardType: String,
 ) {
@@ -28,4 +31,15 @@ enum class BoardType(
     TUBA("튜바"),
     PERCUSSION_INSTRUMENT("타악기"),
     OTHERS("기타 악기"),
+    ;
+
+    companion object {
+        fun boardNameToBoardType(boardName: String): BoardType {
+            try {
+                return BoardType.valueOf(boardName.uppercase())
+            } catch (e: IllegalArgumentException) {
+                throw BoardNameNotFoundException(boardName.uppercase())
+            }
+        }
+    }
 }

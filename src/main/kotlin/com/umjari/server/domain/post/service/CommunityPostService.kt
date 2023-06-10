@@ -2,21 +2,24 @@ package com.umjari.server.domain.post.service
 
 import com.umjari.server.domain.post.dto.BoardType
 import com.umjari.server.domain.post.dto.CommunityPostDto
-import com.umjari.server.domain.post.exception.BoardNameNotFoundException
 import com.umjari.server.domain.post.exception.PostIdNotFoundException
 import com.umjari.server.domain.post.exception.PostPermissionNotAuthorizedException
 import com.umjari.server.domain.post.model.CommunityPost
+import com.umjari.server.domain.post.model.PostLike
 import com.umjari.server.domain.post.repository.CommunityPostRepository
+import com.umjari.server.domain.post.repository.PostLikeRepository
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.pagination.PageResponse
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.lang.IllegalArgumentException
 
 @Service
 class CommunityPostService(
     private val communityPostRepository: CommunityPostRepository,
+    private val postLikeRepository: PostLikeRepository,
+    private val postLikeService: PostLikeService,
 ) {
     fun createCommunityPost(
         boardName: String,
@@ -25,7 +28,7 @@ class CommunityPostService(
     ): CommunityPostDto.PostDetailResponse {
         val post = CommunityPost(
             author = user,
-            board = boardNameToBoardType(boardName),
+            board = BoardType.boardNameToBoardType(boardName),
             authorNickname = user.nickname,
             title = createCommunityPostRequest.title!!,
             content = createCommunityPostRequest.content!!,
@@ -47,7 +50,7 @@ class CommunityPostService(
         updateCommunityPostRequest: CommunityPostDto.UpdateCommunityPostRequest,
         user: User,
     ) {
-        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
         if (post.author.id != user.id) throw PostPermissionNotAuthorizedException()
@@ -64,7 +67,7 @@ class CommunityPostService(
 
     @Transactional
     fun deleteCommunityPost(boardName: String, postId: Long, user: User) {
-        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
         if (post.author.id != user.id) throw PostPermissionNotAuthorizedException()
@@ -73,13 +76,13 @@ class CommunityPostService(
     }
 
     fun getCommunityPost(boardName: String, postId: Long, user: User?): CommunityPostDto.PostDetailResponse {
-        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
-
+        val likeList = postLikeRepository.getAllByPostId(postId)
         return if (post.isAnonymous) {
-            CommunityPostDto.AnonymousPostDetailResponse(post, user)
+            CommunityPostDto.AnonymousPostDetailResponse(post, user, likeList)
         } else {
-            CommunityPostDto.NotAnonymousPostDetailResponse(post, user)
+            CommunityPostDto.NotAnonymousPostDetailResponse(post, user, likeList)
         }
     }
 
@@ -88,10 +91,10 @@ class CommunityPostService(
         pageable: Pageable,
         currentUser: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
-        if (boardName.uppercase() == "ALL") {
-            return getCommunityAllPostList(pageable, currentUser)
+        return if (boardName.uppercase() == "ALL") {
+            getCommunityAllPostList(pageable, currentUser)
         } else {
-            return getCommunityBoardPostList(boardName, pageable, currentUser)
+            getCommunityBoardPostList(boardName, pageable, currentUser)
         }
     }
 
@@ -100,14 +103,10 @@ class CommunityPostService(
         pageable: Pageable,
         currentUser: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
-        val postList = communityPostRepository.findByBoard(boardNameToBoardType(boardName), pageable)
-        val postResponses = postList.map {
-            if (it.isAnonymous) {
-                CommunityPostDto.AnonymousPostSimpleResponse(it, currentUser)
-            } else {
-                CommunityPostDto.NotAnonymousPostSimpleResponse(it, currentUser)
-            }
-        }
+        val postList = communityPostRepository.findByBoard(BoardType.boardNameToBoardType(boardName), pageable)
+        val postIds = postList.map { it.id }.toList()
+        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
+        val postResponses = buildPostPageResponse(postList, postIdToLikeList, currentUser)
         return PageResponse(postResponses, pageable.pageNumber)
     }
 
@@ -116,21 +115,27 @@ class CommunityPostService(
         currentUser: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
         val postList = communityPostRepository.findAll(pageable)
-        val postResponses = postList.map {
-            if (it.isAnonymous) {
-                CommunityPostDto.AnonymousPostSimpleResponse(it, currentUser)
-            } else {
-                CommunityPostDto.NotAnonymousPostSimpleResponse(it, currentUser)
-            }
-        }
+        val postIds = postList.map { it.id }.toList()
+        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
+        val postResponses = buildPostPageResponse(postList, postIdToLikeList, currentUser)
         return PageResponse(postResponses, pageable.pageNumber)
     }
 
-    private fun boardNameToBoardType(boardName: String): BoardType {
-        try {
-            return BoardType.valueOf(boardName.uppercase())
-        } catch (e: IllegalArgumentException) {
-            throw BoardNameNotFoundException(boardName.uppercase())
+    private fun buildPostPageResponse(
+        postList: Page<CommunityPost>,
+        postIdToReplyList: Map<Long, List<PostLike>>,
+        currentUser: User?,
+    ): Page<CommunityPostDto.PostSimpleResponse> {
+        return postList.map {
+            if (it.isAnonymous) {
+                CommunityPostDto.AnonymousPostSimpleResponse(it, currentUser, postIdToReplyList[it.id] ?: emptyList())
+            } else {
+                CommunityPostDto.NotAnonymousPostSimpleResponse(
+                    it,
+                    currentUser,
+                    postIdToReplyList[it.id] ?: emptyList(),
+                )
+            }
         }
     }
 }
