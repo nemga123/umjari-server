@@ -37,7 +37,6 @@ class CommunityPostDto {
         abstract val replyCount: Int
         abstract val isAnonymous: Boolean
         abstract val isAuthor: Boolean
-        abstract val boardName: String
     }
 
     data class AnonymousPostSimpleResponse(
@@ -47,7 +46,6 @@ class CommunityPostDto {
         override val replyCount: Int,
         override val isAnonymous: Boolean,
         override val isAuthor: Boolean,
-        override val boardName: String,
         val nickname: String,
     ) : PostSimpleResponse() {
         constructor(post: CommunityPost, currentUser: User?) : this(
@@ -57,7 +55,6 @@ class CommunityPostDto {
             replyCount = post.replies.size,
             isAnonymous = post.isAnonymous,
             isAuthor = post.author.id == currentUser?.id,
-            boardName = post.board.boardType,
             nickname = post.authorNickname,
         )
     }
@@ -69,7 +66,6 @@ class CommunityPostDto {
         override val replyCount: Int,
         override val isAnonymous: Boolean,
         override val isAuthor: Boolean,
-        override val boardName: String,
         val authorInfo: UserDto.SimpleUserDto,
     ) : PostSimpleResponse() {
         constructor(post: CommunityPost, currentUser: User?) : this(
@@ -79,7 +75,6 @@ class CommunityPostDto {
             replyCount = post.replies.size,
             isAnonymous = post.isAnonymous,
             isAuthor = post.author.id == currentUser?.id,
-            boardName = post.board.boardType,
             authorInfo = UserDto.SimpleUserDto(post.author),
         )
     }
