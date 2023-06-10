@@ -402,6 +402,31 @@ class CommunityPostTests {
 
     @Test
     @Order(7)
+    fun testDeleteLike() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/100/likes/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(8)
     fun testDeleteReply(
         @Autowired communityPostReplyRepository: CommunityPostReplyRepository,
     ) {
@@ -447,7 +472,7 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     fun testDeletePost(
         @Autowired communityPostRepository: CommunityPostRepository,
     ) {
