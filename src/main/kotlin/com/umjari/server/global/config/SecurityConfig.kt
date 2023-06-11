@@ -96,6 +96,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "POST"),
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/post/{\\d+}/likes/", "PUT"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),

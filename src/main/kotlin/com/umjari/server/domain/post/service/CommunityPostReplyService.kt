@@ -2,7 +2,6 @@ package com.umjari.server.domain.post.service
 
 import com.umjari.server.domain.post.dto.BoardType
 import com.umjari.server.domain.post.dto.PostReplyDto
-import com.umjari.server.domain.post.exception.BoardNameNotFoundException
 import com.umjari.server.domain.post.exception.PostIdNotFoundException
 import com.umjari.server.domain.post.exception.ReplyIdNotFoundException
 import com.umjari.server.domain.post.exception.ReplyPermissionNotAuthorizedException
@@ -11,7 +10,6 @@ import com.umjari.server.domain.post.repository.CommunityPostReplyRepository
 import com.umjari.server.domain.post.repository.CommunityPostRepository
 import com.umjari.server.domain.user.model.User
 import org.springframework.stereotype.Service
-import java.lang.IllegalArgumentException
 
 @Service
 class CommunityPostReplyService(
@@ -24,7 +22,7 @@ class CommunityPostReplyService(
         createReplyRequest: PostReplyDto.CreateReplyRequest,
         user: User,
     ) {
-        val post = communityPostRepository.findByBoardAndId(boardNameToBoardType(boardName), postId)
+        val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
         val reply = CommunityPostReply(
@@ -46,7 +44,7 @@ class CommunityPostReplyService(
         user: User,
     ) {
         val reply = communityPostReplyRepository.getByPost_BoardAndPostIdAndId(
-            boardNameToBoardType(boardName),
+            BoardType.boardNameToBoardType(boardName),
             postId,
             replyId,
         )
@@ -64,7 +62,7 @@ class CommunityPostReplyService(
 
     fun deleteReplyOnPost(boardName: String, postId: Long, replyId: Long, user: User) {
         val reply = communityPostReplyRepository.getByPost_BoardAndPostIdAndId(
-            boardNameToBoardType(boardName),
+            BoardType.boardNameToBoardType(boardName),
             postId,
             replyId,
         )
@@ -74,13 +72,5 @@ class CommunityPostReplyService(
 
         reply.isDeleted = true
         communityPostReplyRepository.save(reply)
-    }
-
-    private fun boardNameToBoardType(boardName: String): BoardType {
-        try {
-            return BoardType.valueOf(boardName.uppercase())
-        } catch (e: IllegalArgumentException) {
-            throw BoardNameNotFoundException(boardName.uppercase())
-        }
     }
 }

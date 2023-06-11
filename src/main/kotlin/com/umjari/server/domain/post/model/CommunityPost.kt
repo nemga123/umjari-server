@@ -41,4 +41,7 @@ class CommunityPost(
     @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
     @OrderBy("createdAt ASC")
     var replies: MutableList<CommunityPostReply> = mutableListOf(),
+
+    @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
+    var likes: MutableList<PostLike> = mutableListOf(),
 ) : BaseTimeEntity()

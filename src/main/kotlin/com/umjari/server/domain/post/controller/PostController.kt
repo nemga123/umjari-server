@@ -2,6 +2,7 @@ package com.umjari.server.domain.post.controller
 
 import com.umjari.server.domain.post.dto.CommunityPostDto
 import com.umjari.server.domain.post.service.CommunityPostService
+import com.umjari.server.domain.post.service.PostLikeService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
 import com.umjari.server.global.pagination.PageResponse
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/board/{board_type}/post")
 class PostController(
     private val communityPostService: CommunityPostService,
+    private val postLikeService: PostLikeService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -82,5 +84,15 @@ class PostController(
         @CurrentUser user: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
         return communityPostService.getCommunityPostListByBoard(boardName, pageable, user)
+    }
+
+    @PutMapping("/{post_id}/likes/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateLikeStatus(
+        @PathVariable("board_type") boardName: String,
+        @PathVariable("post_id") postId: Long,
+        @CurrentUser user: User,
+    ) {
+        postLikeService.updateLikeStatus(boardName, postId, user)
     }
 }

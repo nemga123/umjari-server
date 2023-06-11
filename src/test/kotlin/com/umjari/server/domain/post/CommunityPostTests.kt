@@ -209,6 +209,70 @@ class CommunityPostTests {
 
     @Test
     @Order(4)
+    fun testLikeToPost() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/100/likes/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(4)
+    fun testLikeToReply() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/1/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/reply/2/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/3/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/reply/4/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/100/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(5)
     fun testRetrievePost() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/1/")
@@ -274,7 +338,7 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     fun testGetPostList() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/")
@@ -329,7 +393,7 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     fun testUpdateReply() {
         val updateReply = """
             {
@@ -376,7 +440,39 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
+    fun testDeleteLike() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/1/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/3/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+    }
+
+    @Test
+    @Order(8)
     fun testDeleteReply(
         @Autowired communityPostReplyRepository: CommunityPostReplyRepository,
     ) {
@@ -422,7 +518,7 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(7)
+    @Order(9)
     fun testDeletePost(
         @Autowired communityPostRepository: CommunityPostRepository,
     ) {
