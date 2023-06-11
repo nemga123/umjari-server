@@ -1,6 +1,7 @@
 package com.umjari.server.domain.post.dto
 
 import com.umjari.server.domain.post.model.CommunityPostReply
+import com.umjari.server.domain.post.model.PostReplyLike
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
@@ -20,6 +21,8 @@ class PostReplyDto {
         abstract val isAnonymous: Boolean
         abstract val isAuthor: Boolean
         abstract val isDeleted: Boolean
+        abstract val likeCount: Int
+        abstract val isLiked: Boolean
     }
 
     data class AnonymousPostReplyResponse(
@@ -31,8 +34,10 @@ class PostReplyDto {
         val nickname: String,
         override val isAuthor: Boolean,
         override val isDeleted: Boolean,
+        override val likeCount: Int,
+        override val isLiked: Boolean,
     ) : PostReplyResponse() {
-        constructor(reply: CommunityPostReply, user: User?) : this(
+        constructor(reply: CommunityPostReply, user: User?, replyLikeList: List<PostReplyLike>) : this(
             id = reply.id,
             content = if (reply.isDeleted) "삭제된 댓글입니다." else reply.content,
             createAt = reply.createdAt!!.toString(),
@@ -41,6 +46,8 @@ class PostReplyDto {
             nickname = reply.authorNickname,
             isAuthor = reply.author.id == user?.id,
             isDeleted = reply.isDeleted,
+            likeCount = if (reply.isDeleted) 0 else replyLikeList.size,
+            isLiked = if (reply.isDeleted) false else replyLikeList.any { it.user.id == user?.id },
         )
     }
 
@@ -53,8 +60,10 @@ class PostReplyDto {
         val authorInfo: UserDto.SimpleUserDto,
         override val isAuthor: Boolean,
         override val isDeleted: Boolean,
+        override val likeCount: Int,
+        override val isLiked: Boolean,
     ) : PostReplyResponse() {
-        constructor(reply: CommunityPostReply, user: User?) : this(
+        constructor(reply: CommunityPostReply, user: User?, replyLikeList: List<PostReplyLike>) : this(
             id = reply.id,
             content = if (reply.isDeleted) "삭제된 댓글입니다." else reply.content,
             createAt = reply.createdAt!!.toString(),
@@ -63,6 +72,8 @@ class PostReplyDto {
             authorInfo = UserDto.SimpleUserDto(reply.author),
             isAuthor = reply.author.id == user?.id,
             isDeleted = reply.isDeleted,
+            likeCount = if (reply.isDeleted) 0 else replyLikeList.size,
+            isLiked = if (reply.isDeleted) false else replyLikeList.any { it.user.id == user?.id },
         )
     }
 }

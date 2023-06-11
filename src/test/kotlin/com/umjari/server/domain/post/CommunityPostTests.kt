@@ -233,6 +233,45 @@ class CommunityPostTests {
     }
 
     @Test
+    @Order(4)
+    fun testLikeToReply() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/1/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/reply/2/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/3/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/2/reply/4/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/100/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
     @Order(5)
     fun testRetrievePost() {
         mockMvc.perform(
@@ -418,10 +457,17 @@ class CommunityPostTests {
         )
 
         mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/100/likes/")
-                .header("Authorization", userToken2),
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/1/likes/")
+                .header("Authorization", userToken1),
         ).andExpect(
-            status().isNotFound,
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/reply/3/likes/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
         )
     }
 

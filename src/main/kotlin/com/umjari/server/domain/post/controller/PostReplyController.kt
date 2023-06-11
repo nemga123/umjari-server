@@ -2,6 +2,7 @@ package com.umjari.server.domain.post.controller
 
 import com.umjari.server.domain.post.dto.PostReplyDto
 import com.umjari.server.domain.post.service.CommunityPostReplyService
+import com.umjari.server.domain.post.service.PostReplyLikeService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/board/{board_type}/post/{post_id}/reply")
 class PostReplyController(
     private val communityPostReplyService: CommunityPostReplyService,
+    private val postReplyLikeService: PostReplyLikeService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,5 +58,16 @@ class PostReplyController(
         @CurrentUser user: User,
     ) {
         communityPostReplyService.deleteReplyOnPost(boardName, postId, replyId, user)
+    }
+
+    @PutMapping("/{reply_id}/likes/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateReplyLikeStatus(
+        @PathVariable("board_type") boardName: String,
+        @PathVariable("post_id") postId: Long,
+        @PathVariable("reply_id") replyId: Long,
+        @CurrentUser user: User,
+    ) {
+        postReplyLikeService.updateLikeStatus(boardName, postId, replyId, user)
     }
 }

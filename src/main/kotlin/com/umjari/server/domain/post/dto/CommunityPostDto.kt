@@ -2,6 +2,7 @@ package com.umjari.server.domain.post.dto
 
 import com.umjari.server.domain.post.model.CommunityPost
 import com.umjari.server.domain.post.model.PostLike
+import com.umjari.server.domain.post.model.PostReplyLike
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import jakarta.validation.constraints.NotBlank
@@ -118,7 +119,12 @@ class CommunityPostDto {
         override val isLiked: Boolean,
         override val replies: List<PostReplyDto.PostReplyResponse>,
     ) : PostDetailResponse() {
-        constructor(post: CommunityPost, user: User?, likeList: List<PostLike>) : this(
+        constructor(
+            post: CommunityPost,
+            user: User?,
+            likeList: List<PostLike>,
+            replyLikeList: Map<Long, List<PostReplyLike>>,
+        ) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -132,11 +138,12 @@ class CommunityPostDto {
             isLiked = likeList.any { it.user.id == user?.id },
             replies = post.replies.map {
                 if (it.isAnonymous) {
-                    PostReplyDto.AnonymousPostReplyResponse(it, user)
+                    PostReplyDto.AnonymousPostReplyResponse(it, user, replyLikeList[it.id] ?: emptyList())
                 } else {
                     PostReplyDto.NotAnonymousPostReplyResponse(
                         it,
                         user,
+                        replyLikeList[it.id] ?: emptyList(),
                     )
                 }
             },
@@ -172,7 +179,12 @@ class CommunityPostDto {
         override val isLiked: Boolean,
         override val replies: List<PostReplyDto.PostReplyResponse>,
     ) : PostDetailResponse() {
-        constructor(post: CommunityPost, user: User?, likeList: List<PostLike>) : this(
+        constructor(
+            post: CommunityPost,
+            user: User?,
+            likeList: List<PostLike>,
+            replyLikeList: Map<Long, List<PostReplyLike>>,
+        ) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -186,11 +198,12 @@ class CommunityPostDto {
             likeCount = likeList.size,
             replies = post.replies.map {
                 if (it.isAnonymous) {
-                    PostReplyDto.AnonymousPostReplyResponse(it, user)
+                    PostReplyDto.AnonymousPostReplyResponse(it, user, replyLikeList[it.id] ?: emptyList())
                 } else {
                     PostReplyDto.NotAnonymousPostReplyResponse(
                         it,
                         user,
+                        replyLikeList[it.id] ?: emptyList(),
                     )
                 }
             },

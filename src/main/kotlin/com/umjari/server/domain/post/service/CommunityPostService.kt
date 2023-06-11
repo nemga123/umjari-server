@@ -20,6 +20,7 @@ class CommunityPostService(
     private val communityPostRepository: CommunityPostRepository,
     private val postLikeRepository: PostLikeRepository,
     private val postLikeService: PostLikeService,
+    private val postReplyLikeService: PostReplyLikeService,
 ) {
     fun createCommunityPost(
         boardName: String,
@@ -79,10 +80,12 @@ class CommunityPostService(
         val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
         val likeList = postLikeRepository.getAllByPostId(postId)
+        val replyIds = post.replies.map { it.id }
+        val replyIdToLikeList = postReplyLikeService.getReplyIdToLikeListMap(replyIds)
         return if (post.isAnonymous) {
-            CommunityPostDto.AnonymousPostDetailResponse(post, user, likeList)
+            CommunityPostDto.AnonymousPostDetailResponse(post, user, likeList, replyIdToLikeList)
         } else {
-            CommunityPostDto.NotAnonymousPostDetailResponse(post, user, likeList)
+            CommunityPostDto.NotAnonymousPostDetailResponse(post, user, likeList, replyIdToLikeList)
         }
     }
 
