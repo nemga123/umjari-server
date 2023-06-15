@@ -159,17 +159,23 @@ class ConcertService(
             user.id,
         )
 
-        concertMusicRepository.deleteAllByConcertIdAndMusicIdNotIn(concertId, updateConcertSetListRequest.musicIds)
-        val musicList = musicRepository.findAllByIdIn(updateConcertSetListRequest.musicIds)
-        val musicMap = musicList.associateBy { it.id }
-        val existingIdSet = concertMusicRepository.findMusicIdAllByConcertId(concertId)
-        val concertSetList = updateConcertSetListRequest.musicIds.filter { musicId ->
-            !existingIdSet.contains(musicId)
-        }.map { id ->
-            val music = musicMap[id] ?: throw MusicIdNotFoundException(id)
-            ConcertMusic(concert = concert, music = music)
+        val musicIds = updateConcertSetListRequest.musicIds
+
+        if (musicIds.isEmpty()) {
+            concertMusicRepository.deleteAllByConcertId(concertId)
+        } else {
+            concertMusicRepository.deleteAllByConcertIdAndMusicIdNotIn(concertId, musicIds)
+            val musicList = musicRepository.findAllByIdIn(musicIds)
+            val musicMap = musicList.associateBy { it.id }
+            val existingIdSet = concertMusicRepository.findMusicIdAllByConcertId(concertId)
+            val concertSetList = updateConcertSetListRequest.musicIds.filter { musicId ->
+                !existingIdSet.contains(musicId)
+            }.map { id ->
+                val music = musicMap[id] ?: throw MusicIdNotFoundException(id)
+                ConcertMusic(concert = concert, music = music)
+            }
+            concertMusicRepository.saveAll(concertSetList)
         }
-        concertMusicRepository.saveAll(concertSetList)
     }
 
     fun getConcertParticipantsList(

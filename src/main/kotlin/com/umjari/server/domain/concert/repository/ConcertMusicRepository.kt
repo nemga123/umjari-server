@@ -30,6 +30,9 @@ interface ConcertMusicRepository : JpaRepository<ConcertMusic, Long?> {
     @Modifying
     fun deleteAllByConcertIdAndMusicIdNotIn(concertId: Long, musicIds: ArrayList<Long>)
 
+    @Modifying
+    fun deleteAllByConcertId(concertId: Long)
+
     @Query(
         """
             SELECT cm.music.id FROM ConcertMusic AS cm WHERE cm.concert.id = :concertId
