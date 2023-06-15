@@ -551,4 +551,26 @@ class ConcertTests {
             jsonPath("$.contents.length()").value(0),
         )
     }
+
+    @Test
+    @Order(9)
+    fun testDeleteConcertSetList(
+        @Autowired concertMusicRepository: ConcertMusicRepository,
+    ) {
+        val content = """
+            {
+              "musicIds": []
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+        assert(!concertMusicRepository.existsByConcertIdAndMusicId(1, 1))
+    }
 }

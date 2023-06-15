@@ -43,7 +43,6 @@ class FriendTests {
             @Autowired verifyTokenRepository: VerifyTokenRepository,
         ) {
             val userResult = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
-            val user = userResult.first
             userToken1 = userResult.second
 
             val userResult2 = TestUtils.createDummyUser(
