@@ -65,6 +65,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/board/**/post/", "GET"),
                 AntPathRequestMatcher("/api/v1/board/**/post/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/album/profile-name/**/", "GET"),
+                AntPathRequestMatcher("/api/v1/album/profile-name/**/friends/", "GET"),
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "GET"),
             ).permitAll()
             .requestMatchers(
@@ -97,6 +98,11 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "POST"),
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/post/{\\d+}/likes/", "PUT"),
+                AntPathRequestMatcher("/api/v1/friend/", "POST"),
+                AntPathRequestMatcher("/api/v1/friend/approval/{\\d+}/", "POST"),
+                AntPathRequestMatcher("/api/v1/friend/rejection/{\\d+}/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/friend/{\\d+}/", "DELETE"),
+                AntPathRequestMatcher("/api/v1/friend/requests/", "GET"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),

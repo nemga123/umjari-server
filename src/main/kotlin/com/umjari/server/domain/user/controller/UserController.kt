@@ -1,12 +1,18 @@
 package com.umjari.server.domain.user.controller
 
 import com.umjari.server.domain.concert.dto.ConcertParticipantDto
+import com.umjari.server.domain.friend.dto.FriendDto
+import com.umjari.server.domain.friend.service.FriendService
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
 import com.umjari.server.global.auth.annotation.CurrentUser
+import com.umjari.server.global.pagination.PageResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/user")
 class UserController(
     private val userService: UserService,
+    private val friendService: FriendService,
 ) {
     @GetMapping("/my-group/")
     @ResponseStatus(HttpStatus.OK)
@@ -61,6 +68,19 @@ class UserController(
         @CurrentUser currentUser: User?,
     ): UserDto.DetailUserInfoResponse {
         return userService.getUserInformation(profileName, currentUser)
+    }
+
+    @GetMapping("/profile-name/{profile_name}/friends/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserFriendList(
+        @PathVariable("profile_name") profileName: String,
+        @PageableDefault(
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+    ): PageResponse<FriendDto.FriendResponse> {
+        return friendService.getFriendList(profileName, pageable)
     }
 
     @PutMapping("/info/")

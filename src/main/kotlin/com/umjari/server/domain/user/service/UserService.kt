@@ -2,6 +2,7 @@ package com.umjari.server.domain.user.service
 
 import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
+import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.image.service.ImageService
@@ -19,6 +20,7 @@ class UserService(
     private val groupMemberRepository: GroupMemberRepository,
     private val concertParticipantRepository: ConcertParticipantRepository,
     private val imageService: ImageService,
+    private val friendRepository: FriendRepository,
 ) {
     fun checkDuplicatedNickname(nicknameRequest: UserDto.NicknameRequest) {
         if (userRepository.existsByNickname(nicknameRequest.nickname!!)) {
@@ -83,7 +85,13 @@ class UserService(
         val user = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        return UserDto.DetailUserInfoResponse(user = user, currentUser = currentUser)
+        val isFriend = if (currentUser != null) {
+            friendRepository.existsFriendRelation(currentUser.id, user.id)
+        } else {
+            false
+        }
+
+        return UserDto.DetailUserInfoResponse(user = user, currentUser = currentUser, isFriend)
     }
 
     fun getUserIdToUserMapInUserIds(userIds: List<String>): Pair<Set<String>, Map<String, User>> {

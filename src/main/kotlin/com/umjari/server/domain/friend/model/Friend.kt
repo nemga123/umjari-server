@@ -1,4 +1,4 @@
-package com.umjari.server.domain.friendship.model
+package com.umjari.server.domain.friend.model
 
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseTimeEntity
@@ -21,7 +21,7 @@ import jakarta.validation.constraints.NotNull
         ),
     ],
 )
-class Friendship(
+class Friend(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id", referencedColumnName = "id")
     val requester: User,
@@ -31,7 +31,7 @@ class Friendship(
     val receiver: User,
 
     @field:NotNull
-    val status: FriendshipStatus,
+    var status: FriendshipStatus,
 ) : BaseTimeEntity() {
     enum class FriendshipStatus {
         FENDING, APPROVED
