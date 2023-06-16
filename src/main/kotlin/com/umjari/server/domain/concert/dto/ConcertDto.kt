@@ -164,21 +164,6 @@ class ConcertDto {
         val regionDetail: String,
         val setList: List<ConcertMusicDto.ConcertSetResponse>,
     ) {
-        constructor(concert: Concert, playList: List<ConcertMusic>) : this(
-            id = concert.id,
-            groupId = concert.group.id,
-            title = concert.title,
-            subtitle = concert.subtitle,
-            posterImg = concert.posterImg,
-            concertDate = SimpleDateFormat("yyyy-MM-dd").format(concert.concertDate),
-            concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
-            concertRunningTime = concert.concertRunningTime,
-            fee = concert.fee,
-            region = concert.region.toString(),
-            regionDetail = concert.regionDetail,
-            setList = playList.map { ConcertMusicDto.ConcertSetResponse(it) },
-        )
-
         constructor(concert: Concert) : this(
             id = concert.id,
             groupId = concert.group.id,
@@ -192,6 +177,34 @@ class ConcertDto {
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
             setList = concert.playList.sortedBy { it.id }.map { ConcertMusicDto.ConcertSetResponse(it) },
+        )
+    }
+
+    data class ConcertDashboardResponse(
+        val id: Long,
+        val groupId: Long,
+        val title: String,
+        val subtitle: String,
+        val posterImg: String,
+        val concertDate: String,
+        val concertTime: String,
+        val concertRunningTime: Int,
+        val fee: Int,
+        val region: String,
+        val regionDetail: String,
+    ) {
+        constructor(concert: Concert) : this(
+            id = concert.id,
+            groupId = concert.group.id,
+            title = concert.title,
+            subtitle = concert.subtitle,
+            posterImg = concert.posterImg,
+            concertDate = SimpleDateFormat("yyyy-MM-dd").format(concert.concertDate),
+            concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
+            concertRunningTime = concert.concertRunningTime,
+            fee = concert.fee,
+            region = concert.region.toString(),
+            regionDetail = concert.regionDetail,
         )
     }
 }

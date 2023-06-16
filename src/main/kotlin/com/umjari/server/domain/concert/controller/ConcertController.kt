@@ -49,10 +49,10 @@ class ConcertController(
         @RequestParam(required = false) text: String? = null,
         @PageableDefault(
             size = 20,
-            sort = ["createdAt"],
-            direction = Sort.Direction.DESC,
+            sort = ["concertDate", "title", "group.name", "regionDetail"],
+            direction = Sort.Direction.ASC,
         ) pageable: Pageable,
-    ): PageResponse<ConcertDto.ConcertSimpleResponse> {
+    ): PageResponse<ConcertDto.ConcertDashboardResponse> {
         return concertService.getConcertDashboard(startDate, endDate, regionParent, regionChild, text, pageable)
     }
 
