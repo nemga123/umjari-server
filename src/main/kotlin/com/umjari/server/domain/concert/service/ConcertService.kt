@@ -96,7 +96,7 @@ class ConcertService(
         regionChild: String?,
         text: String?,
         pageable: Pageable,
-    ): PageResponse<ConcertDto.ConcertSimpleResponse> {
+    ): PageResponse<ConcertDto.ConcertDashboardResponse> {
         val spec = ConcertSpecification()
         startDate?.let { spec.filteredByDateStart(dateFormatter.parse(it)) }
         endDate?.let { spec.filteredByDateEnd(dateFormatter.parse(it)) }
@@ -104,7 +104,7 @@ class ConcertService(
         regionChild?.let { if (regionChild != "전체") spec.filteredByRegionChild(regionChild) }
         text?.let { spec.filteredByText(text) }
         val concerts = concertRepository.findAll(spec.build(), pageable)
-        val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
+        val concertResponses = concerts.map { ConcertDto.ConcertDashboardResponse(it) }
         return PageResponse(concertResponses, pageable.pageNumber)
     }
 

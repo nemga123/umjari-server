@@ -56,7 +56,7 @@ class Concert(
     @field:PositiveOrZero
     var fee: Int,
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "id")
     var region: Region,
 
