@@ -36,16 +36,12 @@ class MusicService(
     }
 
     fun getMusicList(
-        composerEng: String,
-        composerKor: String,
-        nameEng: String,
-        nameKor: String,
+        composer: String,
+        name: String,
     ): MusicDto.MusicDetailListResponse {
         val musicList = musicRepository.getMusicByFilterString(
-            composerEng,
-            composerKor,
-            nameEng,
-            nameKor,
+            composer,
+            name,
         )
         val musicListResponse = musicList.map { MusicDto.MusicDetailResponse(it) }
         return MusicDto.MusicDetailListResponse(musicListResponse, musicListResponse.size)

@@ -17,21 +17,17 @@ interface MusicRepository : JpaRepository<Music, Long?> {
         """
             SELECT music FROM Music AS music
                 WHERE
-                    music.composerEng ILIKE CONCAT('%', :composerEng, '%')
-                    AND music.composerKor ILIKE CONCAT('%', :composerKor, '%')
-                    AND music.nameEng ILIKE CONCAT('%', :nameEng, '%')
-                    AND music.nameKor ILIKE CONCAT('%', :nameKor, '%')
+                    music.composerEng ILIKE CONCAT('%', :composer, '%')
+                    AND music.composerKor ILIKE CONCAT('%', :composer, '%')
+                    AND music.nameEng ILIKE CONCAT('%', :name, '%')
+                    AND music.nameKor ILIKE CONCAT('%', :name, '%')
         """,
     )
     fun getMusicByFilterString(
-        @Param("composerEng")
-        composerEng: String,
-        @Param("composerKor")
-        composerKor: String,
-        @Param("nameEng")
-        nameEng: String,
-        @Param("nameKor")
-        nameKor: String,
+        @Param("composer")
+        composer: String,
+        @Param("name")
+        name: String,
     ): List<Music>
 
     fun findAllByIdIn(id: MutableCollection<Long>): List<Music>
