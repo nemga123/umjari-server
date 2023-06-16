@@ -477,7 +477,7 @@ class ConcertTests {
     ) {
         val content = """
             {
-              "userIds": ["user"]
+              "userIds": ["user", "NOT_ENROLLED_USER"]
             }
         """.trimIndent()
 
@@ -487,7 +487,11 @@ class ConcertTests {
                 .content(content)
                 .header("Authorization", userToken),
         ).andExpect(
-            status().isNoContent,
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers[0].userId").value("NOT_ENROLLED_USER"),
+        ).andExpect(
+            jsonPath("$.failedUsers[0].reason").value("User does not enrolled in concert."),
         )
 
         mockMvc.perform(
