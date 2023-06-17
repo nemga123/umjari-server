@@ -17,10 +17,17 @@ interface MusicRepository : JpaRepository<Music, Long?> {
         """
             SELECT music FROM Music AS music
                 WHERE
-                    music.composerEng ILIKE CONCAT('%', :composer, '%')
-                    AND music.composerKor ILIKE CONCAT('%', :composer, '%')
-                    AND music.nameEng ILIKE CONCAT('%', :name, '%')
-                    AND music.nameKor ILIKE CONCAT('%', :name, '%')
+                    (
+                        music.composerEng ILIKE CONCAT('%', :composer, '%')
+                        OR
+                        music.composerKor ILIKE CONCAT('%', :composer, '%')
+                    )
+                    AND
+                    (
+                        music.nameEng ILIKE CONCAT('%', :name, '%')
+                        OR
+                        music.nameKor ILIKE CONCAT('%', :name, '%')
+                    )
         """,
     )
     fun getMusicByFilterString(
