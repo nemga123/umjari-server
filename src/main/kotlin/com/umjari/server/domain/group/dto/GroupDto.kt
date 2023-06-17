@@ -43,6 +43,7 @@ class GroupDto {
         @field:NotBlank
         @field:Size(max = 255)
         val practiceTime: String?,
+        @field:Size(max = 255) val logo: String?,
         @field:NotNull
         val audition: Boolean?,
         @field:NotNull @field:PositiveOrZero
