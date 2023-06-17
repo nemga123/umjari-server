@@ -31,7 +31,7 @@ class ConcertParticipantDto {
         val userIds: List<String>,
     )
 
-    data class RegisterConcertParticipantsResponse(
+    data class UpdateConcertParticipantsResponse(
         val failedUsers: List<FailedUser>,
     )
 

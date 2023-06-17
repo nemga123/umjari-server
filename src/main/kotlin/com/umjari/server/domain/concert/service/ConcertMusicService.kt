@@ -24,7 +24,7 @@ class ConcertMusicService(
         concertId: Long,
         concertMusicId: Long,
         registerConcertParticipantListRequest: ConcertParticipantDto.RegisterConcertParticipantListRequest,
-    ): ConcertParticipantDto.RegisterConcertParticipantsResponse {
+    ): ConcertParticipantDto.UpdateConcertParticipantsResponse {
         val concertMusic = concertMusicRepository.findByConcertIdAndId(concertId, concertMusicId)
             ?: throw ConcertMusicIdNotFoundException(concertMusicId)
 
@@ -67,7 +67,7 @@ class ConcertMusicService(
             failedUsers.add(ConcertParticipantDto.FailedUser(it, "User does not exist."))
         }
 
-        return ConcertParticipantDto.RegisterConcertParticipantsResponse(failedUsers)
+        return ConcertParticipantDto.UpdateConcertParticipantsResponse(failedUsers)
     }
 
     @Transactional
@@ -76,7 +76,8 @@ class ConcertMusicService(
         concertId: Long,
         concertMusicId: Long,
         removeConcertParticipantListRequest: ConcertParticipantDto.RemoveConcertParticipantListRequest,
-    ) {
+    ): ConcertParticipantDto.UpdateConcertParticipantsResponse {
+        val userIds = removeConcertParticipantListRequest.userIds.toSet()
         val concertMusic = concertMusicRepository.findByConcertIdAndId(concertId, concertMusicId)
             ?: throw ConcertMusicIdNotFoundException(concertMusicId)
 
@@ -86,10 +87,19 @@ class ConcertMusicService(
             user.id,
         )
 
-        concertParticipantRepository.deleteAllByConcertMusicIdAndPerformer_UserIdIn(
-            concertMusicId,
-            removeConcertParticipantListRequest.userIds,
-        )
+        val failedUsers = mutableListOf<ConcertParticipantDto.FailedUser>()
+        val enrolledUser = concertParticipantRepository.findAllAlreadyEnrolled(userIds, concertMusicId)
+        val enrolledUserIds = enrolledUser.map { it.performer.userId }.toSet()
+
+        concertParticipantRepository.deleteAll(enrolledUser)
+
+        for (userId in userIds) {
+            if (!enrolledUserIds.contains(userId)) {
+                failedUsers.add(ConcertParticipantDto.FailedUser(userId, "User does not enrolled in concert."))
+            }
+        }
+
+        return ConcertParticipantDto.UpdateConcertParticipantsResponse(failedUsers)
     }
 
     fun getConcertParticipantsList(

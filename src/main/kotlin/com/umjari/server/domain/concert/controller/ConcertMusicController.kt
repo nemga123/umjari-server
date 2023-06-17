@@ -39,7 +39,7 @@ class ConcertMusicController(
         @Valid @RequestBody
         registerConcertParticipantListRequest: ConcertParticipantDto.RegisterConcertParticipantListRequest,
         @CurrentUser user: User,
-    ): ConcertParticipantDto.RegisterConcertParticipantsResponse {
+    ): ConcertParticipantDto.UpdateConcertParticipantsResponse {
         return concertMusicService.registerConcertParticipant(
             user,
             concertId,
@@ -49,15 +49,15 @@ class ConcertMusicController(
     }
 
     @DeleteMapping("/{concert_music_id}/participant/")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     fun removeConcertParticipants(
         @PathVariable("concert_id") concertId: Long,
         @PathVariable("concert_music_id") concertMusicId: Long,
         @Valid @RequestBody
         removeConcertParticipantListRequest: ConcertParticipantDto.RemoveConcertParticipantListRequest,
         @CurrentUser user: User,
-    ) {
-        concertMusicService.removeConcertParticipant(
+    ): ConcertParticipantDto.UpdateConcertParticipantsResponse {
+        return concertMusicService.removeConcertParticipant(
             user,
             concertId,
             concertMusicId,
