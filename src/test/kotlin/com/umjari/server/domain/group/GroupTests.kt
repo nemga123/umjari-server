@@ -76,6 +76,7 @@ class GroupTests {
         val content = """
             {
               "name": "NEW_NAME",
+              "logo": "NEW_LOGO",
               "practiceTime": "string",
               "audition": true,
               "membershipFee": 0,
@@ -91,6 +92,30 @@ class GroupTests {
             MockMvcRequestBuilders.put("/api/v1/group/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        val contentWithDefaultLogo = """
+            {
+              "name": "NEW_NAME",
+              "logo": null,
+              "practiceTime": "string",
+              "audition": true,
+              "membershipFee": 0,
+              "monthlyFee": 0,
+              "regionParent": "string",
+              "regionChild": "string",
+              "regionDetail": "string",
+              "homepage": "string",
+              "detailIntro": "string"
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(contentWithDefaultLogo)
                 .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,

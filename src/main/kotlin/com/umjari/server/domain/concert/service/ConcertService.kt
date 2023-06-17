@@ -131,6 +131,7 @@ class ConcertService(
                 updateConcertDetailRequest.regionParent!!,
                 updateConcertDetailRequest.regionChild!!,
             )
+            regionDetail = updateConcertDetailRequest.regionDetail!!
             fee = updateConcertDetailRequest.fee!!
         }
         concertRepository.save(concert)

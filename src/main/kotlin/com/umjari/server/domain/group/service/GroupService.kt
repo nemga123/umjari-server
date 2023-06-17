@@ -86,6 +86,7 @@ class GroupService(
 
         with(group) {
             name = updateGroupRequest.name!!
+            logo = updateGroupRequest.logo ?: "default_image"
             practiceTime = updateGroupRequest.practiceTime!!
             audition = updateGroupRequest.audition!!
             membershipFee = updateGroupRequest.membershipFee!!
