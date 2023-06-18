@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -77,6 +78,16 @@ class GroupQnaController(
         groupQnaService.updateQna(groupId, qnaId, user, updateQnaRequest)
     }
 
+    @DeleteMapping("/{qna_id}/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteQna(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @CurrentUser user: User,
+    ) {
+        groupQnaService.deleteQna(groupId, qnaId, user)
+    }
+
     @PostMapping("/{qna_id}/reply/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun createReplyOnQna(
@@ -87,5 +98,29 @@ class GroupQnaController(
         @CurrentUser user: User,
     ) {
         groupQnaReplyService.createReplyOnQna(groupId, qnaId, createReplyRequest, user)
+    }
+
+    @PutMapping("/{qna_id}/reply/{reply_id}/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateReply(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @PathVariable("reply_id") replyId: Long,
+        @Valid @RequestBody
+        createReplyRequest: GroupQnaReplyDto.CreateReplyRequest,
+        @CurrentUser user: User,
+    ) {
+        groupQnaReplyService.updateReply(groupId, qnaId, replyId, createReplyRequest, user)
+    }
+
+    @DeleteMapping("/{qna_id}/reply/{reply_id}/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteReply(
+        @PathVariable("group_id") groupId: Long,
+        @PathVariable("qna_id") qnaId: Long,
+        @PathVariable("reply_id") replyId: Long,
+        @CurrentUser user: User,
+    ) {
+        groupQnaReplyService.deleteReply(groupId, qnaId, replyId, user)
     }
 }
