@@ -117,4 +117,67 @@ class GroupQnaReplyTests {
             MockMvcResultMatchers.status().isNotFound,
         )
     }
+
+    @Test
+    @Order(2)
+    fun testUpdateGroupQnaReply() {
+        val replyContent = """
+            {
+                "content": "NEW_CONTENT",
+                "isAnonymous": false
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/1/reply/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(replyContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/100/reply/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(replyContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/qna/1/reply/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(replyContent)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(3)
+    fun testDeleteGroupQnaReply() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/1/reply/1/")
+                .header("Authorization", adminToken),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/100/reply/1/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/1/reply/1/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
+    }
 }

@@ -14,4 +14,6 @@ interface GroupQnaReplyRepository : JpaRepository<GroupQnaReply, Long?> {
     """,
     )
     fun getAllByQnaIdWithUser(@Param("qnaId") qnaId: Long): List<GroupQnaReply>
+
+    fun findByIdAndQnaIdAndQnaGroupId(id: Long, qnaId: Long, groupId: Long): GroupQnaReply?
 }

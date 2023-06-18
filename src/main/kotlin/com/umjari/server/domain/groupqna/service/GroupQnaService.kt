@@ -4,6 +4,7 @@ import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
 import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
+import com.umjari.server.domain.groupqna.exception.QnaCannotBeDeletedException
 import com.umjari.server.domain.groupqna.exception.QnaCannotBeUpdatedException
 import com.umjari.server.domain.groupqna.exception.QnaIdNotFoundException
 import com.umjari.server.domain.groupqna.model.GroupQna
@@ -14,6 +15,7 @@ import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class GroupQnaService(
@@ -95,5 +97,14 @@ class GroupQnaService(
             isAnonymous = updateGroupQnaRequest.isAnonymous!!
         }
         groupQnaRepository.save(qna)
+    }
+
+    @Transactional
+    fun deleteQna(groupId: Long, qnaId: Long, user: User) {
+        val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
+            ?: throw QnaIdNotFoundException(groupId, qnaId)
+        if (qna.author.id != user.id) throw QnaIdNotFoundException(groupId, qnaId)
+        if (groupQnaReplyRepository.existsByQnaId(qna.id)) throw QnaCannotBeDeletedException(qnaId)
+        groupQnaRepository.delete(qna)
     }
 }

@@ -25,7 +25,7 @@ class GroupQnaReply(
 
     @field:NotBlank
     @Column(columnDefinition = "TEXT")
-    val content: String,
+    var content: String,
 
     @field:NotNull
     var isAnonymous: Boolean,

@@ -316,4 +316,36 @@ class GroupQnaTests {
             status().isNotFound,
         )
     }
+
+    @Test
+    @Order(7)
+    fun testDeleteQna() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/2/")
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/2/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/1/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isBadRequest, // Reply is already commented.
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/1/qna/100/")
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
 }
