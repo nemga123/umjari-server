@@ -99,6 +99,30 @@ class ConcertSpecification {
         }
         textSpec = textSpec.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
+                criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("composerKor")),
+                "%${text.uppercase()}%",
+            )
+        }
+        textSpec = textSpec.or { root, _, criteriaBuilder ->
+            criteriaBuilder.like(
+                criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("shortComposerKor")),
+                "%${text.uppercase()}%",
+            )
+        }
+        textSpec = textSpec.or { root, _, criteriaBuilder ->
+            criteriaBuilder.like(
+                criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("composerEng")),
+                "%${text.uppercase()}%",
+            )
+        }
+        textSpec = textSpec.or { root, _, criteriaBuilder ->
+            criteriaBuilder.like(
+                criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("shortComposerEng")),
+                "%${text.uppercase()}%",
+            )
+        }
+        textSpec = textSpec.or { root, _, criteriaBuilder ->
+            criteriaBuilder.like(
                 criteriaBuilder.upper(root.get("regionDetail")),
                 "%${text.uppercase()}%",
             )
