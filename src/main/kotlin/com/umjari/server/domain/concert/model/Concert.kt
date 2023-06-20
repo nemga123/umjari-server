@@ -3,7 +3,6 @@ package com.umjari.server.domain.concert.model
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseTimeEntity
-import jakarta.annotation.Nullable
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -30,8 +29,8 @@ class Concert(
     @field:NotBlank
     var conductor: String,
 
-    @field:Nullable
-    var solist: String?,
+    @field:NotNull
+    var solist: String,
 
     @field:NotNull
     var host: String,

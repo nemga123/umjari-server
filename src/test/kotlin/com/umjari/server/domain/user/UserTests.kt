@@ -336,6 +336,7 @@ class UserTests {
               "title": "TITLE",
               "subtitle": "SUBTITLE",
               "conductor": "CONDUCTOR",
+              "solist": "SOLIST",
               "host": "HOST",
               "support": "SUPPORT",
               "qna": "QNA",
