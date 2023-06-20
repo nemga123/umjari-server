@@ -57,6 +57,7 @@ class ConcertService(
             title = createConcertRequest.title!!,
             subtitle = createConcertRequest.subtitle!!.trim(),
             conductor = createConcertRequest.conductor!!,
+            solist = createConcertRequest.solist,
             host = createConcertRequest.host!!,
             support = createConcertRequest.support!!,
             qna = createConcertRequest.qna!!,
@@ -121,6 +122,7 @@ class ConcertService(
             title = updateConcertDetailRequest.title!!
             subtitle = updateConcertDetailRequest.subtitle!!.trim()
             conductor = updateConcertDetailRequest.conductor!!
+            solist = updateConcertDetailRequest.solist
             host = updateConcertDetailRequest.host!!
             support = updateConcertDetailRequest.support!!
             qna = updateConcertDetailRequest.qna!!

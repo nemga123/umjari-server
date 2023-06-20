@@ -2,6 +2,7 @@ package com.umjari.server.domain.concert.dto
 
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.model.ConcertMusic
+import jakarta.annotation.Nullable
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
@@ -22,6 +23,8 @@ class ConcertDto {
         @field:NotBlank
         @field:Size(max = 255)
         val conductor: String?,
+        @field:Nullable
+        val solist: String?,
         @field:NotNull
         @field:Size(max = 255)
         val host: String?,
@@ -68,6 +71,8 @@ class ConcertDto {
         @field:NotBlank
         @field:Size(max = 255)
         val conductor: String?,
+        @field:Nullable
+        val solist: String?,
         @field:NotNull
         @field:Size(max = 255)
         val host: String?,
@@ -116,6 +121,7 @@ class ConcertDto {
         val title: String,
         val subtitle: String,
         val conductor: String,
+        val solist: String?,
         val host: String,
         val support: String,
         val qna: String,
@@ -135,6 +141,7 @@ class ConcertDto {
             title = concert.title,
             subtitle = concert.subtitle,
             conductor = concert.conductor,
+            solist = concert.solist,
             host = concert.host,
             support = concert.support,
             qna = concert.qna,
