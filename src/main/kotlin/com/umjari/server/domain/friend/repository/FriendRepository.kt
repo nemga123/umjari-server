@@ -98,7 +98,7 @@ interface FriendRepository : JpaRepository<Friend, Long?> {
                     AND friend_relation.status = 1
         """,
     )
-    fun existsFriendRelation(
+    fun isFriend(
         @Param("currentUserId") currentUSerId: Long,
         @Param("targetUserId") targetUserId: Long,
     ): Boolean

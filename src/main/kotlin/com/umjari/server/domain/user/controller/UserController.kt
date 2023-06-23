@@ -3,6 +3,8 @@ package com.umjari.server.domain.user.controller
 import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.friend.dto.FriendDto
 import com.umjari.server.domain.friend.service.FriendService
+import com.umjari.server.domain.guestbook.dto.GuestBookDto
+import com.umjari.server.domain.guestbook.service.GuestBookService
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController
 class UserController(
     private val userService: UserService,
     private val friendService: FriendService,
+    private val guestBookService: GuestBookService,
 ) {
     @GetMapping("/my-group/")
     @ResponseStatus(HttpStatus.OK)
@@ -81,6 +84,20 @@ class UserController(
         ) pageable: Pageable,
     ): PageResponse<FriendDto.FriendResponse> {
         return friendService.getFriendList(profileName, pageable)
+    }
+
+    @GetMapping("/profile-name/{profile_name}/guestbook/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserGuestBookList(
+        @PathVariable("profile_name") profileName: String,
+        @PageableDefault(
+            size = 10,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+        @CurrentUser currentUser: User?,
+    ): PageResponse<GuestBookDto.GuestBookResponse> {
+        return guestBookService.listGuestBook(profileName, currentUser, pageable)
     }
 
     @PutMapping("/info/")

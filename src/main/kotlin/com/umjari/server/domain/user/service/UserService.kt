@@ -86,7 +86,7 @@ class UserService(
             ?: throw UserProfileNameNotFoundException(profileName)
 
         val isFriend = if (currentUser != null) {
-            friendRepository.existsFriendRelation(currentUser.id, user.id)
+            friendRepository.isFriend(currentUser.id, user.id)
         } else {
             false
         }
