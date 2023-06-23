@@ -72,8 +72,8 @@ class GuestBookTests {
                 Friend(
                     requester = userResult.first,
                     receiver = userResult2.first,
-                    status = Friend.FriendshipStatus.APPROVED
-                )
+                    status = Friend.FriendshipStatus.APPROVED,
+                ),
             )
         }
     }
@@ -92,18 +92,18 @@ class GuestBookTests {
             MockMvcRequestBuilders.post("/api/v1/guestbook/user/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(privateContent)
-                .header("Authorization", userToken2)
+                .header("Authorization", userToken2),
         ).andExpect(
-            status().isCreated
+            status().isCreated,
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/guestbook/user/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(privateContent)
-                .header("Authorization", userToken3)
+                .header("Authorization", userToken3),
         ).andExpect(
-            status().isForbidden
+            status().isForbidden,
         )
 
         val openContent = """
@@ -117,18 +117,18 @@ class GuestBookTests {
             MockMvcRequestBuilders.post("/api/v1/guestbook/user/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(openContent)
-                .header("Authorization", userToken2)
+                .header("Authorization", userToken2),
         ).andExpect(
-            status().isCreated
+            status().isCreated,
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/guestbook/user/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(openContent)
-                .header("Authorization", userToken2)
+                .header("Authorization", userToken2),
         ).andExpect(
-            status().isNotFound
+            status().isNotFound,
         )
     }
 
@@ -146,18 +146,18 @@ class GuestBookTests {
             MockMvcRequestBuilders.put("/api/v1/guestbook/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateContent)
-                .header("Authorization", userToken2)
+                .header("Authorization", userToken2),
         ).andExpect(
-            status().isNoContent
+            status().isNoContent,
         )
 
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/guestbook/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updateContent)
-                .header("Authorization", userToken2)
+                .header("Authorization", userToken2),
         ).andExpect(
-            status().isNotFound
+            status().isNotFound,
         )
     }
 
@@ -166,11 +166,67 @@ class GuestBookTests {
     fun testListGuestBook() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/user/profile-name/홍길동/guestbook/")
-                .header("Authorization", userToken2)
+                .header("Authorization", userToken2),
         ).andExpect(
-            status().isOk
+            status().isOk,
         ).andExpect(
-            jsonPath("$.contents.length()").value(2)
+            jsonPath("$.contents.length()").value(2),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/user/profile-name/홍길동/guestbook/")
+                .header("Authorization", userToken3),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/user/profile-name/홍길동/guestbook/"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/user/profile-name/NONEXISTNAME/guestbook/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(4)
+    fun testDeleteGuestBook() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/guestbook/1/")
+                .header("Authorization", userToken3),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/guestbook/1/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/guestbook/2/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/guestbook/100/")
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isNotFound,
         )
     }
 }

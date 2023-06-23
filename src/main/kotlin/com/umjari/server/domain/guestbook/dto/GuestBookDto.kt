@@ -26,7 +26,7 @@ class GuestBookDto {
             authorId = UserDto.SimpleUserDto(guestBook.user),
             content = guestBook.content,
             createdAt = guestBook.createdAt.toString(),
-            isAuthor = guestBook.author.id == currentUser?.id
+            isAuthor = guestBook.author.id == currentUser?.id,
         )
     }
 }

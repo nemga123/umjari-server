@@ -47,11 +47,10 @@ class GuestBookService(
         val targetUser = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        lateinit var guestBooks: Page<GuestBook>
-        if (currentUser != null) {
-            guestBooks = guestBookRepository.findAllByUserIdWithAuthor(targetUser.id, currentUser.id, pageable)
+        var guestBooks: Page<GuestBook> = if (currentUser != null) {
+            guestBookRepository.findAllByUserIdWithAuthor(targetUser.id, currentUser.id, pageable)
         } else {
-            guestBooks = guestBookRepository.findAllByUserId(targetUser.id, pageable)
+            guestBookRepository.findAllByUserId(targetUser.id, pageable)
         }
 
         val guestBookPage = guestBooks.map { GuestBookDto.GuestBookResponse(it, currentUser) }

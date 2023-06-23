@@ -10,18 +10,15 @@ import org.springframework.data.repository.query.Param
 interface GuestBookRepository : JpaRepository<GuestBook, Long?> {
     @Query(
         """
-            SELECT guest_book AS gb
-                FROM GuestBook AS guest_book
-                    JOIN FETCH guest_book.author
-                WHERE guest_book.user.id = :userId
-                    AND guest_book.private = false
-            UNION ALL
-            SELECT guest_book AS gb
-                FROM GuestBook AS guest_book
-                    JOIN FETCH guest_book.author
-                WHERE guest_book.user.id = :userId
-                    AND guest_book.private = true
-                    AND guest_book.author.id = :authorId
+            SELECT guest_book FROM GuestBook AS guest_book
+                JOIN FETCH guest_book.author
+                WHERE (guest_book.user.id = :userId)
+                    AND
+                        (
+                            (guest_book.private = true
+                            AND guest_book.author.id = :authorId)
+                            OR (guest_book.private = false)
+                        )
         """,
         countQuery = """
             SELECT COUNT (*) FROM GuestBook AS guest_book
