@@ -12,6 +12,6 @@ class ImageEntityListener {
 
     @PreRemove
     fun preRemove(image: Image) {
-        s3Service.removeFile(image.owner.userId, image.fileName)
+        s3Service.removeFile(image.owner.id, image.fileName)
     }
 }

@@ -8,7 +8,6 @@ import com.umjari.server.domain.image.exception.ImageNotUploadedException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.lang.Exception
 
 @Service
 class S3Service(
@@ -19,7 +18,7 @@ class S3Service(
 
     fun uploadFile(
         file: MultipartFile,
-        userId: String,
+        userId: Long,
         fileToken: String,
         fileName: String,
     ): ImageDto.ImageUrlResponse {
@@ -42,8 +41,8 @@ class S3Service(
         )
     }
 
-    fun removeFile(userId: String, fileName: String) {
-        val keyName = "images/$userId/$fileName"
+    fun removeFile(id: Long, fileName: String) {
+        val keyName = "images/$id/$fileName"
         amazonS3.deleteObject(bucketName, keyName)
     }
 }
