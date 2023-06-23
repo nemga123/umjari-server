@@ -12,6 +12,7 @@ import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
+import org.mockito.Mockito.anyLong
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.doNothing
 import org.springframework.beans.factory.annotation.Autowired
@@ -294,7 +295,7 @@ class AlbumTests {
     fun testDeletePhotoList(
         @Autowired imageRepository: ImageRepository,
     ) {
-        doNothing().`when`(s3Service).removeFile(anyString(), anyString())
+        doNothing().`when`(s3Service).removeFile(anyLong(), anyString())
 
         val content = """
             {
