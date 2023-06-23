@@ -27,7 +27,7 @@ class AlbumDto {
         constructor(album: Album) : this(
             id = album.id,
             title = album.title,
-            headPhoto = if (album.headPhoto != null) album.headPhoto!!.image.toUrl() else "default_image",
+            headPhoto = if (album.photos.isEmpty()) "default_image" else album.photos.first().image.toUrl(),
             createAt = album.createdAt.toString(),
             photoCount = album.photos.size,
         )

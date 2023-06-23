@@ -8,7 +8,6 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
@@ -27,10 +26,6 @@ class Album(
 
     @field:NotBlank
     var title: String,
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "head_photo", referencedColumnName = "id")
-    val headPhoto: Photo? = null,
 
     @OneToMany(mappedBy = "album", cascade = [CascadeType.REMOVE])
     @OrderBy("createdAt ASC")
