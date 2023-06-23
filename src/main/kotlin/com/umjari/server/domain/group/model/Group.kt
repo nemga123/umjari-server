@@ -3,6 +3,7 @@ package com.umjari.server.domain.group.model
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseEntity
+import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -54,6 +55,7 @@ class Group(
     @ElementCollection
     var recruitInstruments: MutableList<Instrument> = mutableListOf(),
 
+    @Column(columnDefinition = "TEXT")
     var recruitDetail: String = "",
 
     @OneToMany(mappedBy = "group")
