@@ -26,7 +26,7 @@ class ImageService(
         }
 
         val image = Image(token = fileToken, fileName = fileSaveName, owner = user)
-        return s3Service.uploadFile(imageFile, user.nickname, fileToken, fileSaveName)
+        return s3Service.uploadFile(imageFile, user.userId, fileToken, fileSaveName)
             .also { imageRepository.save(image) }
     }
 
