@@ -27,6 +27,6 @@ class Image(
     val owner: User,
 ) : BaseEntity() {
     fun toUrl(): String {
-        return "https://umjari-image-bucket.s3.ap-northeast-2.amazonaws.com/images/${owner.userId}/$fileName"
+        return "https://umjari-image-bucket.s3.ap-northeast-2.amazonaws.com/images/${owner.profileName}/$fileName"
     }
 }
