@@ -54,6 +54,7 @@ class Group(
     @ElementCollection
     var recruitInstruments: MutableList<Instrument> = mutableListOf(),
 
+    @Column(columnDefinition = "TEXT")
     var recruitDetail: String = "",
 
     @OneToMany(mappedBy = "group")
