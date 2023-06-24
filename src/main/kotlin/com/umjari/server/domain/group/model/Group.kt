@@ -3,6 +3,7 @@ package com.umjari.server.domain.group.model
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
@@ -58,6 +59,9 @@ class Group(
     @Column(columnDefinition = "TEXT")
     var recruitDetail: String = "",
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = [CascadeType.REMOVE])
     var concerts: MutableList<Concert> = mutableListOf(),
+
+    @OneToMany(mappedBy = "group", cascade = [CascadeType.REMOVE])
+    var setList: MutableList<GroupMusic> = mutableListOf(),
 ) : BaseEntity()

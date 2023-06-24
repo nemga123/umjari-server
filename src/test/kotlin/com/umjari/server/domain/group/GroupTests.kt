@@ -2,8 +2,11 @@ package com.umjari.server.domain.group
 
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
+import com.umjari.server.domain.group.repository.GroupMusicRepository
 import com.umjari.server.domain.group.repository.GroupRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
+import com.umjari.server.domain.music.model.Music
+import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
@@ -453,5 +456,78 @@ class GroupTests {
         ).andExpect(
             status().isForbidden,
         )
+    }
+
+    @Test
+    @Order(11)
+    fun testUpdateGroupSetList(
+        @Autowired groupMusicRepository: GroupMusicRepository,
+        @Autowired musicRepository: MusicRepository,
+    ) {
+        musicRepository.save(
+            Music(
+                composerEng = "Composer",
+                composerKor = "작곡가",
+                nameKor = "노래",
+                nameEng = "music",
+                shortComposerEng = "c",
+                shortComposerKor = "작",
+                shortNameEng = "m",
+                shortNameKor = "음",
+            ),
+        )
+        val content = """
+            {
+              "musicIds": [1]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/100/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        val invalidContent = """
+            {
+              "musicIds": [1, 100]
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+
+        val emptyContent = """
+            {
+              "musicIds": []
+            }
+        """.trimIndent()
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(emptyContent)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        assert(groupMusicRepository.count() == 0L)
     }
 }
