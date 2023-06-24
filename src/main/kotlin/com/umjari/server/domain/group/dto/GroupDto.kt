@@ -129,4 +129,32 @@ class GroupDto {
             memberType = groupMember.role.toString(),
         )
     }
+
+    data class UpdateGroupSetListRequest(
+        val musicIds: java.util.ArrayList<Long> = arrayListOf(),
+    )
+
+    data class GroupListResponse(
+        val id: Long,
+        val name: String,
+        val logo: String,
+        val region: String,
+        val regionDetail: String,
+        val recruit: Boolean,
+        val recruitInstruments: List<Instrument>?,
+        val recruitDetail: String?,
+        val memberType: String,
+    ) {
+        constructor(group: Group, memberType: GroupMember.MemberRole) : this(
+            id = group.id,
+            name = group.name,
+            logo = group.logo,
+            region = group.region.toString(),
+            regionDetail = group.regionDetail,
+            recruit = group.recruit,
+            recruitInstruments = if (group.recruit) group.recruitInstruments else null,
+            recruitDetail = if (group.recruit) group.recruitDetail else null,
+            memberType = memberType.toString(),
+        )
+    }
 }

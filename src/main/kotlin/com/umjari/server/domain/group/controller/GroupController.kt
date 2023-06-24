@@ -4,6 +4,7 @@ import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.dto.GroupRegisterDto
 import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.service.GroupMusicService
 import com.umjari.server.domain.group.service.GroupService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/group")
 class GroupController(
     private val groupService: GroupService,
+    private val groupMusicService: GroupMusicService,
 ) {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -124,5 +126,16 @@ class GroupController(
         registerRequest: GroupRegisterDto.GroupRegisterRequest,
     ): GroupRegisterDto.GroupRegisterResponse {
         return groupService.registerGroupMember(groupId, registerRequest, GroupMember.MemberRole.ADMIN)
+    }
+
+    @PutMapping("/{group_id}/set-list/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateGroupSetList(
+        @PathVariable("group_id") groupId: Long,
+        @Valid @RequestBody
+        updateGroupSetListRequest: GroupDto.UpdateGroupSetListRequest,
+        @CurrentUser user: User,
+    ) {
+        groupMusicService.updateConcertSetList(user, groupId, updateGroupSetListRequest)
     }
 }
