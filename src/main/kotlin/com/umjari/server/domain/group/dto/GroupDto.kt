@@ -3,6 +3,7 @@ package com.umjari.server.domain.group.dto
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.model.Instrument
+import com.umjari.server.domain.music.dto.MusicDto
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PositiveOrZero
@@ -143,9 +144,9 @@ class GroupDto {
         val recruit: Boolean,
         val recruitInstruments: List<Instrument>?,
         val recruitDetail: String?,
-        val memberType: String,
+        val setList: List<MusicDto.MusicDetailResponse>,
     ) {
-        constructor(group: Group, memberType: GroupMember.MemberRole) : this(
+        constructor(group: Group) : this(
             id = group.id,
             name = group.name,
             logo = group.logo,
@@ -154,7 +155,7 @@ class GroupDto {
             recruit = group.recruit,
             recruitInstruments = if (group.recruit) group.recruitInstruments else null,
             recruitDetail = if (group.recruit) group.recruitDetail else null,
-            memberType = memberType.toString(),
+            setList = group.setList.map { MusicDto.MusicDetailResponse(it.music) },
         )
     }
 }

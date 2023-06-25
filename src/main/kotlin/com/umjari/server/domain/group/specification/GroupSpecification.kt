@@ -7,13 +7,14 @@ import com.umjari.server.domain.group.model.GroupMusic
 import com.umjari.server.domain.group.model.Instrument
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.region.model.Region
+import jakarta.persistence.criteria.JoinType
 import org.springframework.data.jpa.domain.Specification
 
 class GroupSpecification {
     private var spec = Specification<Group> { root, query, _ ->
         if (Group::class.java == query.resultType) {
-            root.fetch<Group, GroupMusic>("setList")
-                .fetch<ConcertMusic, Music>("music")
+            root.fetch<Group, GroupMusic>("setList", JoinType.LEFT)
+                .fetch<ConcertMusic, Music>("music", JoinType.LEFT)
             root.fetch<Concert, Region>("region")
         }
         null
@@ -37,11 +38,11 @@ class GroupSpecification {
         }
     }
 
-    fun filteredByText(text: String) {
+    fun filteredByName(name: String) {
         spec = spec.and { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get("name")),
-                "%${text.uppercase()}%",
+                "%${name.uppercase()}%",
             )
         }
     }
@@ -105,7 +106,7 @@ class GroupSpecification {
     }
 
     fun filteredByRecruitInstruments(recruit: List<Instrument>) {
-        val instrumentsSpec = Specification<Group> { _, query, criteriaBuilder ->
+        val instrumentsSpec = Specification<Group> { root, query, criteriaBuilder ->
             val sub = query.subquery(Long::class.java)
             val subRoot = sub.from(Group::class.java)
             val subPredicate = criteriaBuilder.`in`(subRoot.get<Instrument>("recruitInstruments"))
@@ -116,7 +117,7 @@ class GroupSpecification {
             sub.groupBy(subRoot.get<Long>("id"))
             sub.having(criteriaBuilder.equal(criteriaBuilder.count(subRoot.get<Long>("id")), recruit.size.toLong()))
 
-            criteriaBuilder.`in`(subRoot.get<Long>("id")).value(sub)
+            criteriaBuilder.`in`(root.get<Long>("id")).value(sub)
         }
         spec = spec.and(instrumentsSpec)
     }

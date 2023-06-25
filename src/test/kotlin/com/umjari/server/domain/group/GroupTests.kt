@@ -210,6 +210,18 @@ class GroupTests {
 
     @Test
     @Order(4)
+    fun testSearchGroup() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/?name=NAME"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+    }
+
+    @Test
+    @Order(4)
     fun testGetGroupAsMember() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/1/")
