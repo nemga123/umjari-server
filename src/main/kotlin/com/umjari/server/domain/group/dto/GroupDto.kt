@@ -2,6 +2,7 @@ package com.umjari.server.domain.group.dto
 
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.model.GroupMusic
 import com.umjari.server.domain.group.model.Instrument
 import com.umjari.server.domain.music.dto.MusicDto
 import jakarta.validation.constraints.NotBlank
@@ -146,7 +147,7 @@ class GroupDto {
         val recruitDetail: String?,
         val setList: List<MusicDto.MusicDetailResponse>,
     ) {
-        constructor(group: Group) : this(
+        constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>) : this(
             id = group.id,
             name = group.name,
             logo = group.logo,
@@ -155,7 +156,7 @@ class GroupDto {
             recruit = group.recruit,
             recruitInstruments = if (group.recruit) group.recruitInstruments else null,
             recruitDetail = if (group.recruit) group.recruitDetail else null,
-            setList = group.setList.map { MusicDto.MusicDetailResponse(it.music) },
+            setList = setListMap[group.id]?.map { MusicDto.MusicDetailResponse(it.music) } ?: emptyList(),
         )
     }
 }

@@ -1,7 +1,5 @@
 package com.umjari.server.domain.group.specification
 
-import com.umjari.server.domain.concert.model.Concert
-import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.model.GroupMusic
 import com.umjari.server.domain.group.model.Instrument
@@ -13,9 +11,8 @@ import org.springframework.data.jpa.domain.Specification
 class GroupSpecification {
     private var spec = Specification<Group> { root, query, _ ->
         if (Group::class.java == query.resultType) {
-            root.fetch<Group, GroupMusic>("setList", JoinType.LEFT)
-                .fetch<ConcertMusic, Music>("music", JoinType.LEFT)
-            root.fetch<Concert, Region>("region")
+            root.fetch<Group, Instrument>("recruitInstruments", JoinType.LEFT)
+            root.fetch<Group, Region>("region")
         }
         null
     }
@@ -109,7 +106,7 @@ class GroupSpecification {
         val instrumentsSpec = Specification<Group> { root, query, criteriaBuilder ->
             val sub = query.subquery(Long::class.java)
             val subRoot = sub.from(Group::class.java)
-            val subPredicate = criteriaBuilder.`in`(subRoot.get<Instrument>("recruitInstruments"))
+            val subPredicate = criteriaBuilder.`in`(subRoot.join<Group, Instrument>("recruitInstruments"))
             for (inst in recruit) {
                 subPredicate.value(inst)
             }

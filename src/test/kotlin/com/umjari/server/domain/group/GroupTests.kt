@@ -218,6 +218,22 @@ class GroupTests {
         ).andExpect(
             jsonPath("$.contents.length()").value(1),
         )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/?instruments=VIOLIN"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/?instruments=VIOLIN&instruments=TUBA"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(0),
+        )
     }
 
     @Test
