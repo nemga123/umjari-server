@@ -38,9 +38,9 @@ interface FriendRepository : JpaRepository<Friend, Long?> {
             UNION ALL
             SELECT
                 friend_relation.id AS id,
-                friend_relation.receiver.id AS userId,
-                friend_relation.receiver.profileName AS profileName,
-                friend_relation.receiver.profileImage AS profileImage,
+                friend_relation.requester.id AS userId,
+                friend_relation.requester.profileName AS profileName,
+                friend_relation.requester.profileImage AS profileImage,
                 friend_relation.createdAt AS createdAt
                     FROM Friend AS friend_relation
                     WHERE friend_relation.receiver.id = :userId
