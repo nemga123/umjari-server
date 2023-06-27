@@ -4,6 +4,7 @@ import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.dto.GroupRegisterDto
 import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.model.Instrument
 import com.umjari.server.domain.group.service.GroupMusicService
 import com.umjari.server.domain.group.service.GroupService
 import com.umjari.server.domain.user.model.User
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -38,6 +40,24 @@ class GroupController(
         createGroupRequest: GroupDto.CreateGroupRequest,
     ): GroupDto.GroupDetailResponse {
         return groupService.createGroup(createGroupRequest)
+    }
+
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    fun searchGroupList(
+        @RequestParam(required = false) regionParent: String? = null,
+        @RequestParam(required = false) regionChild: String? = null,
+        @RequestParam(required = false) name: String? = null,
+        @RequestParam(required = false) composer: String? = null,
+        @RequestParam(required = false) musicName: String? = null,
+        @RequestParam(required = false) instruments: List<Instrument>? = null,
+        @PageableDefault(
+            size = 20,
+            sort = ["name", "regionDetail"],
+            direction = Direction.ASC,
+        ) pageable: Pageable,
+    ): PageResponse<GroupDto.GroupListResponse> {
+        return groupService.searchGroupList(regionParent, regionChild, name, composer, musicName, instruments, pageable)
     }
 
     @GetMapping("/{group_id}/")

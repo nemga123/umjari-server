@@ -49,6 +49,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/mail-verification/validate/", "POST"),
             ).permitAll()
             .requestMatchers(
+                AntPathRequestMatcher("/api/v1/group/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/recruit/", "GET"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/concerts/", "GET"),

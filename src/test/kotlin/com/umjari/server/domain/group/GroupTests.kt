@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 import java.text.SimpleDateFormat
 
 @SpringBootTest
@@ -529,5 +530,71 @@ class GroupTests {
         )
 
         assert(groupMusicRepository.count() == 0L)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/group/1/set-list/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+    }
+
+    @Test
+    @Order(12)
+    @Transactional
+    fun testSearchGroup() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/")
+                .param("name", "NAME")
+                .param("regionParent", "전체")
+                .param("regionChild", "전체")
+                .param("instruments", ""),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(3),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/")
+                .param("regionParent", "서울시")
+                .param("regionChild", "관악구")
+                .param("composer", "NO_COMPOSER")
+                .param("musicName", "NO_MUSIC_NAME"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(0),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/")
+                .param("composer", "c")
+                .param("musicName", "노래"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/")
+                .param("instruments", "VIOLIN"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/?instruments=VIOLIN&instruments=TUBA")
+                .param("instruments", "VIOLIN", "TUBA"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(0),
+        )
     }
 }

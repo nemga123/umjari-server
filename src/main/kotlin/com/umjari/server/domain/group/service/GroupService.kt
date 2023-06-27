@@ -8,8 +8,11 @@ import com.umjari.server.domain.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.exception.GroupRoleNotAuthorizedException
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.model.Instrument
 import com.umjari.server.domain.group.repository.GroupMemberRepository
+import com.umjari.server.domain.group.repository.GroupMusicRepository
 import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.specification.GroupSpecification
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -23,6 +26,7 @@ import java.text.SimpleDateFormat
 class GroupService(
     private val groupRepository: GroupRepository,
     private val groupMemberRepository: GroupMemberRepository,
+    private val groupMusicRepository: GroupMusicRepository,
     private val concertRepository: ConcertRepository,
     private val regionService: RegionService,
     private val userService: UserService,
@@ -196,5 +200,29 @@ class GroupService(
         }
 
         return GroupRegisterDto.GroupRegisterResponse(failedUsers)
+    }
+
+    fun searchGroupList(
+        regionParent: String?,
+        regionChild: String?,
+        name: String?,
+        composer: String?,
+        musicName: String?,
+        instruments: List<Instrument>?,
+        pageable: Pageable,
+    ): PageResponse<GroupDto.GroupListResponse> {
+        val spec = GroupSpecification()
+        regionParent?.let { if (regionParent != "전체") spec.filteredByRegionParent(regionParent) }
+        regionChild?.let { if (regionChild != "전체") spec.filteredByRegionChild(regionChild) }
+        name?.let { spec.filteredByName(name) }
+        composer?.let { spec.filteredByComposer(composer) }
+        musicName?.let { spec.filteredByMusicName(musicName) }
+        if (!instruments.isNullOrEmpty()) spec.filteredByRecruitInstruments(instruments)
+        val groups = groupRepository.findAll(spec.build(), pageable)
+        val idList = groups.map { it.id }.toList()
+        val groupMusicList = groupMusicRepository.fetchGroupMusicByGroupIds(idList)
+        val setListMap = groupMusicList.groupBy { it.group.id }
+        val groupResponse = groups.map { GroupDto.GroupListResponse(it, setListMap) }
+        return PageResponse(groupResponse, pageable.pageNumber)
     }
 }

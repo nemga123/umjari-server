@@ -5,14 +5,15 @@ import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.region.model.Region
+import jakarta.persistence.criteria.JoinType
 import org.springframework.data.jpa.domain.Specification
 import java.util.Date
 
 class ConcertSpecification {
     private var spec = Specification<Concert> { root, query, _ ->
         if (Concert::class.java == query.resultType) {
-            root.fetch<Concert, ConcertMusic>("playList")
-                .fetch<ConcertMusic, Music>("music")
+            root.fetch<Concert, ConcertMusic>("playList", JoinType.LEFT)
+                .fetch<ConcertMusic, Music>("music", JoinType.LEFT)
             root.fetch<Concert, Region>("region")
         }
         null
