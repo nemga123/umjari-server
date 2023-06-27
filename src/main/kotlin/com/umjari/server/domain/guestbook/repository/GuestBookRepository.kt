@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.time.LocalDateTime
 
 interface GuestBookRepository : JpaRepository<GuestBook, Long?> {
     @Query(
@@ -37,6 +38,8 @@ interface GuestBookRepository : JpaRepository<GuestBook, Long?> {
         pageable: Pageable,
     ): Page<GuestBook>
 
+    fun findAllByUserId(userId: Long, pageable: Pageable): Page<GuestBook>
+
     @Query(
         """
             SELECT guest_book AS gb
@@ -52,7 +55,9 @@ interface GuestBookRepository : JpaRepository<GuestBook, Long?> {
                     AND guest_book.private = false
         """,
     )
-    fun findAllByUserId(@Param("userId") userId: Long, pageable: Pageable): Page<GuestBook>
+    fun findAllOpenGuestBookByUserId(@Param("userId") userId: Long, pageable: Pageable): Page<GuestBook>
 
     fun findByIdAndAuthorId(id: Long, authorId: Long): GuestBook?
+
+    fun existsByUserIdAndAuthorIdAndCreatedAtAfter(userId: Long, authorId: Long, today: LocalDateTime): Boolean
 }

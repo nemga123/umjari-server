@@ -2,6 +2,7 @@ package com.umjari.server.domain.guestbook.service
 
 import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.guestbook.dto.GuestBookDto
+import com.umjari.server.domain.guestbook.exception.GuestBookAlreadyPostedOnToday
 import com.umjari.server.domain.guestbook.exception.GuestBookIdNotFoundException
 import com.umjari.server.domain.guestbook.exception.PrivateGuestBookNotAuthorizedException
 import com.umjari.server.domain.guestbook.model.GuestBook
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class GuestBookService(
@@ -25,6 +27,15 @@ class GuestBookService(
     fun postGuestBook(targetUserId: Long, postGuestBookRequest: GuestBookDto.PostGuestBookRequest, currentUser: User) {
         val targetUser = userRepository.findByIdOrNull(targetUserId)
             ?: throw UserIdNotFoundException(targetUserId)
+        println(LocalDate.now().atStartOfDay())
+        if (guestBookRepository.existsByUserIdAndAuthorIdAndCreatedAtAfter(
+                targetUserId,
+                currentUser.id,
+                LocalDate.now().atStartOfDay(),
+            )
+        ) {
+            throw GuestBookAlreadyPostedOnToday()
+        }
 
         if (postGuestBookRequest.private && !friendRepository.isFriend(targetUserId, currentUser.id)) {
             throw PrivateGuestBookNotAuthorizedException()
@@ -47,10 +58,12 @@ class GuestBookService(
         val targetUser = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        var guestBooks: Page<GuestBook> = if (currentUser != null) {
-            guestBookRepository.findAllByUserIdWithAuthor(targetUser.id, currentUser.id, pageable)
-        } else {
+        var guestBooks: Page<GuestBook> = if (currentUser == null) {
+            guestBookRepository.findAllOpenGuestBookByUserId(targetUser.id, pageable)
+        } else if (currentUser.id == targetUser.id) {
             guestBookRepository.findAllByUserId(targetUser.id, pageable)
+        } else {
+            guestBookRepository.findAllByUserIdWithAuthor(targetUser.id, currentUser.id, pageable)
         }
 
         val guestBookPage = guestBooks.map { GuestBookDto.GuestBookResponse(it, currentUser) }
