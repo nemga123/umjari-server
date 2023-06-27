@@ -4,6 +4,7 @@ import com.umjari.server.domain.friend.model.Friend
 import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.user.repository.UserRepository
+import com.umjari.server.global.exception.ErrorType
 import com.umjari.server.utils.TestUtils
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
@@ -117,9 +118,20 @@ class GuestBookTests {
             MockMvcRequestBuilders.post("/api/v1/guestbook/user/1/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(openContent)
-                .header("Authorization", userToken2),
+                .header("Authorization", userToken3),
         ).andExpect(
             status().isCreated,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/guestbook/user/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(openContent)
+                .header("Authorization", userToken2),
+        ).andExpect(
+            status().isBadRequest,
+        ).andExpect(
+            jsonPath("$.errorCode").value(ErrorType.GUESTBOOK_ALREADY_POSTED_ON_TODAY.code),
         )
 
         mockMvc.perform(
@@ -164,6 +176,15 @@ class GuestBookTests {
     @Test
     @Order(3)
     fun testListGuestBook() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/user/profile-name/홍길동/guestbook/")
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(2),
+        )
+
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/user/profile-name/홍길동/guestbook/")
                 .header("Authorization", userToken2),

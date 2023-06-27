@@ -15,6 +15,7 @@ class GuestBookDto {
     )
 
     data class GuestBookResponse(
+        val id: Long,
         val userId: Long,
         val authorId: UserDto.SimpleUserDto,
         val content: String,
@@ -22,8 +23,9 @@ class GuestBookDto {
         val isAuthor: Boolean,
     ) {
         constructor(guestBook: GuestBook, currentUser: User?) : this(
+            id = guestBook.id,
             userId = guestBook.user.id,
-            authorId = UserDto.SimpleUserDto(guestBook.user),
+            authorId = UserDto.SimpleUserDto(guestBook.author),
             content = guestBook.content,
             createdAt = guestBook.createdAt.toString(),
             isAuthor = guestBook.author.id == currentUser?.id,
