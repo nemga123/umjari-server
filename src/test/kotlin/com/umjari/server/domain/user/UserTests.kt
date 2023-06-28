@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDate
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -198,28 +199,13 @@ class UserTests {
 
     @Test
     @Order(5)
-    fun testUpdateUserInfo() {
-        val userInfoRequest = """
-                {
-                    "profileName":"홍길동",
-                    "nickname": "user",
-                    "intro": "intro"
-                }
-        """.trimIndent()
+    fun testUpdateUserInfoWithDuplicatedData(
+        @Autowired userRepository: UserRepository,
+    ) {
+        val user = userRepository.findByIdOrNull(1)!!
+        user.nicknameUpdatedAt = LocalDate.now().minusMonths(2)
+        userRepository.save(user)
 
-        mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/v1/user/info/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userInfoRequest)
-                .header("Authorization", userToken),
-        ).andExpect(
-            status().isNoContent,
-        )
-    }
-
-    @Test
-    @Order(5)
-    fun testUpdateUserInfoWithDuplicatedDate() {
         val duplicatedNicknameRequest = """
                 {
                     "profileName":"홍길동",
@@ -257,6 +243,53 @@ class UserTests {
 
     @Test
     @Order(6)
+    fun testUpdateUserInfo() {
+        val userInfoRequest = """
+                {
+                    "profileName":"홍길동",
+                    "nickname": "new_user",
+                    "intro": "new_intro"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/user/info/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userInfoRequest)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/user/info/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userInfoRequest)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isNoContent,
+        )q
+
+        val newUserInfoRequest = """
+                {
+                    "profileName":"홍길동",
+                    "nickname": "new_user2",
+                    "intro": "new_intro"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/user/info/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(newUserInfoRequest)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isForbidden,
+        )
+    }
+
+    @Test
+    @Order(7)
     fun testGetUserInformation() {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/user/profile-name/홍길동/"),
@@ -298,7 +331,7 @@ class UserTests {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     fun testGetUserConcertHistory(
         @Autowired musicRepository: MusicRepository,
         @Autowired concertRepository: ConcertRepository,
