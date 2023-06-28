@@ -84,6 +84,7 @@ class GroupDto {
         val detailIntro: String?,
         val recruit: Boolean,
         val memberType: String,
+        val setList: List<MusicDto.MusicDetailResponse>,
     ) {
         constructor(group: Group, memberType: GroupMember.MemberRole) : this(
             id = group.id,
@@ -99,6 +100,7 @@ class GroupDto {
             detailIntro = group.detailIntro,
             recruit = group.recruit,
             memberType = memberType.toString(),
+            setList = group.setList.map { MusicDto.MusicDetailResponse(it.music) },
         )
     }
 
