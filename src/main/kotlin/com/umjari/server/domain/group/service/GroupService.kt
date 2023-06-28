@@ -58,7 +58,7 @@ class GroupService(
     }
 
     fun getGroup(groupId: Long, user: User?): GroupDto.GroupDetailResponse {
-        val group = groupRepository.findByIdOrNull(groupId)
+        val group = groupRepository.findGroupFetchSetList(groupId)
             ?: throw GroupIdNotFoundException(groupId)
         val memberStatus = if (user != null) {
             groupMemberRepository.findByGroup_IdAndUser_Id(
