@@ -135,6 +135,17 @@ class GuestBookTests {
         )
 
         mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/guestbook/user/1/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(openContent)
+                .header("Authorization", userToken1),
+        ).andExpect(
+            status().isBadRequest,
+        ).andExpect(
+            jsonPath("$.errorCode").value(ErrorType.CANNOT_POST_TO_OWN_GUESTBOOK.code),
+        )
+
+        mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/guestbook/user/100/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(openContent)
@@ -147,7 +158,7 @@ class GuestBookTests {
     @Test
     @Order(2)
     fun testUpdateGuestBook() {
-        val updateContent = """
+        val updatePrivateContent = """
             {
                 "content": "Hello Too Much!",
                 "private": true
@@ -157,8 +168,33 @@ class GuestBookTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/guestbook/1/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(updatePrivateContent)
                 .header("Authorization", userToken2),
+        ).andExpect(
+            status().isNoContent,
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/guestbook/2/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatePrivateContent)
+                .header("Authorization", userToken3),
+        ).andExpect(
+            status().isForbidden,
+        )
+
+        val updateOpenContent = """
+            {
+                "content": "Hello Too Much!",
+                "private": false
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/guestbook/2/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateOpenContent)
+                .header("Authorization", userToken3),
         ).andExpect(
             status().isNoContent,
         )
@@ -166,7 +202,7 @@ class GuestBookTests {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/guestbook/100/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updateContent)
+                .content(updatePrivateContent)
                 .header("Authorization", userToken2),
         ).andExpect(
             status().isNotFound,
