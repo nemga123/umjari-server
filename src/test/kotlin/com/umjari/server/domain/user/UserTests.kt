@@ -268,7 +268,7 @@ class UserTests {
                 .header("Authorization", userToken),
         ).andExpect(
             status().isNoContent,
-        )q
+        )
 
         val newUserInfoRequest = """
                 {
