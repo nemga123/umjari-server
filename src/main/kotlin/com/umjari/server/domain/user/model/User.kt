@@ -10,6 +10,8 @@ import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import java.time.LocalDate
 
 @Entity
 @Table(name = "umjari_user")
@@ -36,6 +38,9 @@ class User(
     @Column(unique = true)
     @field:NotBlank
     var nickname: String,
+
+    @field:NotNull
+    var nicknameUpdatedAt: LocalDate,
 
     var intro: String?,
 

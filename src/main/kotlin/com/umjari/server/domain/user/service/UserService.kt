@@ -9,10 +9,12 @@ import com.umjari.server.domain.image.service.ImageService
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
 import com.umjari.server.domain.user.exception.DuplicatedUserProfileNameException
+import com.umjari.server.domain.user.exception.NicknameUpdatedInOneMonth
 import com.umjari.server.domain.user.exception.UserProfileNameNotFoundException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class UserService(
@@ -64,18 +66,29 @@ class UserService(
     }
 
     fun updateUserInformation(user: User, updateUserInfo: UserDto.UpdateUserInfoRequest) {
-        if (userRepository.existsByNicknameAndIdNot(updateUserInfo.nickname!!, user.id)) {
-            throw DuplicatedUserNicknameException(updateUserInfo.nickname)
-        }
-
         if (userRepository.existsByProfileNameAndIdNot(updateUserInfo.profileName!!, user.id)) {
             throw DuplicatedUserProfileNameException(updateUserInfo.profileName)
         }
 
-        with(user) {
-            profileName = updateUserInfo.profileName
-            nickname = updateUserInfo.nickname
-            intro = updateUserInfo.intro
+        if (user.nickname == updateUserInfo.nickname!!) {
+            with(user) {
+                profileName = updateUserInfo.profileName
+                intro = updateUserInfo.intro
+            }
+        } else {
+            if (user.nicknameUpdatedAt.isAfter(LocalDate.now().minusMonths(1))) {
+                throw NicknameUpdatedInOneMonth()
+            }
+            if (userRepository.existsByNicknameAndIdNot(updateUserInfo.nickname, user.id)) {
+                throw DuplicatedUserNicknameException(updateUserInfo.nickname)
+            }
+
+            with(user) {
+                profileName = updateUserInfo.profileName
+                nickname = updateUserInfo.nickname
+                intro = updateUserInfo.intro
+                nicknameUpdatedAt = LocalDate.now()
+            }
         }
 
         userRepository.save(user)
