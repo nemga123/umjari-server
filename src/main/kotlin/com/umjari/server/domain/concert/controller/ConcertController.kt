@@ -46,6 +46,8 @@ class ConcertController(
         @RequestParam(required = false) endDate: String? = null,
         @RequestParam(required = false) regionParent: String? = null,
         @RequestParam(required = false) regionChild: String? = null,
+        @RequestParam(required = false) composer: String? = null,
+        @RequestParam(required = false) musicName: String? = null,
         @RequestParam(required = false) text: String? = null,
         @PageableDefault(
             size = 20,
@@ -53,7 +55,16 @@ class ConcertController(
             direction = Sort.Direction.ASC,
         ) pageable: Pageable,
     ): PageResponse<ConcertDto.ConcertDashboardResponse> {
-        return concertService.getConcertDashboard(startDate, endDate, regionParent, regionChild, text, pageable)
+        return concertService.getConcertDashboard(
+            startDate,
+            endDate,
+            regionParent,
+            regionChild,
+            composer,
+            musicName,
+            text,
+            pageable,
+        )
     }
 
     @GetMapping("/{concert_id}/")
