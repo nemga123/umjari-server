@@ -2,6 +2,7 @@ package com.umjari.server.domain.guestbook.service
 
 import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.guestbook.dto.GuestBookDto
+import com.umjari.server.domain.guestbook.exception.CannotPostToOwnGuestbookException
 import com.umjari.server.domain.guestbook.exception.GuestBookAlreadyPostedOnToday
 import com.umjari.server.domain.guestbook.exception.GuestBookIdNotFoundException
 import com.umjari.server.domain.guestbook.exception.PrivateGuestBookNotAuthorizedException
@@ -25,9 +26,12 @@ class GuestBookService(
     private val friendRepository: FriendRepository,
 ) {
     fun postGuestBook(targetUserId: Long, postGuestBookRequest: GuestBookDto.PostGuestBookRequest, currentUser: User) {
+        if (currentUser.id == targetUserId) {
+            throw CannotPostToOwnGuestbookException()
+        }
+
         val targetUser = userRepository.findByIdOrNull(targetUserId)
             ?: throw UserIdNotFoundException(targetUserId)
-        println(LocalDate.now().atStartOfDay())
         if (guestBookRepository.existsByUserIdAndAuthorIdAndCreatedAtAfter(
                 targetUserId,
                 currentUser.id,
@@ -78,6 +82,10 @@ class GuestBookService(
     ) {
         val guestBook = guestBookRepository.findByIdAndAuthorId(guestBookId, currentUser.id)
             ?: throw GuestBookIdNotFoundException(guestBookId)
+
+        if (updateGuestBookRequest.private && !friendRepository.isFriend(guestBook.user.id, currentUser.id)) {
+            throw PrivateGuestBookNotAuthorizedException()
+        }
 
         with(guestBook) {
             content = updateGuestBookRequest.content!!
