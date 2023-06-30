@@ -65,4 +65,22 @@ interface CommunityPostRepository : JpaRepository<CommunityPost, Long?> {
         """,
     )
     fun findAllLikedPosts(@Param("userId") userId: Long, pageable: Pageable): Page<CommunityPost>
+
+    @Query(
+        value = """
+            SELECT post
+                FROM CommunityPost AS post
+                    LEFT JOIN FETCH post.replies
+                    JOIN FETCH post.author
+            WHERE post.id IN (
+                SELECT reply.post.id
+                    FROM CommunityPostReply AS reply
+                    WHERE reply.author.id = :authorId AND reply.isDeleted = FALSE
+            )
+        """,
+        countQuery = """
+            SELECT COUNT (DISTINCT reply.post.id) FROM CommunityPostReply AS reply WHERE reply.author.id = :authorId
+        """,
+    )
+    fun findAllRepliedPosts(@Param("authorId") authorId: Long, pageable: Pageable): Page<CommunityPost>
 }

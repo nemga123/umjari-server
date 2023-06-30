@@ -74,4 +74,17 @@ interface GroupQnaRepository : JpaRepository<GroupQna, Long?> {
     ): Page<GroupQnaDto.SimpleQnaDto>
 
     fun getByIdAndGroupId(id: Long, groupId: Long): GroupQna?
+
+    @Query(
+        """
+            SELECT qna
+                FROM GroupQna AS qna
+                LEFT JOIN FETCH qna.replies
+            WHERE qna.author.id = :authorId
+        """,
+        countQuery = """
+            SELECT COUNT (*) FROM GroupQna AS qna WHERE qna.author.id = :authorId
+        """,
+    )
+    fun findAllMyQnaList(@Param("authorId") authorId: Long, pageable: Pageable): Page<GroupQna>
 }

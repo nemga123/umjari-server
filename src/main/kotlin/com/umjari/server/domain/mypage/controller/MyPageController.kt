@@ -47,4 +47,43 @@ class MyPageController(
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
         return myPageService.getLikedPostList(pageable, currentUser)
     }
+
+    @GetMapping("/replies/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMyPostReplyList(
+        @PageableDefault(
+            size = 20,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+        @CurrentUser currentUser: User,
+    ): PageResponse<MyPageDto.MyPostReplyListResponse> {
+        return myPageService.getMyPostReplyList(pageable, currentUser)
+    }
+
+    @GetMapping("/replied-posts/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getRepliedPostList(
+        @PageableDefault(
+            size = 20,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+        @CurrentUser currentUser: User,
+    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
+        return myPageService.getRepliedPostList(pageable, currentUser)
+    }
+
+    @GetMapping("/qna/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getMyQnaList(
+        @PageableDefault(
+            size = 20,
+            sort = ["createdAt"],
+            direction = Sort.Direction.DESC,
+        ) pageable: Pageable,
+        @CurrentUser currentUser: User,
+    ): PageResponse<MyPageDto.MyQnaListResponse> {
+        return myPageService.getMyQnaList(pageable, currentUser)
+    }
 }
