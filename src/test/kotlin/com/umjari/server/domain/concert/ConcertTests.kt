@@ -540,7 +540,8 @@ class ConcertTests {
                 .param("endDate", "2050-12-31")
                 .param("regionParent", "전체")
                 .param("regionChild", "전체")
-                .param("text", "NEW"),
+                .param("text", "NEW")
+                .param("composer", "c"),
         ).andExpect(
             jsonPath("$.contents.length()").value(1),
         )
@@ -551,7 +552,8 @@ class ConcertTests {
                 .param("endDate", "2050-12-31")
                 .param("regionParent", "서울시")
                 .param("regionChild", "강남구")
-                .param("text", "NEW"),
+                .param("text", "NEW")
+                .param("musicName", "NO_MUSIC"),
         ).andExpect(
             jsonPath("$.contents.length()").value(0),
         )
