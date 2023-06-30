@@ -107,6 +107,8 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/friend/rejection/{\\d+}/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/friend/{\\d+}/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/friend/requests/", "GET"),
+                AntPathRequestMatcher("/api/v1/friend/requests/", "GET"),
+                AntPathRequestMatcher("/api/v1/me/**/", "GET"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),

@@ -124,7 +124,7 @@ class CommunityPostService(
         return PageResponse(postResponses, pageable.pageNumber)
     }
 
-    private fun buildPostPageResponse(
+    fun buildPostPageResponse(
         postList: Page<CommunityPost>,
         postIdToReplyList: Map<Long, List<PostLike>>,
         currentUser: User?,

@@ -3,11 +3,13 @@ package com.umjari.server.domain.groupqna.model
 import com.umjari.server.domain.group.model.Group
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseTimeEntity
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -35,4 +37,7 @@ class GroupQna(
 
     @field:NotNull
     var isAnonymous: Boolean,
+
+    @OneToMany(mappedBy = "qna", cascade = [CascadeType.REMOVE])
+    var replies: MutableList<GroupQnaReply> = mutableListOf(),
 ) : BaseTimeEntity()

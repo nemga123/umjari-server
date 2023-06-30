@@ -33,4 +33,54 @@ interface CommunityPostRepository : JpaRepository<CommunityPost, Long?> {
         """,
     )
     fun findByBoardAndId(@Param("board") board: BoardType, @Param("id") id: Long): CommunityPost?
+
+    @Query(
+        value = """
+            SELECT post
+                FROM CommunityPost AS post
+                    LEFT JOIN FETCH post.replies
+                    JOIN FETCH post.author
+            WHERE post.author.id = :authorId
+        """,
+        countQuery = """
+            SELECT COUNT (post) FROM CommunityPost AS post WHERE post.author.id = :authorId
+        """,
+    )
+    fun findByAuthorId(@Param("authorId") authorId: Long, pageable: Pageable): Page<CommunityPost>
+
+    @Query(
+        value = """
+            SELECT post
+                FROM CommunityPost AS post
+                    LEFT JOIN FETCH post.replies
+                    JOIN FETCH post.author
+            WHERE post.id IN (
+                SELECT pl.post.id
+                    FROM PostLike AS pl
+                    WHERE pl.user.id = :userId
+            )
+        """,
+        countQuery = """
+            SELECT COUNT (pl) FROM PostLike AS pl WHERE pl.user.id = :userId
+        """,
+    )
+    fun findAllLikedPosts(@Param("userId") userId: Long, pageable: Pageable): Page<CommunityPost>
+
+    @Query(
+        value = """
+            SELECT post
+                FROM CommunityPost AS post
+                    LEFT JOIN FETCH post.replies
+                    JOIN FETCH post.author
+            WHERE post.id IN (
+                SELECT reply.post.id
+                    FROM CommunityPostReply AS reply
+                    WHERE reply.author.id = :authorId AND reply.isDeleted = FALSE
+            )
+        """,
+        countQuery = """
+            SELECT COUNT (DISTINCT reply.post.id) FROM CommunityPostReply AS reply WHERE reply.author.id = :authorId
+        """,
+    )
+    fun findAllRepliedPosts(@Param("authorId") authorId: Long, pageable: Pageable): Page<CommunityPost>
 }
