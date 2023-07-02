@@ -8,6 +8,7 @@ import com.umjari.server.domain.post.model.CommunityPost
 import com.umjari.server.domain.post.model.PostLike
 import com.umjari.server.domain.post.repository.CommunityPostRepository
 import com.umjari.server.domain.post.repository.PostLikeRepository
+import com.umjari.server.domain.post.specification.PostSpecification
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Page
@@ -91,33 +92,27 @@ class CommunityPostService(
 
     fun getCommunityPostListByBoard(
         boardName: String,
+        filterType: String,
+        text: String?,
         pageable: Pageable,
         currentUser: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
-        return if (boardName.uppercase() == "ALL") {
-            getCommunityAllPostList(pageable, currentUser)
+        val postList = if (text.isNullOrBlank()) {
+            if (boardName.uppercase() == "ALL") {
+                communityPostRepository.findAllFetchReplies(pageable)
+            } else {
+                communityPostRepository.findByBoard(BoardType.boardNameToBoardType(boardName), pageable)
+            }
         } else {
-            getCommunityBoardPostList(boardName, pageable, currentUser)
+            val filteredBy = PostSpecification.FilterType.paramToFilterType(filterType)
+            if (boardName.uppercase() == "ALL") {
+                val postSpec = PostSpecification().build(filteredBy, text)
+                communityPostRepository.findAll(postSpec, pageable)
+            } else {
+                val postSpec = PostSpecification(BoardType.boardNameToBoardType(boardName)).build(filteredBy, text)
+                communityPostRepository.findAll(postSpec, pageable)
+            }
         }
-    }
-
-    private fun getCommunityBoardPostList(
-        boardName: String,
-        pageable: Pageable,
-        currentUser: User?,
-    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
-        val postList = communityPostRepository.findByBoard(BoardType.boardNameToBoardType(boardName), pageable)
-        val postIds = postList.map { it.id }.toList()
-        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
-        val postResponses = buildPostPageResponse(postList, postIdToLikeList, currentUser)
-        return PageResponse(postResponses, pageable.pageNumber)
-    }
-
-    private fun getCommunityAllPostList(
-        pageable: Pageable,
-        currentUser: User?,
-    ): PageResponse<CommunityPostDto.PostSimpleResponse> {
-        val postList = communityPostRepository.findAll(pageable)
         val postIds = postList.map { it.id }.toList()
         val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
         val postResponses = buildPostPageResponse(postList, postIdToLikeList, currentUser)

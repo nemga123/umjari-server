@@ -441,6 +441,79 @@ class CommunityPostTests {
 
     @Test
     @Order(7)
+    fun testPostSearch() {
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/ALL/post/")
+                .param("text", "NEW"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/ALL/post/")
+                .param("text", "NEW")
+                .param("filterType", "title"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/VIOLIN/post/")
+                .param("text", "NEW")
+                .param("filterType", "content"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/TUBA/post/")
+                .param("text", "NEW")
+                .param("filterType", "content"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(0),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/ALL/post/")
+                .param("text", "user")
+                .param("filterType", "author"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/ALL/post/")
+                .param("text", "NEW")
+                .param("filterType", "reply_content"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/board/ALL/post/")
+                .param("text", "user")
+                .param("filterType", "reply_author"),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(2),
+        )
+    }
+
+    @Test
+    @Order(8)
     fun testDeleteLike() {
         mockMvc.perform(
             MockMvcRequestBuilders.put("/api/v1/board/VIOLIN/post/1/likes/")
@@ -472,7 +545,7 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     fun testDeleteReply(
         @Autowired communityPostReplyRepository: CommunityPostReplyRepository,
     ) {
@@ -518,7 +591,7 @@ class CommunityPostTests {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     fun testDeletePost(
         @Autowired communityPostRepository: CommunityPostRepository,
     ) {

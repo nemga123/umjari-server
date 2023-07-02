@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -76,6 +77,8 @@ class PostController(
     @ResponseStatus(HttpStatus.OK)
     fun getCommunityPost(
         @PathVariable("board_type") boardName: String,
+        @RequestParam(required = false, defaultValue = "") text: String? = null,
+        @RequestParam(required = false, defaultValue = "all") filterType: String,
         @PageableDefault(
             size = 20,
             sort = ["createdAt"],
@@ -83,7 +86,7 @@ class PostController(
         ) pageable: Pageable,
         @CurrentUser user: User?,
     ): PageResponse<CommunityPostDto.PostSimpleResponse> {
-        return communityPostService.getCommunityPostListByBoard(boardName, pageable, user)
+        return communityPostService.getCommunityPostListByBoard(boardName, filterType, text, pageable, user)
     }
 
     @PutMapping("/{post_id}/likes/")

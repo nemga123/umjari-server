@@ -5,10 +5,24 @@ import com.umjari.server.domain.post.model.CommunityPost
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface CommunityPostRepository : JpaRepository<CommunityPost, Long?> {
+interface CommunityPostRepository : JpaRepository<CommunityPost, Long?>, JpaSpecificationExecutor<CommunityPost> {
+    @Query(
+        value = """
+            SELECT post
+                FROM CommunityPost AS post
+                    LEFT JOIN FETCH post.replies
+                    JOIN FETCH post.author
+        """,
+        countQuery = """
+            SELECT COUNT (*) FROM CommunityPost
+        """,
+    )
+    fun findAllFetchReplies(pageable: Pageable): Page<CommunityPost>
+
     @Query(
         value = """
             SELECT post
