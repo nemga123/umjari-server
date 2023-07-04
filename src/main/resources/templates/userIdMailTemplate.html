@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <style>
+        /* 가운데 정렬 */
+        body {
+            text-align: center;
+        }
+        /* 테두리와 스타일 적용 */
+        .auth-number {
+            border: 2px solid black;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+<p>아이디는 <span class="auth-number" th:text="${userId}"></span>입니다.</p>
+</body>
+</html>

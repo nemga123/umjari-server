@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
-@Tag(name = "auth", description = "유저 관련 APIs")
+@Tag(name = "user", description = "유저 관련 APIs")
 @RestController
 @RequestMapping("/api/v1/user")
 class UserController(

@@ -35,4 +35,27 @@ class AuthDto {
         @field:Size(max = 255)
         val profileImage: String? = "default_image",
     )
+
+    data class FindPasswordRequest(
+        @field:NotBlank
+        @field:Size(max = 255)
+        @field:KeyWordsBlock
+        val userId: String?,
+        @field:NotBlank @field:Email
+        val email: String?,
+    )
+
+    data class UpdatePasswordRequest(
+        @field:NotBlank
+        @field:Size(max = 255)
+        val currentPassword: String?,
+        @field:NotBlank
+        @field:Size(max = 255)
+        val newPassword: String?,
+    )
+
+    data class UserIdMailRequest(
+        @field:NotBlank @field:Email
+        val email: String?,
+    )
 }

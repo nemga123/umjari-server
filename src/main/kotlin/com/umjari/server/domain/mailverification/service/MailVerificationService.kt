@@ -1,5 +1,6 @@
 package com.umjari.server.domain.mailverification.service
 
+import com.umjari.server.domain.mailverification.component.VerificationMailSender
 import com.umjari.server.domain.mailverification.dto.MailVerificationDto
 import com.umjari.server.domain.mailverification.exception.InvalidTokenException
 import com.umjari.server.domain.mailverification.exception.TokenAlreadyExpiredException
@@ -17,8 +18,7 @@ import kotlin.streams.asSequence
 class MailVerificationService(
     private val verifyTokenRepository: VerifyTokenRepository,
     private val userRepository: UserRepository,
-    private val mailBuilder: MailBuilder,
-    private val mailSender: MailSender,
+    private val verificationMailSender: VerificationMailSender,
 ) {
     fun verifyEmail(mailVerificationRequest: MailVerificationDto.MailVerificationRequest) {
         if (userRepository.existsByEmail(mailVerificationRequest.email!!)) {
@@ -26,9 +26,9 @@ class MailVerificationService(
         }
         val verifyToken = generateVerifyToken()
         val verifyTokenObject = VerifyToken(token = verifyToken, email = mailVerificationRequest.email)
-        val mailContent = mailBuilder.build(verifyToken)
         verifyTokenRepository.save(verifyTokenObject)
-        mailSender.sendMail(mailVerificationRequest.email, mailContent)
+        val contextVariables = mapOf("token" to verifyToken)
+        verificationMailSender.sendMail(mailVerificationRequest.email, contextVariables)
     }
 
     fun validateToken(tokenValidationRequest: MailVerificationDto.TokenValidationRequest) {

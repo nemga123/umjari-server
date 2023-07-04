@@ -1,4 +1,4 @@
-package com.umjari.server.domain.mailverification.service
+package com.umjari.server.global.mail
 
 import org.springframework.stereotype.Component
 import org.thymeleaf.TemplateEngine
@@ -8,9 +8,9 @@ import org.thymeleaf.context.Context
 class MailBuilder(
     private val templateEngine: TemplateEngine,
 ) {
-    fun build(token: String): String {
+    fun build(contextVariable: Map<String, String>, template: String): String {
         val context = Context()
-        context.setVariable("token", token)
-        return templateEngine.process("verifyMailTemplate", context)
+        context.setVariables(contextVariable)
+        return templateEngine.process(template, context)
     }
 }
