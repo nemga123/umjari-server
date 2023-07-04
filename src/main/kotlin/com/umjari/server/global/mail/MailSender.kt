@@ -1,4 +1,4 @@
-package com.umjari.server.domain.mailverification.service
+package com.umjari.server.global.mail
 
 import jakarta.mail.internet.InternetAddress
 import jakarta.mail.internet.MimeMessage
@@ -10,19 +10,19 @@ import org.springframework.stereotype.Component
 class MailSender(
     private val emailSender: JavaMailSender,
 ) {
-    fun sendMail(receiver: String, content: String) {
-        val mail = convertToMail(receiver, content)
+    fun sendMail(receiver: String, subject: String, content: String) {
+        val mail = convertToMail(receiver, subject, content)
         emailSender.send(mail)
     }
 
-    private fun convertToMail(receiver: String, content: String): MimeMessage {
+    private fun convertToMail(receiver: String, subject: String, content: String): MimeMessage {
         val message = emailSender.createMimeMessage()
         message.setFrom(InternetAddress("umjari.register@gmail.com", "umjari.register"))
         message.setText(content, "utf-8", "html")
 
         val helper = MimeMessageHelper(message)
         helper.setTo(receiver)
-        helper.setSubject("[Umjari] 인증 메일")
+        helper.setSubject(subject)
 
         return message
     }

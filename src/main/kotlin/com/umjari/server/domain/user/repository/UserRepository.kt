@@ -32,4 +32,8 @@ interface UserRepository : JpaRepository<User, Long?> {
     fun existsByProfileNameAndIdNot(profileName: String, id: Long): Boolean
 
     fun existsByIdAndRolesLike(id: Long, roles: String): Boolean
+
+    fun findByUserIdAndEmail(userId: String, email: String): User?
+
+    fun findByEmail(email: String): User?
 }

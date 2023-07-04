@@ -68,6 +68,8 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/album/profile-name/**/", "GET"),
                 AntPathRequestMatcher("/api/v1/album/profile-name/**/friends/", "GET"),
                 AntPathRequestMatcher("/api/v1/album/{\\d+}/photo/", "GET"),
+                AntPathRequestMatcher("/api/v1/auth/password-reset/", "POST"),
+                AntPathRequestMatcher("/api/v1/auth/id-find/", "POST"),
             ).permitAll()
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/", "PUT"),
@@ -109,6 +111,7 @@ class SecurityConfig(
                 AntPathRequestMatcher("/api/v1/friend/requests/", "GET"),
                 AntPathRequestMatcher("/api/v1/friend/requests/", "GET"),
                 AntPathRequestMatcher("/api/v1/me/**/", "GET"),
+                AntPathRequestMatcher("/api/v1/auth/password/", "PUT"),
             ).hasRole("USER")
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
