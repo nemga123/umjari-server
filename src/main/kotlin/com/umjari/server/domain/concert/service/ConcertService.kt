@@ -98,6 +98,7 @@ class ConcertService(
         composer: String?,
         musicName: String?,
         text: String?,
+        currentUser: User?,
         pageable: Pageable,
     ): PageResponse<ConcertDto.ConcertDashboardResponse> {
         val spec = ConcertSpecification()
@@ -109,8 +110,16 @@ class ConcertService(
         musicName?.let { spec.filteredByMusicName(musicName) }
         text?.let { spec.filteredByText(text) }
         val concerts = concertRepository.findAll(spec.build(), pageable)
-        val concertResponses = concerts.map { ConcertDto.ConcertDashboardResponse(it) }
-        return PageResponse(concertResponses, pageable.pageNumber)
+        return if (currentUser == null) {
+            val concertResponses = concerts.map { ConcertDto.ConcertDashboardResponse(it) }
+            PageResponse(concertResponses, pageable.pageNumber)
+        } else {
+            val concertIdSet = concerts.map { it.id }.toSet()
+            val friendCountList = concertParticipantRepository.findFriendCount(concertIdSet, currentUser.id)
+            val friendCountMap = friendCountList.associate { it.concertId to it.count }
+            val concertResponses = concerts.map { ConcertDto.ConcertDashboardResponse(it, friendCountMap[it.id]) }
+            PageResponse(concertResponses, pageable.pageNumber)
+        }
     }
 
     fun updateConcertDetail(

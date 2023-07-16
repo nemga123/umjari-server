@@ -19,7 +19,31 @@ interface ConcertParticipantRepository : JpaRepository<ConcertParticipant, Long?
         @Param("concertMusicId") concertMusicId: Long,
     ): Set<ConcertParticipant>
 
-    fun deleteAllByConcertMusicIdAndPerformer_UserIdIn(concertMusicId: Long, performerUserId: List<String>)
+    @Query(
+        """
+            SELECT
+                participant.concertMusic.concert.id AS  concertId,
+                COUNT (DISTINCT participant.id) AS count
+                FROM ConcertParticipant AS participant
+                    JOIN participant.concertMusic
+                WHERE participant.concertMusic.concert.id IN (:concertIds)
+                    AND (participant.performer.id IN
+                        (SELECT friend_relation.receiver.id
+                        FROM Friend AS friend_relation
+                        WHERE friend_relation.requester.id = :userId
+                            AND friend_relation.status = 1)
+                    OR participant.performer.id IN
+                        (SELECT friend_relation.requester.id
+                        FROM Friend AS friend_relation
+                        WHERE friend_relation.receiver.id = :userId
+                            AND friend_relation.status = 1))
+                GROUP BY participant.concertMusic.concert.id
+        """,
+    )
+    fun findFriendCount(
+        @Param("concertIds") concertIds: Set<Long>,
+        @Param("userId") userId: Long,
+    ): List<ConcertParticipantDto.ConcertParticipatedInterface>
 
     @Query(
         """

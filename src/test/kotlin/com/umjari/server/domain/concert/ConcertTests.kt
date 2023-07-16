@@ -2,6 +2,8 @@ package com.umjari.server.domain.concert
 
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
+import com.umjari.server.domain.friend.model.Friend
+import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupRepository
@@ -9,6 +11,7 @@ import com.umjari.server.domain.mailverification.repository.VerifyTokenRepositor
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
 import org.junit.jupiter.api.Assertions
@@ -43,8 +46,10 @@ class ConcertTests {
 
     companion object {
         private lateinit var userToken: String
+        private lateinit var user: User
         private lateinit var adminToken: String
         private lateinit var userToken3: String
+        private lateinit var user3: User
         private lateinit var userToken4: String
 
         @BeforeAll
@@ -59,7 +64,7 @@ class ConcertTests {
         ) {
             val group = TestUtils.createDummyGroup(regionRepository, groupRepository)
             val userResult = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
-            val user = userResult.first
+            user = userResult.first
             userToken = userResult.second
             groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
 
@@ -76,6 +81,7 @@ class ConcertTests {
                 "nickname3",
             )
             userToken3 = userResult3.second
+            user3 = userResult3.first
 
             val userResult4 = TestUtils.createDummyUser(
                 mockMvc,
@@ -532,6 +538,74 @@ class ConcertTests {
             MockMvcRequestBuilders.get("/api/v1/concert/dashboard/"),
         ).andExpect(
             jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/dashboard/")
+                .param("startDate", "2023-01-01")
+                .param("endDate", "2050-12-31")
+                .param("regionParent", "전체")
+                .param("regionChild", "전체")
+                .param("text", "NEW")
+                .param("composer", "c"),
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/dashboard/")
+                .param("startDate", "2023-01-01")
+                .param("endDate", "2050-12-31")
+                .param("regionParent", "서울시")
+                .param("regionChild", "강남구")
+                .param("text", "NEW")
+                .param("musicName", "NO_MUSIC"),
+        ).andExpect(
+            jsonPath("$.contents.length()").value(0),
+        )
+    }
+
+    @Test
+    @Order(8)
+    fun testGetConcertDashboardWithFriendCount(
+        @Autowired friendRepository: FriendRepository,
+    ) {
+        val content = """
+            {
+              "participantList": [
+                {
+                  "userId": "user",
+                  "part": "PART",
+                  "detailPart": "DETAIL_PART",
+                  "role": "MEMBER"
+                }
+              ]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put("/api/v1/concert/1/concert-music/1/participant/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", userToken),
+        ).andExpect(
+            status().isOk,
+        )
+
+        friendRepository.save(
+            Friend(
+                receiver = user,
+                requester = user3,
+                status = Friend.FriendshipStatus.APPROVED,
+            ),
+        )
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/concert/dashboard/")
+                .header("Authorization", userToken3),
+        ).andExpect(
+            jsonPath("$.contents.length()").value(1),
+        ).andExpect(
+            jsonPath("$.contents[0].friendCount").value(1),
         )
 
         mockMvc.perform(
