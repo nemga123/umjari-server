@@ -183,4 +183,9 @@ class ConcertParticipantDto {
             },
         )
     }
+
+    interface ConcertParticipatedInterface {
+        val concertId: Long
+        val count: Int
+    }
 }

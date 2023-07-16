@@ -49,6 +49,7 @@ class ConcertController(
         @RequestParam(required = false) composer: String? = null,
         @RequestParam(required = false) musicName: String? = null,
         @RequestParam(required = false) text: String? = null,
+        @CurrentUser currentUser: User?,
         @PageableDefault(
             size = 20,
             sort = ["concertDate", "title", "group.name", "regionDetail"],
@@ -63,6 +64,7 @@ class ConcertController(
             composer,
             musicName,
             text,
+            currentUser,
             pageable,
         )
     }

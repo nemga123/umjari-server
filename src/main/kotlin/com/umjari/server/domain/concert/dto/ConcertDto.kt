@@ -200,6 +200,7 @@ class ConcertDto {
         val fee: Int,
         val region: String,
         val regionDetail: String,
+        val friendCount: Int?,
     ) {
         constructor(concert: Concert) : this(
             id = concert.id,
@@ -213,6 +214,22 @@ class ConcertDto {
             fee = concert.fee,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
+            friendCount = null,
+        )
+
+        constructor(concert: Concert, friendCount: Int?) : this(
+            id = concert.id,
+            groupId = concert.group.id,
+            title = concert.title,
+            subtitle = concert.subtitle,
+            posterImg = concert.posterImg,
+            concertDate = SimpleDateFormat("yyyy-MM-dd").format(concert.concertDate),
+            concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
+            concertRunningTime = concert.concertRunningTime,
+            fee = concert.fee,
+            region = concert.region.toString(),
+            regionDetail = concert.regionDetail,
+            friendCount = friendCount ?: 0,
         )
     }
 }
