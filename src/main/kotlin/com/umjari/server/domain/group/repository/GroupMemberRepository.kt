@@ -1,5 +1,6 @@
 package com.umjari.server.domain.group.repository
 
+import com.umjari.server.domain.group.dto.GroupDto
 import com.umjari.server.domain.group.model.GroupMember
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -41,4 +42,29 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long?> {
         @Param("userIds") userIds: Set<String>,
         @Param("groupId") groupId: Long,
     ): Set<GroupMember>
+
+    @Query(
+        """
+            SELECT
+                gm.group.id AS groupId,
+                COUNT (DISTINCT gm.id) AS count
+                FROM GroupMember AS gm
+                WHERE gm.group.id IN (:groupIds)
+                    AND (gm.user.id IN
+                        (SELECT friend_relation.receiver.id
+                        FROM Friend AS friend_relation
+                        WHERE friend_relation.requester.id = :userId
+                            AND friend_relation.status = 1)
+                    OR gm.user.id IN
+                        (SELECT friend_relation.requester.id
+                        FROM Friend AS friend_relation
+                        WHERE friend_relation.receiver.id = :userId
+                            AND friend_relation.status = 1))
+                GROUP BY gm.group.id
+        """,
+    )
+    fun findFriendCount(
+        @Param("groupIds") groupIds: Set<Long>,
+        @Param("userId") userId: Long,
+    ): List<GroupDto.GroupParticipatedInterface>
 }

@@ -1,5 +1,7 @@
 package com.umjari.server.domain.group
 
+import com.umjari.server.domain.friend.model.Friend
+import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.group.model.GroupMember
 import com.umjari.server.domain.group.repository.GroupMemberRepository
 import com.umjari.server.domain.group.repository.GroupMusicRepository
@@ -8,6 +10,7 @@ import com.umjari.server.domain.mailverification.repository.VerifyTokenRepositor
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.repository.RegionRepository
+import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.utils.TestUtils
 import org.junit.jupiter.api.BeforeAll
@@ -39,8 +42,10 @@ class GroupTests {
 
     companion object {
         private lateinit var userToken: String
+        private lateinit var user: User
         private lateinit var adminToken: String
         private lateinit var userToken3: String
+        private lateinit var user3: User
 
         @BeforeAll
         @JvmStatic
@@ -54,7 +59,7 @@ class GroupTests {
         ) {
             val group = TestUtils.createDummyGroup(regionRepository, groupRepository)
             val userResult = TestUtils.createDummyUser(mockMvc, userRepository, verifyTokenRepository)
-            val user = userResult.first
+            user = userResult.first
             userToken = userResult.second
             groupMemberRepository.save(GroupMember(group, user, GroupMember.MemberRole.ADMIN))
 
@@ -70,6 +75,7 @@ class GroupTests {
                 "profileName3",
                 "nickname3",
             )
+            user3 = userResult3.first
             userToken3 = userResult3.second
         }
     }
@@ -555,6 +561,8 @@ class GroupTests {
             status().isOk,
         ).andExpect(
             jsonPath("$.contents.length()").value(3),
+        ).andExpect(
+            jsonPath("$.contents[0].friendCount").value(null),
         )
 
         mockMvc.perform(
@@ -595,6 +603,34 @@ class GroupTests {
             status().isOk,
         ).andExpect(
             jsonPath("$.contents.length()").value(0),
+        )
+    }
+
+    @Test
+    @Order(12)
+    fun testSearchGroupWithFriend(
+        @Autowired friendRepository: FriendRepository,
+    ) {
+        friendRepository.save(
+            Friend(
+                receiver = user,
+                requester = user3,
+                status = Friend.FriendshipStatus.APPROVED,
+            ),
+        )
+        mockMvc.perform(
+            MockMvcRequestBuilders.get("/api/v1/group/")
+                .param("name", "NAME")
+                .param("regionParent", "전체")
+                .param("regionChild", "전체")
+                .param("instruments", "")
+                .header("Authorization", userToken3),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.contents.length()").value(3),
+        ).andExpect(
+            jsonPath("$.contents[0].friendCount").value(1),
         )
     }
 }

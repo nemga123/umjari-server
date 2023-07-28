@@ -20,5 +20,5 @@ interface GroupMusicRepository : JpaRepository<GroupMusic, Long?> {
             SELECT gm FROM GroupMusic AS gm JOIN FETCH gm.music WHERE gm.group.id IN (:groupIds)
         """,
     )
-    fun fetchGroupMusicByGroupIds(@Param("groupIds") groupIds: List<Long>): List<GroupMusic>
+    fun fetchGroupMusicByGroupIds(@Param("groupIds") groupIds: Set<Long>): List<GroupMusic>
 }

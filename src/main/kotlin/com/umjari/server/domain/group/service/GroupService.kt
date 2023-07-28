@@ -209,6 +209,7 @@ class GroupService(
         composer: String?,
         musicName: String?,
         instruments: List<Instrument>?,
+        currentUser: User?,
         pageable: Pageable,
     ): PageResponse<GroupDto.GroupListResponse> {
         val spec = GroupSpecification()
@@ -219,10 +220,17 @@ class GroupService(
         musicName?.let { spec.filteredByMusicName(musicName) }
         if (!instruments.isNullOrEmpty()) spec.filteredByRecruitInstruments(instruments)
         val groups = groupRepository.findAll(spec.build(), pageable)
-        val idList = groups.map { it.id }.toList()
-        val groupMusicList = groupMusicRepository.fetchGroupMusicByGroupIds(idList)
+        val idSet = groups.map { it.id }.toSet()
+        val groupMusicList = groupMusicRepository.fetchGroupMusicByGroupIds(idSet)
         val setListMap = groupMusicList.groupBy { it.group.id }
-        val groupResponse = groups.map { GroupDto.GroupListResponse(it, setListMap) }
-        return PageResponse(groupResponse, pageable.pageNumber)
+        return if (currentUser == null) {
+            val groupResponse = groups.map { GroupDto.GroupListResponse(it, setListMap) }
+            PageResponse(groupResponse, pageable.pageNumber)
+        } else {
+            val friendCountList = groupMemberRepository.findFriendCount(idSet, currentUser.id)
+            val friendCountMap = friendCountList.associate { it.groupId to it.count }
+            val concertResponses = groups.map { GroupDto.GroupListResponse(it, setListMap, friendCountMap[it.id]) }
+            PageResponse(concertResponses, pageable.pageNumber)
+        }
     }
 }
