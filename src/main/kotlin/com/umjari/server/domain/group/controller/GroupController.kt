@@ -51,13 +51,23 @@ class GroupController(
         @RequestParam(required = false) composer: String? = null,
         @RequestParam(required = false) musicName: String? = null,
         @RequestParam(required = false) instruments: List<Instrument>? = null,
+        @CurrentUser currentUser: User?,
         @PageableDefault(
             size = 20,
             sort = ["name", "regionDetail"],
             direction = Direction.ASC,
         ) pageable: Pageable,
     ): PageResponse<GroupDto.GroupListResponse> {
-        return groupService.searchGroupList(regionParent, regionChild, name, composer, musicName, instruments, pageable)
+        return groupService.searchGroupList(
+            regionParent,
+            regionChild,
+            name,
+            composer,
+            musicName,
+            instruments,
+            currentUser,
+            pageable,
+        )
     }
 
     @GetMapping("/{group_id}/")

@@ -147,6 +147,7 @@ class GroupDto {
         val recruit: Boolean,
         val recruitInstruments: List<Instrument>?,
         val recruitDetail: String?,
+        val friendCount: Int?,
         val setList: List<MusicDto.MusicDetailResponse>,
     ) {
         constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>) : this(
@@ -158,7 +159,26 @@ class GroupDto {
             recruit = group.recruit,
             recruitInstruments = if (group.recruit) group.recruitInstruments else null,
             recruitDetail = if (group.recruit) group.recruitDetail else null,
+            friendCount = null,
             setList = setListMap[group.id]?.map { MusicDto.MusicDetailResponse(it.music) } ?: emptyList(),
         )
+
+        constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>, friendCount: Int?) : this(
+            id = group.id,
+            name = group.name,
+            logo = group.logo,
+            region = group.region.toString(),
+            regionDetail = group.regionDetail,
+            recruit = group.recruit,
+            recruitInstruments = if (group.recruit) group.recruitInstruments else null,
+            recruitDetail = if (group.recruit) group.recruitDetail else null,
+            friendCount = friendCount,
+            setList = setListMap[group.id]?.map { MusicDto.MusicDetailResponse(it.music) } ?: emptyList(),
+        )
+    }
+
+    interface GroupParticipatedInterface {
+        val groupId: Long
+        val count: Int
     }
 }
