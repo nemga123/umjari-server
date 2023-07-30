@@ -1,8 +1,8 @@
 package com.umjari.server.domain.music
 
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.repository.GroupMemberRepository
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.repository.GroupRepository
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository
@@ -19,7 +19,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status

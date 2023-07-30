@@ -1,6 +1,6 @@
 package com.umjari.server.domain.mypage.dto
 
-import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.groupqna.model.GroupQna
 import com.umjari.server.domain.post.model.CommunityPost
 import com.umjari.server.domain.post.model.CommunityPostReply

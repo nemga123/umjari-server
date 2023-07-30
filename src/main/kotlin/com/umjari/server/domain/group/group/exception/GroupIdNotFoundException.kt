@@ -1,4 +1,4 @@
-package com.umjari.server.domain.group.exception
+package com.umjari.server.domain.group.group.exception
 
 import com.umjari.server.global.exception.DataNotFoundException
 import com.umjari.server.global.exception.ErrorType

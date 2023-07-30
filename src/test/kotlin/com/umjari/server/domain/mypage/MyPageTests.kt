@@ -1,6 +1,6 @@
 package com.umjari.server.domain.mypage
 
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.repository.GroupRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository

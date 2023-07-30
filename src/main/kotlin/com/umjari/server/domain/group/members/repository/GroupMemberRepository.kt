@@ -1,7 +1,7 @@
-package com.umjari.server.domain.group.repository
+package com.umjari.server.domain.group.members.repository
 
-import com.umjari.server.domain.group.dto.GroupDto
-import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.group.dto.GroupDto
+import com.umjari.server.domain.group.members.model.GroupMember
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param

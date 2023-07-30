@@ -1,5 +1,6 @@
-package com.umjari.server.domain.group.model
+package com.umjari.server.domain.group.groupmusics.model
 
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.global.model.BaseEntity
 import jakarta.persistence.Entity

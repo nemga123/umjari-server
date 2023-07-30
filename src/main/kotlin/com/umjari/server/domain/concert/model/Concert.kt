@@ -1,6 +1,6 @@
 package com.umjari.server.domain.concert.model
 
-import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseTimeEntity
 import jakarta.persistence.CascadeType

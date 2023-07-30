@@ -1,6 +1,6 @@
-package com.umjari.server.domain.group.repository
+package com.umjari.server.domain.group.groupmusics.repository
 
-import com.umjari.server.domain.group.model.GroupMusic
+import com.umjari.server.domain.group.groupmusics.model.GroupMusic
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query

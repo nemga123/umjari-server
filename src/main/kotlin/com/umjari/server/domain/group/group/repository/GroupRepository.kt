@@ -1,6 +1,6 @@
-package com.umjari.server.domain.group.repository
+package com.umjari.server.domain.group.group.repository
 
-import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.group.model.Group
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query

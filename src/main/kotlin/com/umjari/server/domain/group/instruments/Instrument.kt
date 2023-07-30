@@ -1,4 +1,4 @@
-package com.umjari.server.domain.group.model
+package com.umjari.server.domain.group.instruments
 
 enum class Instrument(
     val instrumentName: String,

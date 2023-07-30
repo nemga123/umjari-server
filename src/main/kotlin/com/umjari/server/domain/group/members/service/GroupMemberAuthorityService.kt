@@ -1,8 +1,8 @@
-package com.umjari.server.domain.group.service
+package com.umjari.server.domain.group.members.service
 
-import com.umjari.server.domain.group.exception.GroupRoleNotAuthorizedException
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.repository.GroupMemberRepository
+import com.umjari.server.domain.group.members.exception.GroupRoleNotAuthorizedException
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.user.repository.UserRepository
 import org.springframework.stereotype.Service
 

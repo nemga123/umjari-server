@@ -1,12 +1,12 @@
-package com.umjari.server.domain.group.controller
+package com.umjari.server.domain.group.group.controller
 
 import com.umjari.server.domain.concert.dto.ConcertDto
-import com.umjari.server.domain.group.dto.GroupDto
-import com.umjari.server.domain.group.dto.GroupRegisterDto
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.model.Instrument
-import com.umjari.server.domain.group.service.GroupMusicService
-import com.umjari.server.domain.group.service.GroupService
+import com.umjari.server.domain.group.group.dto.GroupDto
+import com.umjari.server.domain.group.group.service.GroupService
+import com.umjari.server.domain.group.groupmusics.service.GroupMusicService
+import com.umjari.server.domain.group.instruments.Instrument
+import com.umjari.server.domain.group.members.dto.GroupRegisterDto
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.auth.annotation.CurrentUser
 import com.umjari.server.global.pagination.PageResponse
@@ -51,6 +51,7 @@ class GroupController(
         @RequestParam(required = false) composer: String? = null,
         @RequestParam(required = false) musicName: String? = null,
         @RequestParam(required = false) instruments: List<Instrument>? = null,
+        @RequestParam(required = false) tags: List<String>? = null,
         @CurrentUser currentUser: User?,
         @PageableDefault(
             size = 20,
@@ -65,6 +66,7 @@ class GroupController(
             composer,
             musicName,
             instruments,
+            tags,
             currentUser,
             pageable,
         )

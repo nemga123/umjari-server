@@ -1,6 +1,6 @@
 package com.umjari.server.domain.user.model
 
-import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.global.model.BaseTimeEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column

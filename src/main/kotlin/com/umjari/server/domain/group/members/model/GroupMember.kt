@@ -1,5 +1,6 @@
-package com.umjari.server.domain.group.model
+package com.umjari.server.domain.group.members.model
 
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseEntity
 import jakarta.persistence.Entity

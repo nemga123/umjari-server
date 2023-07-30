@@ -1,8 +1,8 @@
 package com.umjari.server.global.auth
 
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.repository.GroupMemberRepository
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.repository.GroupRepository
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.repository.RegionRepository
 import com.umjari.server.domain.user.repository.UserRepository

@@ -5,8 +5,8 @@ import com.umjari.server.domain.concert.exception.ConcertMusicIdNotFoundExceptio
 import com.umjari.server.domain.concert.model.ConcertParticipant
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.service.GroupMemberAuthorityService
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
 import org.springframework.stereotype.Service

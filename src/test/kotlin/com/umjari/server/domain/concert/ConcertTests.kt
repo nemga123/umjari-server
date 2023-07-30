@@ -4,9 +4,9 @@ import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.friend.model.Friend
 import com.umjari.server.domain.friend.repository.FriendRepository
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.repository.GroupMemberRepository
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.repository.GroupRepository
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.music.repository.MusicRepository

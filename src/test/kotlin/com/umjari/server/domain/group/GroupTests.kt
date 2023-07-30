@@ -2,10 +2,10 @@ package com.umjari.server.domain.group
 
 import com.umjari.server.domain.friend.model.Friend
 import com.umjari.server.domain.friend.repository.FriendRepository
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.repository.GroupMemberRepository
-import com.umjari.server.domain.group.repository.GroupMusicRepository
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.repository.GroupRepository
+import com.umjari.server.domain.group.groupmusics.repository.GroupMusicRepository
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.music.repository.MusicRepository
@@ -95,7 +95,8 @@ class GroupTests {
               "regionChild": "string",
               "regionDetail": "string",
               "homepage": "string",
-              "detailIntro": "string"
+              "detailIntro": "string",
+              "tags": ["TAG1"]
             }
         """.trimIndent()
         mockMvc.perform(
@@ -119,7 +120,8 @@ class GroupTests {
               "regionChild": "string",
               "regionDetail": "string",
               "homepage": "string",
-              "detailIntro": "string"
+              "detailIntro": "string",
+              "tags": ["TAG1"]
             }
         """.trimIndent()
         mockMvc.perform(
@@ -151,7 +153,8 @@ class GroupTests {
               "regionChild": "관악구",
               "regionDetail": "string",
               "homepage": "string",
-              "detailIntro": "string"
+              "detailIntro": "string",
+              "tags": ["TAG1"]
             }
         """.trimIndent()
         mockMvc.perform(
@@ -556,7 +559,8 @@ class GroupTests {
                 .param("name", "NAME")
                 .param("regionParent", "전체")
                 .param("regionChild", "전체")
-                .param("instruments", ""),
+                .param("instruments", "")
+                .param("tags", ""),
         ).andExpect(
             status().isOk,
         ).andExpect(
@@ -580,7 +584,8 @@ class GroupTests {
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/")
                 .param("composer", "c")
-                .param("musicName", "노래"),
+                .param("musicName", "노래")
+                .param("tags", "tag1"),
         ).andExpect(
             status().isOk,
         ).andExpect(
@@ -589,11 +594,12 @@ class GroupTests {
 
         mockMvc.perform(
             MockMvcRequestBuilders.get("/api/v1/group/")
-                .param("instruments", "VIOLIN"),
+                .param("instruments", "VIOLIN")
+                .param("tags", "no_tag"),
         ).andExpect(
             status().isOk,
         ).andExpect(
-            jsonPath("$.contents.length()").value(1),
+            jsonPath("$.contents.length()").value(0),
         )
 
         mockMvc.perform(
