@@ -21,6 +21,7 @@ import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.text.SimpleDateFormat
 
 @Service
@@ -175,7 +176,7 @@ class GroupService(
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
-        val requestUserIds = registerRequest.userIds.toMutableList()
+        val requestUserIds = registerRequest.userIds.toSet()
 
         val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
@@ -200,6 +201,36 @@ class GroupService(
         val notExistingUserIds = requestUserIds.subtract(existingUserIds)
         notExistingUserIds.forEach {
             failedUsers.add(GroupRegisterDto.FailedUser(it, "User does not exist."))
+        }
+
+        return GroupRegisterDto.GroupRegisterResponse(failedUsers)
+    }
+
+    @Transactional
+    fun removeGroupMember(
+        groupId: Long,
+        removeRequest: GroupRegisterDto.GroupRegisterRequest,
+    ): GroupRegisterDto.GroupRegisterResponse {
+        val userIds = removeRequest.userIds.toSet()
+        val group = groupRepository.findByIdOrNull(groupId)
+            ?: throw GroupIdNotFoundException(groupId)
+
+        val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
+        val (existingUserIds, _) = userService.getUserIdToUserMapInUserIds(userIds)
+        val enrolledUser = groupMemberRepository.findAllAlreadyEnrolled(existingUserIds, group.id)
+        val enrolledUserIds = enrolledUser.map { it.user.userId }.toSet()
+
+        groupMemberRepository.deleteAll(enrolledUser)
+
+        val notExistingUserIds = userIds.subtract(existingUserIds)
+        notExistingUserIds.forEach {
+            failedUsers.add(GroupRegisterDto.FailedUser(it, "User does not exist."))
+        }
+
+        for (userId in existingUserIds) {
+            if (!enrolledUserIds.contains(userId)) {
+                failedUsers.add(GroupRegisterDto.FailedUser(userId, "User does not enrolled in group."))
+            }
         }
 
         return GroupRegisterDto.GroupRegisterResponse(failedUsers)

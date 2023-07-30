@@ -34,7 +34,7 @@ class ConcertMusicService(
             user.id,
         )
 
-        val requestUserIds = registerConcertParticipantListRequest.participantList.map { it.userId }
+        val requestUserIds = registerConcertParticipantListRequest.participantList.map { it.userId }.toSet()
         val requestUserIdToRole = registerConcertParticipantListRequest.participantList.associateBy { it.userId }
         val failedUsers = mutableListOf<ConcertParticipantDto.FailedUser>()
         val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)

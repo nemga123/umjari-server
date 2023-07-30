@@ -116,6 +116,7 @@ class SecurityConfig(
             .requestMatchers(
                 AntPathRequestMatcher("/api/v1/group/", "POST"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/register/", "POST"),
+                AntPathRequestMatcher("/api/v1/group/{\\d+}/register/", "DELETE"),
                 AntPathRequestMatcher("/api/v1/group/{\\d+}/register/admin/", "POST"),
             ).hasRole("ADMIN")
             .requestMatchers("/error").permitAll()

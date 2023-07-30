@@ -639,4 +639,61 @@ class GroupTests {
             jsonPath("$.contents[0].friendCount").value(1),
         )
     }
+
+    @Test
+    @Order(13)
+    fun testRemoveGroupMember() {
+        val content = """
+            {
+              "userIds": [
+                "user",
+                "user3"
+              ]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/2/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(0),
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/100/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isNotFound,
+        )
+    }
+
+    @Test
+    @Order(14)
+    fun testRemoveWrongGroupMember() {
+        val content = """
+            {
+              "userIds": [
+                "non-user",
+                "user"
+              ]
+            }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/v1/group/2/register/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+                .header("Authorization", adminToken),
+        ).andExpect(
+            status().isOk,
+        ).andExpect(
+            jsonPath("$.failedUsers.length()").value(2),
+        )
+    }
 }
