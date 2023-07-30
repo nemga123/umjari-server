@@ -107,7 +107,7 @@ class UserService(
         return UserDto.DetailUserInfoResponse(user = user, currentUser = currentUser, isFriend)
     }
 
-    fun getUserIdToUserMapInUserIds(userIds: List<String>): Pair<Set<String>, Map<String, User>> {
+    fun getUserIdToUserMapInUserIds(userIds: Set<String>): Pair<Set<String>, Map<String, User>> {
         val existingUsers = userRepository.findUserIdsByUserIdIn(userIds)
         val userMap = existingUsers.associateBy { it.userId }
         val existingUserIds = existingUsers.map { it.userId }.toSet()
