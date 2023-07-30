@@ -1,6 +1,6 @@
 package com.umjari.server.domain.groupqna.model
 
-import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.model.BaseTimeEntity
 import jakarta.persistence.CascadeType

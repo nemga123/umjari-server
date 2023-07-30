@@ -2,7 +2,7 @@ package com.umjari.server.domain.concert.specification
 
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.concert.model.ConcertMusic
-import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.region.model.Region
 import jakarta.persistence.criteria.JoinType

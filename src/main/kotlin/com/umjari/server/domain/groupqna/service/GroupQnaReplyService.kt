@@ -1,7 +1,7 @@
 package com.umjari.server.domain.groupqna.service
 
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.service.GroupMemberAuthorityService
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
 import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
 import com.umjari.server.domain.groupqna.exception.QnaIdNotFoundException
 import com.umjari.server.domain.groupqna.exception.QnaReplyIdNotFoundException

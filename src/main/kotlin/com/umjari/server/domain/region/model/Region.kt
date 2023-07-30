@@ -1,6 +1,6 @@
 package com.umjari.server.domain.region.model
 
-import com.umjari.server.domain.group.model.Group
+import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.global.model.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

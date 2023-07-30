@@ -1,8 +1,8 @@
 package com.umjari.server.utils
 
 import com.jayway.jsonpath.JsonPath
-import com.umjari.server.domain.group.model.Group
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.model.Group
+import com.umjari.server.domain.group.group.repository.GroupRepository
 import com.umjari.server.domain.mailverification.model.VerifyToken
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
 import com.umjari.server.domain.region.model.Region
@@ -30,6 +30,7 @@ class TestUtils {
                 regionDetail = "음대",
                 detailIntro = "음악 동아리",
                 homepage = "homepage",
+                tags = ",,",
             )
             return groupRepository.save(group)
         }

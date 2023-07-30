@@ -1,7 +1,7 @@
 package com.umjari.server.domain.groupqna.service
 
-import com.umjari.server.domain.group.exception.GroupIdNotFoundException
-import com.umjari.server.domain.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
+import com.umjari.server.domain.group.group.repository.GroupRepository
 import com.umjari.server.domain.groupqna.dto.GroupQnaDto
 import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
 import com.umjari.server.domain.groupqna.exception.QnaCannotBeDeletedException

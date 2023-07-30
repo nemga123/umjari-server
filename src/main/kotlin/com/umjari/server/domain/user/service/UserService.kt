@@ -3,8 +3,8 @@ package com.umjari.server.domain.user.service
 import com.umjari.server.domain.concert.dto.ConcertParticipantDto
 import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
 import com.umjari.server.domain.friend.repository.FriendRepository
-import com.umjari.server.domain.group.dto.GroupDto
-import com.umjari.server.domain.group.repository.GroupMemberRepository
+import com.umjari.server.domain.group.group.dto.GroupDto
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.image.service.ImageService
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException

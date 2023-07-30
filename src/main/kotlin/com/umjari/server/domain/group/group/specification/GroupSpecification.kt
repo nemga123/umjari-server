@@ -1,8 +1,8 @@
-package com.umjari.server.domain.group.specification
+package com.umjari.server.domain.group.group.specification
 
-import com.umjari.server.domain.group.model.Group
-import com.umjari.server.domain.group.model.GroupMusic
-import com.umjari.server.domain.group.model.Instrument
+import com.umjari.server.domain.group.group.model.Group
+import com.umjari.server.domain.group.groupmusics.model.GroupMusic
+import com.umjari.server.domain.group.instruments.Instrument
 import com.umjari.server.domain.music.model.Music
 import com.umjari.server.domain.region.model.Region
 import jakarta.persistence.criteria.JoinType
@@ -117,6 +117,19 @@ class GroupSpecification {
             criteriaBuilder.`in`(root.get<Long>("id")).value(sub)
         }
         spec = spec.and(instrumentsSpec)
+    }
+
+    fun filteredByTags(tags: List<String>) {
+        var tagSpec = Specification<Group> { _, _, _ -> null }
+        for (tag in tags) {
+            tagSpec = tagSpec.and { root, _, criteriaBuilder ->
+                criteriaBuilder.like(
+                    criteriaBuilder.upper(root.get("tags")),
+                    "%,${tag.uppercase()},%",
+                )
+            }
+        }
+        spec = spec.and(tagSpec)
     }
 
     fun build(): Specification<Group> {

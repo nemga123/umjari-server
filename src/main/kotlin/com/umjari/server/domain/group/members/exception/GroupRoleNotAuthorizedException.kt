@@ -1,6 +1,6 @@
-package com.umjari.server.domain.group.exception
+package com.umjari.server.domain.group.members.exception
 
-import com.umjari.server.domain.group.model.GroupMember
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.global.exception.ErrorType
 import com.umjari.server.global.exception.NotAllowedException
 

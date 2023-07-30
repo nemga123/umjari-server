@@ -1,6 +1,6 @@
 package com.umjari.server.domain.user.dto
 
-import com.umjari.server.domain.group.dto.GroupDto
+import com.umjari.server.domain.group.group.dto.GroupDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.validation.KeyWordsBlock
 import jakarta.validation.constraints.NotBlank

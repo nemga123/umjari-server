@@ -1,4 +1,4 @@
-package com.umjari.server.domain.group.dto
+package com.umjari.server.domain.group.members.dto
 
 import jakarta.validation.constraints.Pattern
 

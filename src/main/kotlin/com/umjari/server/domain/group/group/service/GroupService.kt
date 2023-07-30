@@ -1,18 +1,19 @@
-package com.umjari.server.domain.group.service
+package com.umjari.server.domain.group.group.service
 
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.repository.ConcertRepository
-import com.umjari.server.domain.group.dto.GroupDto
-import com.umjari.server.domain.group.dto.GroupRegisterDto
-import com.umjari.server.domain.group.exception.GroupIdNotFoundException
-import com.umjari.server.domain.group.exception.GroupRoleNotAuthorizedException
-import com.umjari.server.domain.group.model.Group
-import com.umjari.server.domain.group.model.GroupMember
-import com.umjari.server.domain.group.model.Instrument
-import com.umjari.server.domain.group.repository.GroupMemberRepository
-import com.umjari.server.domain.group.repository.GroupMusicRepository
-import com.umjari.server.domain.group.repository.GroupRepository
-import com.umjari.server.domain.group.specification.GroupSpecification
+import com.umjari.server.domain.group.group.dto.GroupDto
+import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
+import com.umjari.server.domain.group.group.model.Group
+import com.umjari.server.domain.group.group.repository.GroupRepository
+import com.umjari.server.domain.group.group.specification.GroupSpecification
+import com.umjari.server.domain.group.groupmusics.repository.GroupMusicRepository
+import com.umjari.server.domain.group.instruments.Instrument
+import com.umjari.server.domain.group.members.dto.GroupRegisterDto
+import com.umjari.server.domain.group.members.exception.GroupRoleNotAuthorizedException
+import com.umjari.server.domain.group.members.model.GroupMember
+import com.umjari.server.domain.group.members.repository.GroupMemberRepository
+import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -51,6 +52,7 @@ class GroupService(
             regionDetail = createGroupRequest.regionDetail!!,
             homepage = createGroupRequest.homepage,
             detailIntro = createGroupRequest.detailIntro,
+            tags = createGroupRequest.tags.joinToString(",", ",", ","),
         )
 
         groupRepository.save(group)
@@ -102,6 +104,7 @@ class GroupService(
                 updateGroupRequest.regionParent!!,
                 updateGroupRequest.regionChild!!,
             )
+            tags = updateGroupRequest.tags.joinToString(",", ",", ",")
         }
 
         groupRepository.save(group)
@@ -209,6 +212,7 @@ class GroupService(
         composer: String?,
         musicName: String?,
         instruments: List<Instrument>?,
+        tags: List<String>?,
         currentUser: User?,
         pageable: Pageable,
     ): PageResponse<GroupDto.GroupListResponse> {
@@ -219,6 +223,7 @@ class GroupService(
         composer?.let { spec.filteredByComposer(composer) }
         musicName?.let { spec.filteredByMusicName(musicName) }
         if (!instruments.isNullOrEmpty()) spec.filteredByRecruitInstruments(instruments)
+        if (!tags.isNullOrEmpty()) spec.filteredByTags(tags)
         val groups = groupRepository.findAll(spec.build(), pageable)
         val idSet = groups.map { it.id }.toSet()
         val groupMusicList = groupMusicRepository.fetchGroupMusicByGroupIds(idSet)
