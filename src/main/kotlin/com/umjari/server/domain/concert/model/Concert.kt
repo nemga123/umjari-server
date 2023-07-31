@@ -14,7 +14,6 @@ import jakarta.persistence.Table
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Positive
-import jakarta.validation.constraints.PositiveOrZero
 import java.util.Date
 
 @Entity
@@ -41,7 +40,7 @@ class Concert(
     @field:NotNull
     var qna: String,
 
-    @field:NotBlank
+    @field:NotNull
     @Column(columnDefinition = "TEXT")
     var concertInfo: String,
 
@@ -56,8 +55,10 @@ class Concert(
     var concertRunningTime: Int,
 
     @field:NotNull
-    @field:PositiveOrZero
-    var fee: Int,
+    var fee: String,
+
+    @field:NotNull
+    var link: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "id")

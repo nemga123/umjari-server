@@ -66,6 +66,7 @@ class ConcertService(
             concertDate = dateTimeFormatter.parse(createConcertRequest.concertDate!!),
             concertRunningTime = createConcertRequest.concertRunningTime!!,
             fee = createConcertRequest.fee!!,
+            link = createConcertRequest.link!!,
             region = region,
             regionDetail = createConcertRequest.regionDetail!!,
             group = group,

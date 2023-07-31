@@ -377,7 +377,8 @@ class UserTests {
               "posterImg": "IMG",
               "concertDate": "2023-01-01 86:47:35",
               "concertRunningTime": 100,
-              "fee": 0,
+              "fee": "0 won",
+              "link": "LINK",
               "regionParent": "서울시",
               "regionChild": "관악구",
               "regionDetail": "음대"

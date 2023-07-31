@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Positive
-import jakarta.validation.constraints.PositiveOrZero
 import jakarta.validation.constraints.Size
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,7 +15,7 @@ class ConcertDto {
         @field:NotBlank
         @field:Size(max = 255)
         val title: String?,
-        @field:NotBlank
+        @field:NotNull
         @field:Size(max = 255)
         val subtitle: String?,
         @field:NotBlank
@@ -34,7 +33,7 @@ class ConcertDto {
         @field:NotNull
         @field:Size(max = 255)
         val qna: String?,
-        @field:NotBlank
+        @field:NotNull
         val concertInfo: String?,
         @field:NotBlank
         @field:Size(max = 255)
@@ -47,15 +46,17 @@ class ConcertDto {
         val concertDate: String?,
         @field:NotNull @field:Positive
         val concertRunningTime: Int?,
-        @field:NotNull @field:PositiveOrZero
-        val fee: Int?,
+        @field:NotNull
+        val fee: String?,
+        @field:NotNull
+        val link: String?,
         @field:NotBlank
         @field:Size(max = 255)
         val regionParent: String?,
         @field:NotBlank
         @field:Size(max = 255)
         val regionChild: String?,
-        @field:NotBlank
+        @field:NotNull
         @field:Size(max = 255)
         val regionDetail: String?,
         val musicIds: ArrayList<Long> = arrayListOf(),
@@ -65,7 +66,7 @@ class ConcertDto {
         @field:NotBlank
         @field:Size(max = 255)
         val title: String?,
-        @field:NotBlank
+        @field:NotNull
         @field:Size(max = 255)
         val subtitle: String?,
         @field:NotBlank
@@ -94,21 +95,23 @@ class ConcertDto {
         val concertDate: String?,
         @field:NotNull @field:Positive
         val concertRunningTime: Int?,
-        @field:NotNull @field:PositiveOrZero
-        val fee: Int?,
+        @field:NotNull
+        val fee: String?,
+        @field:NotNull
+        val link: String?,
         @field:NotBlank
         @field:Size(max = 255)
         val regionParent: String?,
         @field:NotBlank
         @field:Size(max = 255)
         val regionChild: String?,
-        @field:NotBlank
+        @field:NotNull
         @field:Size(max = 255)
         val regionDetail: String?,
     )
 
     data class UpdateConcertInfoRequest(
-        @field:NotBlank
+        @field:NotNull
         val concertInfo: String?,
     )
 
@@ -131,7 +134,8 @@ class ConcertDto {
         val concertDate: String,
         val concertTime: String,
         val concertRunningTime: Int,
-        val fee: Int,
+        val fee: String,
+        val link: String,
         val region: String,
         val regionDetail: String,
         val setList: List<ConcertMusicDto.ConcertSetResponse>,
@@ -152,6 +156,7 @@ class ConcertDto {
             concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
             concertRunningTime = concert.concertRunningTime,
             fee = concert.fee,
+            link = concert.link,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
             setList = playList.map { ConcertMusicDto.ConcertSetResponse(it) },
@@ -167,7 +172,8 @@ class ConcertDto {
         val concertDate: String,
         val concertTime: String,
         val concertRunningTime: Int,
-        val fee: Int,
+        val fee: String,
+        val link: String,
         val region: String,
         val regionDetail: String,
         val setList: List<ConcertMusicDto.ConcertSetResponse>,
@@ -182,6 +188,7 @@ class ConcertDto {
             concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
             concertRunningTime = concert.concertRunningTime,
             fee = concert.fee,
+            link = concert.link,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
             setList = concert.playList.sortedBy { it.id }.map { ConcertMusicDto.ConcertSetResponse(it) },
@@ -197,7 +204,8 @@ class ConcertDto {
         val concertDate: String,
         val concertTime: String,
         val concertRunningTime: Int,
-        val fee: Int,
+        val fee: String,
+        val link: String,
         val region: String,
         val regionDetail: String,
         val friendCount: Int?,
@@ -212,6 +220,7 @@ class ConcertDto {
             concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
             concertRunningTime = concert.concertRunningTime,
             fee = concert.fee,
+            link = concert.link,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
             friendCount = null,
@@ -227,6 +236,7 @@ class ConcertDto {
             concertTime = SimpleDateFormat("HH:mm:ss").format(concert.concertDate),
             concertRunningTime = concert.concertRunningTime,
             fee = concert.fee,
+            link = concert.link,
             region = concert.region.toString(),
             regionDetail = concert.regionDetail,
             friendCount = friendCount ?: 0,
