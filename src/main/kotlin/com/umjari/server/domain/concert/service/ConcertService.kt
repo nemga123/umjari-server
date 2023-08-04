@@ -143,6 +143,7 @@ class ConcertService(
             posterImg = updateConcertDetailRequest.posterImg!!
             concertDate = dateTimeFormatter.parse(updateConcertDetailRequest.concertDate!!)
             concertRunningTime = updateConcertDetailRequest.concertRunningTime!!
+            link = updateConcertDetailRequest.link!!
             region = regionService.getOrCreateRegion(
                 updateConcertDetailRequest.regionParent!!,
                 updateConcertDetailRequest.regionChild!!,
