@@ -226,4 +226,87 @@ class AuthTests {
             jsonPath("$.errorCode").value(ErrorType.DUPLICATED_USER_EMAIL.code),
         )
     }
+
+    @Test
+    @Order(4)
+    fun testSignUpWithRegion() {
+        val verificationToken = VerifyToken(
+            token = "TOKEN5",
+            email = "user5@umjari.co.kr",
+            confirmed = true,
+        )
+        verifyTokenRepository.save(verificationToken)
+        val signUpRequest = """
+                {
+                    "userId": "user5",
+                    "password": "password",
+                    "profileName":"user5",
+                    "email": "user5@umjari.co.kr",
+                    "nickname": "user5",
+                    "intro": "intro",
+                    "regionParent": "서울시",
+                    "regionChild": "관악구"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/auth/signup/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(signUpRequest),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
+
+        val verificationToken2 = VerifyToken(
+            token = "TOKEN6",
+            email = "user6@umjari.co.kr",
+            confirmed = true,
+        )
+        verifyTokenRepository.save(verificationToken2)
+        val signUpRequest2 = """
+                {
+                    "userId": "user6",
+                    "password": "password",
+                    "profileName":"user6",
+                    "email": "user6@umjari.co.kr",
+                    "nickname": "user6",
+                    "intro": "intro",
+                    "regionParent": "서울시"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/auth/signup/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(signUpRequest2),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
+
+        val verificationToken3 = VerifyToken(
+            token = "TOKEN7",
+            email = "user7@umjari.co.kr",
+            confirmed = true,
+        )
+        verifyTokenRepository.save(verificationToken3)
+        val signUpRequest3 = """
+                {
+                    "userId": "user7",
+                    "password": "password",
+                    "profileName":"user7",
+                    "email": "user7@umjari.co.kr",
+                    "nickname": "user7",
+                    "intro": "intro",
+                    "regionChild": "관악구"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/auth/signup/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(signUpRequest3),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
+    }
 }
