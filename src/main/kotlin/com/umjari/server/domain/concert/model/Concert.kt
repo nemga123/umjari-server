@@ -13,7 +13,6 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Positive
 import java.util.Date
 
 @Entity
@@ -51,8 +50,7 @@ class Concert(
     var concertDate: Date,
 
     @field:NotNull
-    @field:Positive
-    var concertRunningTime: Int,
+    var concertRunningTime: String,
 
     @field:NotNull
     var fee: String,

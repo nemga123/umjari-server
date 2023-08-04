@@ -5,7 +5,6 @@ import com.umjari.server.domain.concert.model.ConcertMusic
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
-import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,8 +43,8 @@ class ConcertDto {
             message = "date format is 'YYYY-MM-DD HH:MM:SS'",
         )
         val concertDate: String?,
-        @field:NotNull @field:Positive
-        val concertRunningTime: Int?,
+        @field:NotNull
+        val concertRunningTime: String?,
         @field:NotNull
         val fee: String?,
         @field:NotNull
@@ -93,8 +92,8 @@ class ConcertDto {
             message = "date format is 'YYYY-MM-DD HH:MM:SS'",
         )
         val concertDate: String?,
-        @field:NotNull @field:Positive
-        val concertRunningTime: Int?,
+        @field:NotNull
+        val concertRunningTime: String?,
         @field:NotNull
         val fee: String?,
         @field:NotNull
@@ -133,7 +132,7 @@ class ConcertDto {
         val posterImg: String,
         val concertDate: String,
         val concertTime: String,
-        val concertRunningTime: Int,
+        val concertRunningTime: String,
         val fee: String,
         val link: String,
         val region: String,
@@ -171,7 +170,7 @@ class ConcertDto {
         val posterImg: String,
         val concertDate: String,
         val concertTime: String,
-        val concertRunningTime: Int,
+        val concertRunningTime: String,
         val fee: String,
         val link: String,
         val region: String,
@@ -203,7 +202,7 @@ class ConcertDto {
         val posterImg: String,
         val concertDate: String,
         val concertTime: String,
-        val concertRunningTime: Int,
+        val concertRunningTime: String,
         val fee: String,
         val link: String,
         val region: String,
