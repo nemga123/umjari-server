@@ -7,6 +7,7 @@ import com.umjari.server.domain.auth.exception.EmailNotVerifiedException
 import com.umjari.server.domain.auth.exception.ResetPasswordForbiddenException
 import com.umjari.server.domain.auth.exception.UserIdMailForbiddenException
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
+import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.exception.DuplicatedUserEmailException
 import com.umjari.server.domain.user.exception.DuplicatedUserIdException
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
@@ -29,6 +30,7 @@ class AuthService(
     private val verifyTokenRepository: VerifyTokenRepository,
     private val passwordResetMailSender: PasswordResetMailSender,
     private val userIdMailSender: UserIdMailSender,
+    private val regionService: RegionService,
 ) {
     @Transactional
     fun signUp(signUpRequest: AuthDto.SignUpRequest): User {
@@ -55,6 +57,16 @@ class AuthService(
             throw DuplicatedUserProfileNameException(signUpRequest.profileName)
         }
         val encodedPassword = passwordEncoder.encode(signUpRequest.password)
+
+        val region = if (signUpRequest.regionParent!!.isNotBlank() && signUpRequest.regionChild!!.isNotBlank()) {
+            regionService.getOrCreateRegion(
+                signUpRequest.regionParent,
+                signUpRequest.regionChild,
+            )
+        } else {
+            null
+        }
+
         val user = User(
             userId = signUpRequest.userId,
             password = encodedPassword,
@@ -64,6 +76,7 @@ class AuthService(
             nickname = signUpRequest.nickname,
             nicknameUpdatedAt = LocalDate.now(),
             profileImage = signUpRequest.profileImage!!,
+            region = region,
         )
 
         val userObject = userRepository.save(user)
