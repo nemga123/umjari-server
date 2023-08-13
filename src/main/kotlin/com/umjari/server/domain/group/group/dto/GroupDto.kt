@@ -139,7 +139,7 @@ class GroupDto {
     }
 
     data class UpdateGroupSetListRequest(
-        val musicIds: java.util.ArrayList<Long> = arrayListOf(),
+        val musicIds: List<Long> = listOf(),
     )
 
     data class GroupListResponse(

@@ -26,7 +26,8 @@ interface UserRepository : JpaRepository<User, Long?> {
                 LEFT JOIN FETCH user.career AS gm LEFT JOIN FETCH gm.group WHERE user.profileName = :profileName
         """,
     )
-    fun findByProfileName(@Param("profileName") profileName: String): User?
+    fun findByProfileNameWithCareer(@Param("profileName") profileName: String): User?
+    fun findByProfileName(profileName: String): User?
 
     fun existsByNicknameAndIdNot(nickname: String, id: Long): Boolean
     fun existsByProfileNameAndIdNot(profileName: String, id: Long): Boolean

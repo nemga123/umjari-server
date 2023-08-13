@@ -37,5 +37,5 @@ interface MusicRepository : JpaRepository<Music, Long?> {
         name: String,
     ): List<Music>
 
-    fun findAllByIdIn(id: MutableCollection<Long>): List<Music>
+    fun findAllByIdIn(id: List<Long>): List<Music>
 }

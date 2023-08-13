@@ -15,6 +15,7 @@ import jakarta.persistence.Table
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 import java.time.LocalDate
 
 @Entity
@@ -57,4 +58,8 @@ class User(
     @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE])
     @OrderBy("id ASC")
     var career: MutableList<GroupMember> = mutableListOf(),
+
+    @field:NotNull
+    @field:Pattern(regexp = "^,(,|(\\d,){1,10})$")
+    var interestMusics: String,
 ) : BaseTimeEntity()

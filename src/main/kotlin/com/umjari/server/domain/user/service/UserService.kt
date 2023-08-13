@@ -6,6 +6,8 @@ import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.group.group.dto.GroupDto
 import com.umjari.server.domain.group.members.repository.GroupMemberRepository
 import com.umjari.server.domain.image.service.ImageService
+import com.umjari.server.domain.music.dto.MusicDto
+import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.exception.DuplicatedUserNicknameException
 import com.umjari.server.domain.user.exception.DuplicatedUserProfileNameException
@@ -23,6 +25,7 @@ class UserService(
     private val concertParticipantRepository: ConcertParticipantRepository,
     private val imageService: ImageService,
     private val friendRepository: FriendRepository,
+    private val musicRepository: MusicRepository,
 ) {
     fun checkDuplicatedNickname(nicknameRequest: UserDto.NicknameRequest) {
         if (userRepository.existsByNickname(nicknameRequest.nickname!!)) {
@@ -94,8 +97,23 @@ class UserService(
         userRepository.save(user)
     }
 
-    fun getUserInformation(profileName: String, currentUser: User?): UserDto.DetailUserInfoResponse {
+    fun updateUserInterestMusicList(user: User, musicIds: UserDto.InterestMusicIdListRequest) {
+        user.interestMusics = musicIds.musicIds.joinToString(",", ",", ",")
+        userRepository.save(user)
+    }
+
+    fun getUserInterestMusicList(profileName: String): MusicDto.MusicDetailListResponse {
         val user = userRepository.findByProfileName(profileName)
+            ?: throw UserProfileNameNotFoundException(profileName)
+
+        val musicIds = user.interestMusics.split(",").filter { it.isNotEmpty() }.map { it.toLong() }
+        val musicList = musicRepository.findAllByIdIn(musicIds)
+        val musicResponse = musicList.map { MusicDto.MusicDetailResponse(it) }
+        return MusicDto.MusicDetailListResponse(musicResponse, musicList.size)
+    }
+
+    fun getUserInformation(profileName: String, currentUser: User?): UserDto.DetailUserInfoResponse {
+        val user = userRepository.findByProfileNameWithCareer(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
         val isFriend = if (currentUser != null) {

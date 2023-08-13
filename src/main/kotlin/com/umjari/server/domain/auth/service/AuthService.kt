@@ -77,6 +77,7 @@ class AuthService(
             nicknameUpdatedAt = LocalDate.now(),
             profileImage = signUpRequest.profileImage!!,
             region = region,
+            interestMusics = ",,",
         )
 
         val userObject = userRepository.save(user)

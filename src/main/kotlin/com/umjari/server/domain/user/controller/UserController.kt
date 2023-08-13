@@ -5,6 +5,7 @@ import com.umjari.server.domain.friend.dto.FriendDto
 import com.umjari.server.domain.friend.service.FriendService
 import com.umjari.server.domain.guestbook.dto.GuestBookDto
 import com.umjari.server.domain.guestbook.service.GuestBookService
+import com.umjari.server.domain.music.dto.MusicDto
 import com.umjari.server.domain.user.dto.UserDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -118,5 +119,23 @@ class UserController(
         imageRequest: UserDto.ProfileImageRequest,
     ) {
         userService.updateProfileImage(user, imageRequest)
+    }
+
+    @PutMapping("/interest-music/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun updateUserProfileImage(
+        @CurrentUser user: User,
+        @Valid @RequestBody
+        interestMusicIds: UserDto.InterestMusicIdListRequest,
+    ) {
+        userService.updateUserInterestMusicList(user, interestMusicIds)
+    }
+
+    @GetMapping("/pofile-name/{profile_name}/interest-music/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getUserProfileImage(
+        @PathVariable("profile_name") profileName: String,
+    ): MusicDto.MusicDetailListResponse {
+        return userService.getUserInterestMusicList(profileName)
     }
 }
