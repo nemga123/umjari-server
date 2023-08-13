@@ -13,7 +13,7 @@ interface GroupMusicRepository : JpaRepository<GroupMusic, Long?> {
     fun deleteAllByGroupId(groupId: Long)
 
     @Modifying
-    fun deleteAllByGroupIdAndMusicIdNotIn(groupId: Long, musicIds: MutableList<Long>)
+    fun deleteAllByGroupIdAndMusicIdNotIn(groupId: Long, musicIds: List<Long>)
 
     @Query(
         """

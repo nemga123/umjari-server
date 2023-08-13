@@ -72,4 +72,9 @@ class UserDto {
         @field:Size(max = 255)
         val intro: String? = null,
     )
+
+    data class InterestMusicIdListRequest(
+        @field:Size(max = 10)
+        val musicIds: List<Long> = listOf(),
+    )
 }
