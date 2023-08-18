@@ -104,7 +104,7 @@ class GroupDto {
             recruit = group.recruit,
             memberType = memberType.toString(),
             setList = group.setList.map { MusicDto.MusicDetailResponse(it.music) },
-            tags = group.tags.split(",").filter { it.isNotEmpty() },
+            tags = group.getTagList(),
         )
     }
 
@@ -166,7 +166,7 @@ class GroupDto {
             recruitDetail = if (group.recruit) group.recruitDetail else null,
             friendCount = null,
             setList = setListMap[group.id]?.map { MusicDto.MusicDetailResponse(it.music) } ?: emptyList(),
-            tags = group.tags.split(",").filter { it.isNotEmpty() },
+            tags = group.getTagList(),
         )
 
         constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>, friendCount: Int?) : this(
@@ -180,7 +180,25 @@ class GroupDto {
             recruitDetail = if (group.recruit) group.recruitDetail else null,
             friendCount = friendCount,
             setList = setListMap[group.id]?.map { MusicDto.MusicDetailResponse(it.music) } ?: emptyList(),
-            tags = group.tags.split(",").filter { it.isNotEmpty() },
+            tags = group.getTagList(),
+        )
+    }
+
+    data class GroupRecommendationListResponse(
+        val id: Long,
+        val name: String,
+        val logo: String,
+        val region: String,
+        val regionDetail: String,
+        val setList: List<MusicDto.MusicDetailResponse>,
+    ) {
+        constructor(group: Group) : this(
+            id = group.id,
+            name = group.name,
+            logo = group.logo,
+            region = group.region.toString(),
+            regionDetail = group.regionDetail,
+            setList = group.setList.map { MusicDto.MusicDetailResponse(it.music) },
         )
     }
 

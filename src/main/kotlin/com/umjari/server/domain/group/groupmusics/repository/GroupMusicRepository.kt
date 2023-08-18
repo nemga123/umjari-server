@@ -1,5 +1,6 @@
 package com.umjari.server.domain.group.groupmusics.repository
 
+import com.umjari.server.domain.group.groupmusics.dto.GroupMusicDto
 import com.umjari.server.domain.group.groupmusics.model.GroupMusic
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
@@ -21,4 +22,19 @@ interface GroupMusicRepository : JpaRepository<GroupMusic, Long?> {
         """,
     )
     fun fetchGroupMusicByGroupIds(@Param("groupIds") groupIds: Set<Long>): List<GroupMusic>
+
+    @Query(
+        """
+            SELECT
+                gm.group.id AS groupId,
+                COUNT (*) AS countMusic
+            FROM GroupMusic AS gm
+            WHERE gm.music.id in (:musicIds)
+            GROUP BY gm.group.id
+            HAVING COUNT (*) > 0
+        """,
+    )
+    fun countGroupMusicsByMusicIdIn(
+        @Param("musicIds") musicIds: List<Long>,
+    ): List<GroupMusicDto.CountInterestMusicGroupQueryResultInterface>
 }

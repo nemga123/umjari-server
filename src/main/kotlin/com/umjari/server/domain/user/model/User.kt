@@ -62,4 +62,6 @@ class User(
     @field:NotNull
     @field:Pattern(regexp = "^,(,|(\\d,){1,10})$")
     var interestMusics: String,
-) : BaseTimeEntity()
+) : BaseTimeEntity() {
+    fun getInterestMusicIdList() = interestMusics.split(",").filter { it.isNotEmpty() }.map { it.toLong() }
+}

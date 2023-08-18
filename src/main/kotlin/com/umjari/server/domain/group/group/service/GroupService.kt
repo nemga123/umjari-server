@@ -3,6 +3,7 @@ package com.umjari.server.domain.group.group.service
 import com.umjari.server.domain.concert.dto.ConcertDto
 import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.group.group.dto.GroupDto
+import com.umjari.server.domain.group.group.dto.GroupRecommendationFilter
 import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.group.group.repository.GroupRepository
@@ -267,6 +268,26 @@ class GroupService(
             val friendCountMap = friendCountList.associate { it.groupId to it.count }
             val concertResponses = groups.map { GroupDto.GroupListResponse(it, setListMap, friendCountMap[it.id]) }
             PageResponse(concertResponses, pageable.pageNumber)
+        }
+    }
+
+    fun getRecommendGroupList(
+        currentUser: User,
+    ): List<GroupDto.GroupRecommendationListResponse> {
+        val interestMusicIdList = currentUser.getInterestMusicIdList()
+        val interestMusicGroupList = groupMusicRepository.countGroupMusicsByMusicIdIn(interestMusicIdList)
+        val groupIdSet = interestMusicGroupList.map { it.groupId }.toSet()
+        val groupMemberCounts = groupRepository.findAllByIdsInWithRegionAndMemberList(groupIdSet)
+
+        val recommendationOrderedGroupIdList = GroupRecommendationFilter(
+            interestMusicGroupList,
+            groupMemberCounts,
+            currentUser.region,
+        ).getRecommendationGroupIdOrder()
+        val groupQueryList = groupRepository.findAllGroupsFetchSetListByIdIn(groupIdSet)
+        val groupIdToGroupMap = groupQueryList.associateBy { it.id }
+        return recommendationOrderedGroupIdList.map {
+            GroupDto.GroupRecommendationListResponse(groupIdToGroupMap[it]!!)
         }
     }
 }
