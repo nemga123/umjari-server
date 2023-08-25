@@ -60,6 +60,6 @@ class User(
     var career: MutableList<GroupMember> = mutableListOf(),
 
     @field:NotNull
-    @field:Pattern(regexp = "^,(,|(\\d,){1,10})$")
+    @field:Pattern(regexp = "^,(,|(\\d,){1,11})$")
     var interestMusics: String,
 ) : BaseTimeEntity()
