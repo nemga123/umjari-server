@@ -131,7 +131,7 @@ class UserController(
         userService.updateUserInterestMusicList(user, interestMusicIds)
     }
 
-    @GetMapping("/pofile-name/{profile_name}/interest-music/")
+    @GetMapping("/profile-name/{profile_name}/interest-music/")
     @ResponseStatus(HttpStatus.OK)
     fun getUserProfileImage(
         @PathVariable("profile_name") profileName: String,
