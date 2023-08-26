@@ -1,14 +1,10 @@
 package com.umjari.server.domain.user.model
 
 import com.umjari.server.domain.group.members.model.GroupMember
-import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseTimeEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
@@ -49,9 +45,7 @@ class User(
 
     var intro: String?,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", referencedColumnName = "id", nullable = true)
-    var region: Region? = null,
+    var region: String = " ",
 
     var roles: String = "ROLE_USER",
 

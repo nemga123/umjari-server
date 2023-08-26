@@ -4,6 +4,7 @@ import com.umjari.server.domain.group.group.dto.GroupDto
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.global.validation.KeyWordsBlock
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 class UserDto {
@@ -53,7 +54,7 @@ class UserDto {
             email = user.email,
             intro = user.intro,
             isSelfProfile = user.id == currentUser?.id,
-            region = if (user.region != null && user.id == currentUser?.id) user.region.toString() else null,
+            region = if (user.region.isNotBlank() && user.id == currentUser?.id) user.region else null,
             nickname = if (user.id == currentUser?.id) user.nickname else null,
             career = user.career.map { GroupDto.GroupUserResponse(it) },
             isFriend = isFriend,
@@ -71,6 +72,12 @@ class UserDto {
         val nickname: String?,
         @field:Size(max = 255)
         val intro: String? = null,
+        @field:NotNull
+        @field:Size(max = 255)
+        val regionParent: String?,
+        @field:NotNull
+        @field:Size(max = 255)
+        val regionChild: String?,
     )
 
     data class InterestMusicIdListRequest(
