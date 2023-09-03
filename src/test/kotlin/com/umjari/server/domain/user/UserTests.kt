@@ -248,7 +248,9 @@ class UserTests {
                 {
                     "profileName":"홍길동",
                     "nickname": "new_user",
-                    "intro": "new_intro"
+                    "intro": "new_intro",
+                    "regionParent": "",
+                    "regionChild": ""
                 }
         """.trimIndent()
 
@@ -274,7 +276,9 @@ class UserTests {
                 {
                     "profileName":"홍길동",
                     "nickname": "new_user2",
-                    "intro": "new_intro"
+                    "intro": "new_intro",
+                    "regionParent": "",
+                    "regionChild": ""
                 }
         """.trimIndent()
 

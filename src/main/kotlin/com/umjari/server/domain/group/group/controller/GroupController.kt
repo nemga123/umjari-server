@@ -73,6 +73,14 @@ class GroupController(
         )
     }
 
+    @GetMapping("/recommendation/")
+    @ResponseStatus(HttpStatus.OK)
+    fun getRecommendGroupList(
+        @CurrentUser currentUser: User,
+    ): List<GroupDto.GroupRecommendationListResponse> {
+        return groupService.getRecommendGroupList(currentUser)
+    }
+
     @GetMapping("/{group_id}/")
     @ResponseStatus(HttpStatus.OK)
     fun getGroup(@PathVariable("group_id") groupId: Long, @CurrentUser user: User?): GroupDto.GroupDetailResponse {

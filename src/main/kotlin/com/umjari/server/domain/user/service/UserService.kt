@@ -91,6 +91,7 @@ class UserService(
                 nickname = updateUserInfo.nickname
                 intro = updateUserInfo.intro
                 nicknameUpdatedAt = LocalDate.now()
+                region = updateUserInfo.regionParent + " " + updateUserInfo.regionChild
             }
         }
 

@@ -3,6 +3,7 @@ package com.umjari.server.domain.group.group.model
 import com.umjari.server.domain.concert.model.Concert
 import com.umjari.server.domain.group.groupmusics.model.GroupMusic
 import com.umjari.server.domain.group.instruments.Instrument
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.region.model.Region
 import com.umjari.server.global.model.BaseEntity
 import jakarta.persistence.CascadeType
@@ -69,4 +70,9 @@ class Group(
 
     @OneToMany(mappedBy = "group", cascade = [CascadeType.REMOVE])
     var setList: MutableList<GroupMusic> = mutableListOf(),
-) : BaseEntity()
+
+    @OneToMany(mappedBy = "group", cascade = [CascadeType.REMOVE])
+    var members: MutableList<GroupMember> = mutableListOf(),
+) : BaseEntity() {
+    fun getTagList() = tags.split(",").filter { it.isNotEmpty() }
+}
