@@ -107,9 +107,12 @@ class UserService(
             ?: throw UserProfileNameNotFoundException(profileName)
 
         val musicIds = user.interestMusics.split(",").filter { it.isNotEmpty() }.map { it.toLong() }
-        val musicList = musicRepository.findAllByIdIn(musicIds)
-        val musicResponse = musicList.map { MusicDto.MusicDetailResponse(it) }
-        return MusicDto.MusicDetailListResponse(musicResponse, musicList.size)
+        val musicIdToMusicMap = musicRepository.findAllByIdIn(musicIds)
+            .let { it.associateBy { music -> music.id } }
+        val musicResponse = musicIds
+            .filter { id -> musicIdToMusicMap.containsKey(id) }
+            .map { id -> MusicDto.MusicDetailResponse(musicIdToMusicMap[id]!!) }
+        return MusicDto.MusicDetailListResponse(musicResponse, musicResponse.size)
     }
 
     fun getUserInformation(profileName: String, currentUser: User?): UserDto.DetailUserInfoResponse {
