@@ -42,7 +42,8 @@ class UserDto {
         val nickname: String?,
         val email: String,
         val intro: String?,
-        val region: String?,
+        val regionParent: String?,
+        val regionChild: String?,
         val isSelfProfile: Boolean,
         val career: List<GroupDto.GroupUserResponse>,
         val isFriend: Boolean,
@@ -54,7 +55,16 @@ class UserDto {
             email = user.email,
             intro = user.intro,
             isSelfProfile = user.id == currentUser?.id,
-            region = if (user.region.isNotBlank() && user.id == currentUser?.id) user.region else null,
+            regionParent = if (user.region.isNotBlank() && user.id == currentUser?.id) {
+                user.region.split(" ")[0]
+            } else {
+                null
+            },
+            regionChild = if (user.region.isNotBlank() && user.id == currentUser?.id) {
+                user.region.split(" ")[1]
+            } else {
+                null
+            },
             nickname = if (user.id == currentUser?.id) user.nickname else null,
             career = user.career.map { GroupDto.GroupUserResponse(it) },
             isFriend = isFriend,
@@ -74,10 +84,10 @@ class UserDto {
         val intro: String? = null,
         @field:NotNull
         @field:Size(max = 255)
-        val regionParent: String?,
+        val regionParent: String? = "",
         @field:NotNull
         @field:Size(max = 255)
-        val regionChild: String?,
+        val regionChild: String? = "",
     )
 
     data class InterestMusicIdListRequest(
