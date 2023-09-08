@@ -58,7 +58,7 @@ class AuthService(
         }
         val encodedPassword = passwordEncoder.encode(signUpRequest.password)
 
-        val region = if (signUpRequest.regionParent!!.isNotBlank() && signUpRequest.regionChild!!.isNotBlank()) {
+        val region = if (!signUpRequest.regionParent.isNullOrBlank() && !signUpRequest.regionChild.isNullOrBlank()) {
             regionService.getOrCreateRegion(
                 signUpRequest.regionParent,
                 signUpRequest.regionChild,

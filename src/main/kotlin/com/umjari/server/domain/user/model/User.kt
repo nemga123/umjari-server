@@ -51,7 +51,7 @@ class User(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", referencedColumnName = "id", nullable = true)
-    var region: Region? = null,
+    var region: Region?,
 
     var roles: String = "ROLE_USER",
 

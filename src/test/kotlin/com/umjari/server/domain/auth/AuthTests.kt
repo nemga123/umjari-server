@@ -308,5 +308,30 @@ class AuthTests {
         ).andExpect(
             MockMvcResultMatchers.status().isNoContent,
         )
+
+        val verificationToken4 = VerifyToken(
+            token = "TOKEN8",
+            email = "user8@umjari.co.kr",
+            confirmed = true,
+        )
+        verifyTokenRepository.save(verificationToken4)
+        val signUpRequest4 = """
+                {
+                    "userId": "user8",
+                    "password": "password",
+                    "profileName":"user8",
+                    "email": "user8@umjari.co.kr",
+                    "nickname": "user8",
+                    "intro": "intro"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/auth/signup/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(signUpRequest4),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
     }
 }

@@ -3,7 +3,6 @@ package com.umjari.server.domain.auth.dto
 import com.umjari.server.global.validation.KeyWordsBlock
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 class AuthDto {
@@ -35,12 +34,10 @@ class AuthDto {
         @field:NotBlank
         @field:Size(max = 255)
         val profileImage: String? = "default_image",
-        @field:NotNull
         @field:Size(max = 255)
-        val regionParent: String? = "",
-        @field:NotNull
+        val regionParent: String?,
         @field:Size(max = 255)
-        val regionChild: String? = "",
+        val regionChild: String?,
     )
 
     data class FindPasswordRequest(
