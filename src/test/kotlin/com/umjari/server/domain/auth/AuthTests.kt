@@ -2,6 +2,7 @@ package com.umjari.server.domain.auth
 
 import com.umjari.server.domain.mailverification.model.VerifyToken
 import com.umjari.server.domain.mailverification.repository.VerifyTokenRepository
+import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.global.exception.ErrorType
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
@@ -229,7 +230,9 @@ class AuthTests {
 
     @Test
     @Order(4)
-    fun testSignUpWithRegion() {
+    fun testSignUpWithRegion(
+        @Autowired userRepository: UserRepository,
+    ) {
         val verificationToken = VerifyToken(
             token = "TOKEN5",
             email = "user5@umjari.co.kr",
@@ -308,5 +311,32 @@ class AuthTests {
         ).andExpect(
             MockMvcResultMatchers.status().isNoContent,
         )
+
+        val verificationToken4 = VerifyToken(
+            token = "TOKEN8",
+            email = "user8@umjari.co.kr",
+            confirmed = true,
+        )
+        verifyTokenRepository.save(verificationToken4)
+        val signUpRequest4 = """
+                {
+                    "userId": "user8",
+                    "password": "password",
+                    "profileName":"user8",
+                    "email": "user8@umjari.co.kr",
+                    "nickname": "user8",
+                    "intro": "intro"
+                }
+        """.trimIndent()
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/v1/auth/signup/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(signUpRequest4),
+        ).andExpect(
+            MockMvcResultMatchers.status().isNoContent,
+        )
+
+        assert(userRepository.findByEmail("user8@umjari.co.kr")!!.region == " ")
     }
 }
