@@ -434,7 +434,7 @@ class GroupTests {
             status().isNoContent,
         )
 
-        var groupMember = groupMemberRepository.findByGroup_IdAndUser_Id(2, 1)!!
+        var groupMember = groupMemberRepository.findByGroupIdAndUserId(2, 1)!!
         assert(dateFormatter.format(groupMember.joinedAt) == "2023-01-01")
         assert(dateFormatter.format(groupMember.leavedAt) == "2050-12-31")
 
@@ -454,7 +454,7 @@ class GroupTests {
             status().isNoContent,
         )
 
-        groupMember = groupMemberRepository.findByGroup_IdAndUser_Id(2, 1)!!
+        groupMember = groupMemberRepository.findByGroupIdAndUserId(2, 1)!!
         assert(groupMember.joinedAt == null)
         assert(groupMember.leavedAt == null)
 

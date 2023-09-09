@@ -21,15 +21,16 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
     private val authService: AuthService,
-    private val jwtTokenProvider: JwtTokenProvider,
 ) {
     @PostMapping("/signup/")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun signup(
         @Valid @RequestBody
         signupRequest: AuthDto.SignUpRequest,
     ): ResponseEntity<Any> {
-        val user = authService.signUp(signupRequest)
-        return ResponseEntity.noContent().header("Authorization", jwtTokenProvider.generateToken(user.userId)).build()
+        authService.signUp(signupRequest).let { token ->
+            return ResponseEntity.noContent().header("Authorization", token).build()
+        }
     }
 
     @PutMapping("/password/")

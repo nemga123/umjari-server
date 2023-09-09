@@ -25,9 +25,10 @@ class S3Service(
         val keyName = "images/$userId/$fileName"
         val inputStream = file.inputStream
         val contentType = file.contentType
-        val meta = ObjectMetadata()
-        meta.contentType = contentType
-        meta.contentLength = inputStream.available().toLong()
+        val meta = ObjectMetadata().also {
+            it.contentType = contentType
+            it.contentLength = inputStream.available().toLong()
+        }
 
         val putObjectRequest = PutObjectRequest(bucketName, keyName, inputStream, meta)
         try {

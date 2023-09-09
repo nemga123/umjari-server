@@ -1,7 +1,7 @@
 package com.umjari.server.domain.groupqna.service
 
 import com.umjari.server.domain.group.members.model.GroupMember
-import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
+import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
 import com.umjari.server.domain.groupqna.dto.GroupQnaReplyDto
 import com.umjari.server.domain.groupqna.exception.QnaIdNotFoundException
 import com.umjari.server.domain.groupqna.exception.QnaReplyIdNotFoundException
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 class GroupQnaReplyService(
     private val groupQnaReplyRepository: GroupQnaReplyRepository,
     private val groupQnaRepository: GroupQnaRepository,
-    private val groupMemberAuthorityService: GroupMemberAuthorityService,
+    private val groupMemberAuthorityValidator: GroupMemberAuthorityValidator,
 ) {
     fun createReplyOnQna(
         groupId: Long,
@@ -26,17 +26,15 @@ class GroupQnaReplyService(
     ) {
         val qna = groupQnaRepository.getByIdAndGroupId(qnaId, groupId)
             ?: throw QnaIdNotFoundException(groupId, qnaId)
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.MEMBER, groupId, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.MEMBER, groupId, user.id)
 
-        val qnaReply = GroupQnaReply(
+        GroupQnaReply(
             author = user,
             qna = qna,
             content = createReplyRequest.content!!,
             isAnonymous = createReplyRequest.isAnonymous!!,
             authorNickname = user.nickname,
-        )
-
-        groupQnaReplyRepository.save(qnaReply)
+        ).also { groupQnaReply -> groupQnaReplyRepository.save(groupQnaReply) }
     }
 
     fun updateReply(

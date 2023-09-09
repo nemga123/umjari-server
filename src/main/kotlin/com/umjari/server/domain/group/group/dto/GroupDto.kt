@@ -89,7 +89,7 @@ class GroupDto {
         val setList: List<MusicDto.MusicDetailResponse>,
         val tags: List<String>,
     ) {
-        constructor(group: Group, memberType: GroupMember.MemberRole) : this(
+        constructor(group: Group, memberType: GroupMember.MemberRole = GroupMember.MemberRole.NON_MEMBER) : this(
             id = group.id,
             name = group.name,
             logo = group.logo,
@@ -155,21 +155,7 @@ class GroupDto {
         val setList: List<MusicDto.MusicDetailResponse>,
         val tags: List<String>,
     ) {
-        constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>) : this(
-            id = group.id,
-            name = group.name,
-            logo = group.logo,
-            region = group.region.toString(),
-            regionDetail = group.regionDetail,
-            recruit = group.recruit,
-            recruitInstruments = if (group.recruit) group.recruitInstruments else null,
-            recruitDetail = if (group.recruit) group.recruitDetail else null,
-            friendCount = null,
-            setList = setListMap[group.id]?.map { MusicDto.MusicDetailResponse(it.music) } ?: emptyList(),
-            tags = group.getTagList(),
-        )
-
-        constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>, friendCount: Int?) : this(
+        constructor(group: Group, setListMap: Map<Long, List<GroupMusic>>, friendCount: Int? = null) : this(
             id = group.id,
             name = group.name,
             logo = group.logo,

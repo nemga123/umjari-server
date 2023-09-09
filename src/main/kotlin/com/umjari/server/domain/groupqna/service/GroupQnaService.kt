@@ -38,8 +38,7 @@ class GroupQnaService(
             title = createQnaRequest.title!!,
             content = createQnaRequest.content!!,
             isAnonymous = createQnaRequest.isAnonymous!!,
-        )
-        groupQnaRepository.save(qna)
+        ).also { groupQna -> groupQnaRepository.save(groupQna) }
         return GroupQnaDto.NotAnonymousQnaDetailResponse(qna, true)
     }
 
@@ -52,7 +51,7 @@ class GroupQnaService(
             throw GroupIdNotFoundException(groupId)
         }
 
-        val qnaList = if (searchText == "") {
+        val qnaList = if (searchText.isBlank()) {
             groupQnaRepository.getSimpleResponseByGroupIdWithReplyCounts(groupId, pageable)
         } else {
             groupQnaRepository.getSimpleResponseByGroupIdAndSearchTextWithReplyCounts(groupId, searchText, pageable)

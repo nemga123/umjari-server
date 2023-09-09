@@ -112,7 +112,7 @@ class UserService(
             .let { it.associateBy { music -> music.id } }
         val musicResponse = musicIds
             .filter { id -> musicIdToMusicMap.containsKey(id) }
-            .map { id -> MusicDto.MusicDetailResponse(musicIdToMusicMap[id]!!) }
+            .map { id -> MusicDto.MusicDetailResponse(musicIdToMusicMap.getValue(id)) }
         return MusicDto.MusicDetailListResponse(musicResponse, musicResponse.size)
     }
 
@@ -134,5 +134,10 @@ class UserService(
         val userMap = existingUsers.associateBy { it.userId }
         val existingUserIds = existingUsers.map { it.userId }.toSet()
         return Pair(existingUserIds, userMap)
+    }
+
+    fun getUserByProfileName(profileName: String): User {
+        return userRepository.findByProfileName(profileName)
+            ?: throw UserProfileNameNotFoundException(profileName)
     }
 }

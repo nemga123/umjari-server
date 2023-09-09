@@ -45,13 +45,12 @@ class GuestBookService(
             throw PrivateGuestBookNotAuthorizedException()
         }
 
-        val obj = GuestBook(
+        GuestBook(
             user = targetUser,
             author = currentUser,
             content = postGuestBookRequest.content!!,
             private = postGuestBookRequest.private,
-        )
-        guestBookRepository.save(obj)
+        ).also { guestBook ->  guestBookRepository.save(guestBook) }
     }
 
     fun listGuestBook(
@@ -62,7 +61,7 @@ class GuestBookService(
         val targetUser = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        var guestBooks: Page<GuestBook> = if (currentUser == null) {
+        val guestBooks: Page<GuestBook> = if (currentUser == null) {
             guestBookRepository.findAllOpenGuestBookByUserId(targetUser.id, pageable)
         } else if (currentUser.id == targetUser.id) {
             guestBookRepository.findAllByUserId(targetUser.id, pageable)

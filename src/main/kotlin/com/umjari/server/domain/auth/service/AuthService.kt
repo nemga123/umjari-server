@@ -1,5 +1,6 @@
 package com.umjari.server.domain.auth.service
 
+import com.umjari.server.domain.auth.JwtTokenProvider
 import com.umjari.server.domain.auth.component.PasswordResetMailSender
 import com.umjari.server.domain.auth.component.UserIdMailSender
 import com.umjari.server.domain.auth.dto.AuthDto
@@ -29,9 +30,10 @@ class AuthService(
     private val verifyTokenRepository: VerifyTokenRepository,
     private val passwordResetMailSender: PasswordResetMailSender,
     private val userIdMailSender: UserIdMailSender,
-) {
+    private val jwtTokenProvider: JwtTokenProvider,
+    ) {
     @Transactional
-    fun signUp(signUpRequest: AuthDto.SignUpRequest): User {
+    fun signUp(signUpRequest: AuthDto.SignUpRequest): String {
         val verificationToken = verifyTokenRepository.findTopByEmailOrderByCreatedAtDesc(signUpRequest.email!!)
             ?: throw EmailNotVerifiedException()
         if (!verificationToken.confirmed || ChronoUnit.SECONDS.between(
@@ -73,19 +75,19 @@ class AuthService(
             profileImage = signUpRequest.profileImage!!,
             region = region,
             interestMusics = ",,",
-        )
+        ).also {
+            userRepository.save(it)
+            verifyTokenRepository.deleteAllByEmail(signUpRequest.email)
+        }
 
-        val userObject = userRepository.save(user)
-        verifyTokenRepository.deleteAllByEmail(signUpRequest.email)
-        return userObject
+        return jwtTokenProvider.generateToken(user.userId);
     }
 
     fun updatePassword(updatePasswordRequest: AuthDto.UpdatePasswordRequest, currentUser: User) {
         if (!passwordEncoder.matches(updatePasswordRequest.currentPassword, currentUser.password)) {
             throw ResetPasswordForbiddenException()
         }
-        val encodedPassword = passwordEncoder.encode(updatePasswordRequest.newPassword)
-        currentUser.password = encodedPassword
+        currentUser.password = passwordEncoder.encode(updatePasswordRequest.newPassword)
         userRepository.save(currentUser)
     }
 

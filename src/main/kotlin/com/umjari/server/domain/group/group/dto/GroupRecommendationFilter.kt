@@ -10,7 +10,7 @@ class GroupRecommendationFilter(
 ) {
     private var groupList: List<GroupRecommendationFactor>
 
-    data class GroupRecommendationFactor(
+    private data class GroupRecommendationFactor(
         val groupId: Long,
         val interestMusicCount: Int,
         val memberCount: Int,
