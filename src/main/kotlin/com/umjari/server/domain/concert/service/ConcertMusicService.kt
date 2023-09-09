@@ -5,8 +5,8 @@ import com.umjari.server.domain.concert.exception.ConcertMusicIdNotFoundExceptio
 import com.umjari.server.domain.concert.model.ConcertParticipant
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
-import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
 import org.springframework.stereotype.Service
@@ -38,7 +38,10 @@ class ConcertMusicService(
         val requestUserIds = registerConcertParticipantListRequest.participantList.map { it.userId }.toSet()
         val requestUserIdToRole = registerConcertParticipantListRequest.participantList.associateBy { it.userId }
         val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
-        val alreadyEnrolledUserMap = concertParticipantRepository.findAllAlreadyEnrolled(existingUserIds, concertMusicId).associateBy { it.performer.userId }
+        val alreadyEnrolledUserMap = concertParticipantRepository.findAllAlreadyEnrolled(
+            existingUserIds,
+            concertMusicId,
+        ).associateBy { it.performer.userId }
 
         existingUserIds.map { userId ->
             val participantRole = requestUserIdToRole.getValue(userId)
@@ -57,7 +60,7 @@ class ConcertMusicService(
                     role = participantRole.role,
                 )
             }
-        }.let { concertParticipants ->  concertParticipantRepository.saveAll(concertParticipants) }
+        }.let { concertParticipants -> concertParticipantRepository.saveAll(concertParticipants) }
 
         val notExistingUserIds = requestUserIds.subtract(existingUserIds)
 
@@ -88,7 +91,7 @@ class ConcertMusicService(
         val enrolledUser = concertParticipantRepository.findAllAlreadyEnrolled(userIds, concertMusicId)
             .also { concertParticipantRepository.deleteAll(it) }
         val enrolledUserIds = enrolledUser.map { it.performer.userId }.toSet()
-        val failedUsers = userIds.filter{ userId -> !enrolledUserIds.contains(userId) }.map{ userId ->
+        val failedUsers = userIds.filter { userId -> !enrolledUserIds.contains(userId) }.map { userId ->
             ConcertParticipantDto.FailedUser(userId, "User does not enrolled in concert.")
         }
 
@@ -106,7 +109,7 @@ class ConcertMusicService(
         val partNameToParticipants = concertParticipantRepository.findParticipantsByConcertMusicId(concertMusicId)
             .groupBy { it.part }
         val concertParticipantByPartList = partNameToParticipants.map { (partName, partParticipants) ->
-            ConcertParticipantDto.ConcertParticipantsByPartResponse(partName, partParticipants)
+            ConcertParticipantDto.ConcertParticipantsByPartResponse.fromEntity(partName, partParticipants)
         }
         return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipantByPartList)
     }

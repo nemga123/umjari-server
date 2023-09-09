@@ -5,8 +5,8 @@ import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.group.repository.GroupRepository
 import com.umjari.server.domain.group.groupmusics.model.GroupMusic
 import com.umjari.server.domain.group.groupmusics.repository.GroupMusicRepository
-import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.music.exception.MusicIdNotFoundException
 import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.user.model.User
@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class GroupMusicService(
-        private val groupRepository: GroupRepository,
-        private val groupMusicRepository: GroupMusicRepository,
-        private val musicRepository: MusicRepository,
-        private val groupMemberAuthorityValidator: GroupMemberAuthorityValidator,
+    private val groupRepository: GroupRepository,
+    private val groupMusicRepository: GroupMusicRepository,
+    private val musicRepository: MusicRepository,
+    private val groupMemberAuthorityValidator: GroupMemberAuthorityValidator,
 ) {
     @Transactional
     fun updateConcertSetList(

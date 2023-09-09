@@ -35,14 +35,12 @@ class CommunityPostService(
             title = createCommunityPostRequest.title!!,
             content = createCommunityPostRequest.content!!,
             isAnonymous = createCommunityPostRequest.isAnonymous,
-        )
+        ).also { post -> communityPostRepository.save(post) }
 
-        val postObject = communityPostRepository.save(post)
-
-        return if (postObject.isAnonymous) {
-            CommunityPostDto.AnonymousPostDetailResponse(postObject, emptyList())
+        return if (post.isAnonymous) {
+            CommunityPostDto.AnonymousPostDetailResponse(post)
         } else {
-            CommunityPostDto.NotAnonymousPostDetailResponse(postObject, emptyList())
+            CommunityPostDto.NotAnonymousPostDetailResponse(post)
         }
     }
 
@@ -81,8 +79,7 @@ class CommunityPostService(
         val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
         val likeList = postLikeRepository.getAllByPostId(postId)
-        val replyIds = post.replies.map { it.id }
-        val replyIdToLikeList = postReplyLikeService.getReplyIdToLikeListMap(replyIds)
+        val replyIdToLikeList = postReplyLikeService.getReplyIdToLikeListMap(post)
         return if (post.isAnonymous) {
             CommunityPostDto.AnonymousPostDetailResponse(post, user, likeList, replyIdToLikeList)
         } else {
@@ -113,8 +110,7 @@ class CommunityPostService(
                 communityPostRepository.findAll(postSpec, pageable)
             }
         }
-        val postIds = postList.map { it.id }.toList()
-        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
+        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postList)
         val postResponses = buildPostPageResponse(postList, postIdToLikeList, currentUser)
         return PageResponse(postResponses, pageable.pageNumber)
     }

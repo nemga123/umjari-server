@@ -7,7 +7,6 @@ import com.umjari.server.domain.friend.exception.FriendRequestIdNotFoundExceptio
 import com.umjari.server.domain.friend.model.Friend
 import com.umjari.server.domain.friend.repository.FriendRepository
 import com.umjari.server.domain.user.exception.UserIdNotFoundException
-import com.umjari.server.domain.user.exception.UserProfileNameNotFoundException
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.repository.UserRepository
 import com.umjari.server.domain.user.service.UserService
@@ -37,7 +36,7 @@ class FriendService(
         Friend(
             requester = requestUser,
             receiver = receiver,
-            status = Friend.FriendshipStatus.FENDING
+            status = Friend.FriendshipStatus.FENDING,
         ).also { friend -> friendRepository.save(friend) }
     }
 

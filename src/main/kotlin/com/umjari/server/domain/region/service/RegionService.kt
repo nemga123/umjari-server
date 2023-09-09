@@ -9,10 +9,7 @@ class RegionService(
     private val regionRepository: RegionRepository,
 ) {
     fun getOrCreateRegion(regionParent: String, regionChild: String): Region {
-        val region = regionRepository.findByParentAndChild(regionParent, regionChild) ?: run {
-            val obj = Region(regionParent, regionChild)
-            regionRepository.save(obj)
-        }
-        return region
+        return regionRepository.findByParentAndChild(regionParent, regionChild)
+            ?: Region(regionParent, regionChild).also { region -> regionRepository.save(region) }
     }
 }

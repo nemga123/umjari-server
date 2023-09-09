@@ -50,7 +50,7 @@ class GuestBookService(
             author = currentUser,
             content = postGuestBookRequest.content!!,
             private = postGuestBookRequest.private,
-        ).also { guestBook ->  guestBookRepository.save(guestBook) }
+        ).also { guestBook -> guestBookRepository.save(guestBook) }
     }
 
     fun listGuestBook(

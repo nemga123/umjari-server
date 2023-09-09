@@ -11,8 +11,8 @@ import com.umjari.server.domain.concert.repository.ConcertRepository
 import com.umjari.server.domain.concert.specification.ConcertSpecificationBuilder
 import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.group.repository.GroupRepository
-import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
+import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.music.exception.MusicIdNotFoundException
 import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.service.RegionService
@@ -206,7 +206,7 @@ class ConcertService(
         val partNameToParticipants = concertParticipantRepository.findParticipantsByConcertId(concertId)
             .groupBy { it.part }
         val concertParticipantByPartList = partNameToParticipants.map { (partName, partParticipants) ->
-            ConcertParticipantDto.ConcertParticipantsByPartResponse(partName, partParticipants)
+            ConcertParticipantDto.ConcertParticipantsByPartResponse.fromSqlInterface(partName, partParticipants)
         }
         return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipantByPartList)
     }

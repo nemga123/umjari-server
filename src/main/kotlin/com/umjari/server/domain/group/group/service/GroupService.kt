@@ -10,11 +10,11 @@ import com.umjari.server.domain.group.group.repository.GroupRepository
 import com.umjari.server.domain.group.group.specification.GroupSpecificationBuilder
 import com.umjari.server.domain.group.groupmusics.repository.GroupMusicRepository
 import com.umjari.server.domain.group.instruments.Instrument
+import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
 import com.umjari.server.domain.group.members.dto.GroupRegisterDto
 import com.umjari.server.domain.group.members.exception.GroupRoleNotAuthorizedException
 import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.group.members.repository.GroupMemberRepository
-import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -174,11 +174,11 @@ class GroupService(
         val objectList = existingUserIds.map { userId ->
             val groupMember = alreadyEnrolledUserMap[userId]
             groupMember?.also { it.role = role }
-                    ?: GroupMember(
-                        group = group,
-                        user = userMap.getValue(userId),
-                        role = role,
-                    )
+                ?: GroupMember(
+                    group = group,
+                    user = userMap.getValue(userId),
+                    role = role,
+                )
         }
 
         groupMemberRepository.saveAll(objectList)
@@ -213,7 +213,7 @@ class GroupService(
         }
 
         existingUserIds.filter { userId -> !enrolledUserIds.contains(userId) }
-            .forEach{ notEnrolledUserId ->
+            .forEach { notEnrolledUserId ->
                 failedUsers.add(GroupRegisterDto.FailedUser(notEnrolledUserId, "User does not enrolled in group."))
             }
         return GroupRegisterDto.GroupRegisterResponse(failedUsers)

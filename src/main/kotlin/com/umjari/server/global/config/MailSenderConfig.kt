@@ -17,16 +17,16 @@ class MailSenderConfig {
         @Value("\${spring.mail.username}") username: String,
         @Value("\${spring.mail.password}") password: String,
     ): JavaMailSender {
-        val mailSenderImpl = JavaMailSenderImpl()
-        mailSenderImpl.host = host
-        mailSenderImpl.port = port
-        mailSenderImpl.username = username
-        mailSenderImpl.password = password
+        return JavaMailSenderImpl()
+            .also { mailSenderImpl ->
+                mailSenderImpl.host = host
+                mailSenderImpl.port = port
+                mailSenderImpl.username = username
+                mailSenderImpl.password = password
 
-        mailSenderImpl.javaMailProperties.setProperty("mail.smtp.auth", auth)
-        mailSenderImpl.javaMailProperties.setProperty("mail.smtp.starttls.enable", enableTls)
-        mailSenderImpl.javaMailProperties.setProperty("mail.debug", "true")
-
-        return mailSenderImpl
+                mailSenderImpl.javaMailProperties.setProperty("mail.smtp.auth", auth)
+                mailSenderImpl.javaMailProperties.setProperty("mail.smtp.starttls.enable", enableTls)
+                mailSenderImpl.javaMailProperties.setProperty("mail.debug", "true")
+            }
     }
 }

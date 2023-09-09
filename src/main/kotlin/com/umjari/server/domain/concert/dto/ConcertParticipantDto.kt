@@ -51,11 +51,34 @@ class ConcertParticipantDto {
         val assistantPrincipal: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
         val member: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
     ) {
+        companion object {
+            fun fromSqlInterface(
+                part: String,
+                participantList: List<ConcertParticipantSqlShortInterface>,
+            ): ConcertParticipantsByPartResponse {
+                return ConcertParticipantsByPartResponse(part).also {
+                    participantList.forEach { concertParticipant ->
+                        it.add(concertParticipant)
+                    }
+                }
+            }
+
+            fun fromEntity(
+                part: String,
+                participantList: List<ConcertParticipant>,
+            ): ConcertParticipantsByPartResponse {
+                return ConcertParticipantsByPartResponse(part).also {
+                    participantList.forEach { concertParticipant ->
+                        it.add(concertParticipant)
+                    }
+                }
+            }
+        }
         private fun add(concertParticipantInterface: ConcertParticipantSqlShortInterface) {
             add(concertParticipantInterface.performer, concertParticipantInterface.role)
         }
 
-        fun add(concertParticipant: ConcertParticipant) {
+        private fun add(concertParticipant: ConcertParticipant) {
             add(concertParticipant.performer, concertParticipant.role)
         }
 
@@ -73,18 +96,6 @@ class ConcertParticipantDto {
                 ConcertParticipant.ParticipantRole.MEMBER -> member.add(
                     UserDto.SimpleUserDto(performer),
                 )
-            }
-        }
-
-        constructor(part: String, participantList: List<ConcertParticipantSqlShortInterface>): this(part) {
-            participantList.forEach { concertParticipant ->
-                add(concertParticipant)
-            }
-        }
-
-        constructor(part: String, participantList: List<ConcertParticipant>): this(part) {
-            participantList.forEach { concertParticipant ->
-                add(concertParticipant)
             }
         }
     }

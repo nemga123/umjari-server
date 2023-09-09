@@ -1,6 +1,5 @@
 package com.umjari.server.domain.auth.controller
 
-import com.umjari.server.domain.auth.JwtTokenProvider
 import com.umjari.server.domain.auth.dto.AuthDto
 import com.umjari.server.domain.auth.service.AuthService
 import com.umjari.server.domain.user.model.User

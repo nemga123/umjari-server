@@ -24,7 +24,7 @@ class AlbumService(
         Album(
             title = createAlbumRequest.title,
             owner = user,
-        ).also { album: Album ->  albumRepository.save(album) }
+        ).also { album: Album -> albumRepository.save(album) }
     }
 
     fun getAlbumListByProfileName(
@@ -58,5 +58,5 @@ class AlbumService(
     }
 
     fun getAlbumByIdAndOwnerId(albumId: Long, userId: Long): Album = albumRepository.findByIdAndOwnerId(albumId, userId)
-            ?: throw AlbumIdNotFoundException(albumId)
+        ?: throw AlbumIdNotFoundException(albumId)
 }

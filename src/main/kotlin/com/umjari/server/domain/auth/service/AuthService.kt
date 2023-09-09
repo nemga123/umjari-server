@@ -31,7 +31,7 @@ class AuthService(
     private val passwordResetMailSender: PasswordResetMailSender,
     private val userIdMailSender: UserIdMailSender,
     private val jwtTokenProvider: JwtTokenProvider,
-    ) {
+) {
     @Transactional
     fun signUp(signUpRequest: AuthDto.SignUpRequest): String {
         val verificationToken = verifyTokenRepository.findTopByEmailOrderByCreatedAtDesc(signUpRequest.email!!)
@@ -80,7 +80,7 @@ class AuthService(
             verifyTokenRepository.deleteAllByEmail(signUpRequest.email)
         }
 
-        return jwtTokenProvider.generateToken(user.userId);
+        return jwtTokenProvider.generateToken(user.userId)
     }
 
     fun updatePassword(updatePasswordRequest: AuthDto.UpdatePasswordRequest, currentUser: User) {
