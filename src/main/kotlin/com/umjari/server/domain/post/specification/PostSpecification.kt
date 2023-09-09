@@ -118,21 +118,19 @@ class PostSpecification {
         }
     }
 
-    private fun filteredByAll(text: String): Specification<CommunityPost> {
-        var allSpecification = filteredByAuthor(text)
-        allSpecification = allSpecification.or(filteredByTitle(text))
-        allSpecification = allSpecification.or(filteredByContent(text))
-        allSpecification = allSpecification.or(filteredByReplyAuthor(text))
-        allSpecification = allSpecification.or(filteredByReplyContent(text))
-        allSpecification = allSpecification.or { _, query, _ ->
-            query.distinct(true)
-            null
-        }
-        return allSpecification
-    }
+    private fun filteredByAll(text: String): Specification<CommunityPost> =
+        filteredByAuthor(text)
+            .or(filteredByTitle(text))
+            .or(filteredByContent(text))
+            .or(filteredByReplyAuthor(text))
+            .or(filteredByReplyContent(text))
+            .or { _, query, _ ->
+                query.distinct(true)
+                null
+            }
 
     fun build(filterType: FilterType, text: String): Specification<CommunityPost> {
-        spec = when (filterType) {
+        return when (filterType) {
             FilterType.ALL -> spec.and(filteredByAll(text))
             FilterType.TITLE -> spec.and(filteredByTitle(text))
             FilterType.AUTHOR -> spec.and(filteredByAuthor(text))
@@ -140,7 +138,6 @@ class PostSpecification {
             FilterType.REPLY_AUTHOR -> spec.and(filteredByReplyAuthor(text))
             FilterType.REPLY_CONTENT -> spec.and(filteredByReplyContent(text))
         }
-        return spec
     }
 
     enum class FilterType() {

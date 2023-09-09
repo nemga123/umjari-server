@@ -21,7 +21,7 @@ interface GroupMemberRepository : JpaRepository<GroupMember, Long?> {
     )
     fun findAllUserIdsNotEnrolled(@Param("userIds") userIds: Set<String>, @Param("groupId") groupId: Long): Set<String>
 
-    fun findByGroup_IdAndUser_Id(groupId: Long, userId: Long): GroupMember?
+    fun findByGroupIdAndUserId(groupId: Long, userId: Long): GroupMember?
 
     @Query(
         """

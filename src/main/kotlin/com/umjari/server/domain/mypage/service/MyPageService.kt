@@ -22,37 +22,39 @@ class MyPageService(
 ) {
     fun getMyPostList(pageable: Pageable, currentUser: User): PageResponse<MyPageDto.MyPostListResponse> {
         val postList = communityPostRepository.findByAuthorId(currentUser.id, pageable)
-        val postIds = postList.map { it.id }.toList()
-        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
-        val postResponses = postList.map { MyPageDto.MyPostListResponse(it, postIdToLikeList[it.id] ?: emptyList()) }
+        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postList)
+        val postResponses = postList.map {
+            MyPageDto.MyPostListResponse(
+                it,
+                postIdToLikeList.getOrDefault(it.id, emptyList()),
+            )
+        }
         return PageResponse(postResponses, pageable.pageNumber)
     }
 
     fun getLikedPostList(pageable: Pageable, currentUser: User): PageResponse<CommunityPostDto.PostSimpleResponse> {
         val postList = communityPostRepository.findAllLikedPosts(currentUser.id, pageable)
-        val postIds = postList.map { it.id }.toList()
-        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
+        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postList)
         val postResponses = communityPostService.buildPostPageResponse(postList, postIdToLikeList, currentUser)
         return PageResponse(postResponses, pageable.pageNumber)
     }
 
     fun getMyPostReplyList(pageable: Pageable, currentUser: User): PageResponse<MyPageDto.MyPostReplyListResponse> {
-        val replyList = communityPostReplyRepository.getAllMyReplies(currentUser.id, pageable)
-        val replyResponses = replyList.map { MyPageDto.MyPostReplyListResponse(it) }
+        val replyResponses = communityPostReplyRepository.getAllMyReplies(currentUser.id, pageable)
+            .map { MyPageDto.MyPostReplyListResponse(it) }
         return PageResponse(replyResponses, pageable.pageNumber)
     }
 
     fun getRepliedPostList(pageable: Pageable, currentUser: User): PageResponse<CommunityPostDto.PostSimpleResponse> {
         val postList = communityPostRepository.findAllRepliedPosts(currentUser.id, pageable)
-        val postIds = postList.map { it.id }.toList()
-        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postIds)
+        val postIdToLikeList = postLikeService.getPostIdToLikeListMap(postList)
         val postResponses = communityPostService.buildPostPageResponse(postList, postIdToLikeList, currentUser)
         return PageResponse(postResponses, pageable.pageNumber)
     }
 
     fun getMyQnaList(pageable: Pageable, currentUser: User): PageResponse<MyPageDto.MyQnaListResponse> {
-        val qnaList = groupQnaRepository.findAllMyQnaList(currentUser.id, pageable)
-        val qnaResponses = qnaList.map { MyPageDto.MyQnaListResponse(it) }
-        return PageResponse(qnaResponses, pageable.pageNumber)
+        val qnaResponse = groupQnaRepository.findAllMyQnaList(currentUser.id, pageable)
+            .map { MyPageDto.MyQnaListResponse(it) }
+        return PageResponse(qnaResponse, pageable.pageNumber)
     }
 }

@@ -33,8 +33,8 @@ class UserService(
         }
     }
     fun getJoinedGroupList(user: User): UserDto.UserGroupListResponse {
-        val groupList = groupMemberRepository.findGroupListByUserId(user.id)
-        val career = groupList.map { GroupDto.GroupUserResponse(it) }
+        val career = groupMemberRepository.findGroupListByUserId(user.id)
+            .map { GroupDto.GroupUserResponse(it) }
         return UserDto.UserGroupListResponse(career = career)
     }
 
@@ -42,9 +42,9 @@ class UserService(
         val user = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        val concertList = concertParticipantRepository.findConcertListByJoinedUserId(user.id)
-        val response = concertList.map { ConcertParticipantDto.ParticipatedConcertResponse(it) }
-        return ConcertParticipantDto.ParticipatedConcertListResponse(response)
+        val joinedConcertList = concertParticipantRepository.findConcertListByJoinedUserId(user.id)
+            .map { ConcertParticipantDto.ParticipatedConcertResponse(it) }
+        return ConcertParticipantDto.ParticipatedConcertListResponse(joinedConcertList)
     }
 
     fun getJoinedConcertListGroupByConcertId(
@@ -53,19 +53,21 @@ class UserService(
         val user = userRepository.findByProfileName(profileName)
             ?: throw UserProfileNameNotFoundException(profileName)
 
-        val concertList = concertParticipantRepository.findConcertListByJoinedUserIdWithPoster(user.id)
-        val listGroupByConcertId = concertList.groupBy { it.id }
-        return ConcertParticipantDto.ParticipatedConcertsGroupByConcertIdListResponse(listGroupByConcertId)
+        val concertIdToConcertObjMap = concertParticipantRepository.findConcertListByJoinedUserIdWithPoster(user.id)
+            .groupBy { it.id }
+        return ConcertParticipantDto.ParticipatedConcertsGroupByConcertIdListResponse(concertIdToConcertObjMap)
     }
 
     fun updateProfileImage(user: User, imageRequest: UserDto.ProfileImageRequest) {
         val originImageUrl = user.profileImage
         if (originImageUrl == imageRequest.image) return
-        user.profileImage = imageRequest.image!!
-        userRepository.save(user)
+
+        // 원래 프로필 사진 삭제
         if (originImageUrl.startsWith("http")) {
             imageService.removeImageByUrl(originImageUrl)
         }
+        user.profileImage = imageRequest.image!!
+        userRepository.save(user)
     }
 
     fun updateUserInformation(user: User, updateUserInfo: UserDto.UpdateUserInfoRequest) {
@@ -109,10 +111,10 @@ class UserService(
 
         val musicIds = user.interestMusics.split(",").filter { it.isNotEmpty() }.map { it.toLong() }
         val musicIdToMusicMap = musicRepository.findAllByIdIn(musicIds)
-            .let { it.associateBy { music -> music.id } }
+            .associateBy { music -> music.id }
         val musicResponse = musicIds
             .filter { id -> musicIdToMusicMap.containsKey(id) }
-            .map { id -> MusicDto.MusicDetailResponse(musicIdToMusicMap[id]!!) }
+            .map { id -> MusicDto.MusicDetailResponse(musicIdToMusicMap.getValue(id)) }
         return MusicDto.MusicDetailListResponse(musicResponse, musicResponse.size)
     }
 
@@ -126,7 +128,7 @@ class UserService(
             false
         }
 
-        return UserDto.DetailUserInfoResponse(user = user, currentUser = currentUser, isFriend)
+        return UserDto.DetailUserInfoResponse(user = user, currentUser = currentUser, isFriend = isFriend)
     }
 
     fun getUserIdToUserMapInUserIds(userIds: Set<String>): Pair<Set<String>, Map<String, User>> {
@@ -135,4 +137,7 @@ class UserService(
         val existingUserIds = existingUsers.map { it.userId }.toSet()
         return Pair(existingUserIds, userMap)
     }
+
+    fun getUserByProfileName(profileName: String): User = userRepository.findByProfileName(profileName)
+        ?: throw UserProfileNameNotFoundException(profileName)
 }

@@ -5,8 +5,8 @@ import com.umjari.server.domain.concert.exception.ConcertMusicIdNotFoundExceptio
 import com.umjari.server.domain.concert.model.ConcertParticipant
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
+import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
 import com.umjari.server.domain.group.members.model.GroupMember
-import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
 import org.springframework.stereotype.Service
@@ -17,10 +17,10 @@ class ConcertMusicService(
     private val concertMusicRepository: ConcertMusicRepository,
     private val concertParticipantRepository: ConcertParticipantRepository,
     private val userService: UserService,
-    private val groupMemberAuthorityService: GroupMemberAuthorityService,
+    private val groupMemberAuthorityValidator: GroupMemberAuthorityValidator,
 ) {
     fun registerConcertParticipant(
-        user: User,
+        currentUser: User,
         concertId: Long,
         concertMusicId: Long,
         registerConcertParticipantListRequest: ConcertParticipantDto.RegisterConcertParticipantListRequest,
@@ -28,23 +28,25 @@ class ConcertMusicService(
         val concertMusic = concertMusicRepository.findByConcertIdAndId(concertId, concertMusicId)
             ?: throw ConcertMusicIdNotFoundException(concertMusicId)
 
-        groupMemberAuthorityService.checkMemberAuthorities(
+        // check currentUser is Admin user
+        groupMemberAuthorityValidator.checkMemberAuthorities(
             GroupMember.MemberRole.ADMIN,
             concertMusic.concert.group.id,
-            user.id,
+            currentUser.id,
         )
 
         val requestUserIds = registerConcertParticipantListRequest.participantList.map { it.userId }.toSet()
         val requestUserIdToRole = registerConcertParticipantListRequest.participantList.associateBy { it.userId }
-        val failedUsers = mutableListOf<ConcertParticipantDto.FailedUser>()
         val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
-        val alreadyEnrolledUser = concertParticipantRepository.findAllAlreadyEnrolled(existingUserIds, concertMusicId)
-        val alreadyEnrolledUserMap = alreadyEnrolledUser.associateBy { it.performer.userId }
+        val alreadyEnrolledUserMap = concertParticipantRepository.findAllAlreadyEnrolled(
+            existingUserIds,
+            concertMusicId,
+        ).associateBy { it.performer.userId }
 
-        val objectList = existingUserIds.map { userId ->
-            val participantRole = requestUserIdToRole[userId]!!
+        existingUserIds.map { userId ->
+            val participantRole = requestUserIdToRole.getValue(userId)
             if (alreadyEnrolledUserMap.containsKey(userId)) {
-                val concertParticipant = alreadyEnrolledUserMap[userId]!!
+                val concertParticipant = alreadyEnrolledUserMap.getValue(userId)
                 concertParticipant.part = participantRole.part
                 concertParticipant.detailPart = participantRole.detailPart
                 concertParticipant.role = participantRole.role
@@ -52,19 +54,18 @@ class ConcertMusicService(
             } else {
                 ConcertParticipant(
                     concertMusic = concertMusic,
-                    performer = userMap[userId]!!,
+                    performer = userMap.getValue(userId),
                     part = participantRole.part,
                     detailPart = participantRole.detailPart,
                     role = participantRole.role,
                 )
             }
-        }
-
-        concertParticipantRepository.saveAll(objectList)
+        }.let { concertParticipants -> concertParticipantRepository.saveAll(concertParticipants) }
 
         val notExistingUserIds = requestUserIds.subtract(existingUserIds)
-        notExistingUserIds.forEach {
-            failedUsers.add(ConcertParticipantDto.FailedUser(it, "User does not exist."))
+
+        val failedUsers = notExistingUserIds.map {
+            ConcertParticipantDto.FailedUser(it, "User does not exist.")
         }
 
         return ConcertParticipantDto.UpdateConcertParticipantsResponse(failedUsers)
@@ -77,26 +78,21 @@ class ConcertMusicService(
         concertMusicId: Long,
         removeConcertParticipantListRequest: ConcertParticipantDto.RemoveConcertParticipantListRequest,
     ): ConcertParticipantDto.UpdateConcertParticipantsResponse {
-        val userIds = removeConcertParticipantListRequest.userIds.toSet()
         val concertMusic = concertMusicRepository.findByConcertIdAndId(concertId, concertMusicId)
             ?: throw ConcertMusicIdNotFoundException(concertMusicId)
 
-        groupMemberAuthorityService.checkMemberAuthorities(
+        groupMemberAuthorityValidator.checkMemberAuthorities(
             GroupMember.MemberRole.ADMIN,
             concertMusic.concert.group.id,
             user.id,
         )
 
-        val failedUsers = mutableListOf<ConcertParticipantDto.FailedUser>()
+        val userIds = removeConcertParticipantListRequest.userIds.toSet()
         val enrolledUser = concertParticipantRepository.findAllAlreadyEnrolled(userIds, concertMusicId)
+            .also { concertParticipantRepository.deleteAll(it) }
         val enrolledUserIds = enrolledUser.map { it.performer.userId }.toSet()
-
-        concertParticipantRepository.deleteAll(enrolledUser)
-
-        for (userId in userIds) {
-            if (!enrolledUserIds.contains(userId)) {
-                failedUsers.add(ConcertParticipantDto.FailedUser(userId, "User does not enrolled in concert."))
-            }
+        val failedUsers = userIds.filter { userId -> !enrolledUserIds.contains(userId) }.map { userId ->
+            ConcertParticipantDto.FailedUser(userId, "User does not enrolled in concert.")
         }
 
         return ConcertParticipantDto.UpdateConcertParticipantsResponse(failedUsers)
@@ -110,15 +106,10 @@ class ConcertMusicService(
             throw ConcertMusicIdNotFoundException(concertMusicId)
         }
 
-        val concertParticipants = concertParticipantRepository.findParticipantsByConcertMusicId(concertMusicId)
-
-        val partNameToParticipants = concertParticipants.groupBy { it.part }
+        val partNameToParticipants = concertParticipantRepository.findParticipantsByConcertMusicId(concertMusicId)
+            .groupBy { it.part }
         val concertParticipantByPartList = partNameToParticipants.map { (partName, partParticipants) ->
-            val partResponse = ConcertParticipantDto.ConcertParticipantsByPartResponse(partName)
-            partParticipants.forEach { concertParticipant ->
-                partResponse.add(concertParticipant)
-            }
-            partResponse
+            ConcertParticipantDto.ConcertParticipantsByPartResponse.fromEntity(partName, partParticipants)
         }
         return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipantByPartList)
     }

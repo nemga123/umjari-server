@@ -61,7 +61,6 @@ class CustomUsernamePasswordAuthenticationFilter(
 
     private fun parseRequest(request: HttpServletRequest): AuthDto.LogInRequest {
         val reader: BufferedReader = request.reader
-        val objectMapper = ObjectMapper()
-        return objectMapper.readValue(reader, AuthDto.LogInRequest::class.java)
+        return ObjectMapper().readValue(reader, AuthDto.LogInRequest::class.java)
     }
 }

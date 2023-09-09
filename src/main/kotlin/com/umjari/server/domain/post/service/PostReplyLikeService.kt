@@ -2,6 +2,7 @@ package com.umjari.server.domain.post.service
 
 import com.umjari.server.domain.post.dto.BoardType
 import com.umjari.server.domain.post.exception.ReplyIdNotFoundException
+import com.umjari.server.domain.post.model.CommunityPost
 import com.umjari.server.domain.post.model.PostReplyLike
 import com.umjari.server.domain.post.repository.CommunityPostReplyRepository
 import com.umjari.server.domain.post.repository.PostReplyLikeRepository
@@ -25,13 +26,14 @@ class PostReplyLikeService(
         if (postReplyLikeRepository.existsByUserIdAndReplyId(user.id, replyId)) {
             postReplyLikeRepository.deleteByUserIdAndReplyId(user.id, replyId)
         } else {
-            val obj = PostReplyLike(user = user, reply = reply)
-            postReplyLikeRepository.save(obj)
+            PostReplyLike(user = user, reply = reply)
+                .also { postReplyLike -> postReplyLikeRepository.save(postReplyLike) }
         }
     }
 
-    fun getReplyIdToLikeListMap(replyIds: List<Long>): Map<Long, List<PostReplyLike>> {
-        val replyList = postReplyLikeRepository.getAllByReplyIdIn(replyIds)
-        return replyList.groupBy { it.reply.id }
+    fun getReplyIdToLikeListMap(post: CommunityPost): Map<Long, List<PostReplyLike>> {
+        val replyIds = post.replies.map { it.id }
+        val replyLikeList = postReplyLikeRepository.getAllByReplyIdIn(replyIds)
+        return replyLikeList.groupBy { it.reply.id }
     }
 }

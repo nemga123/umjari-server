@@ -149,7 +149,7 @@ class CommunityPostDto {
             },
         )
 
-        constructor(post: CommunityPost, replies: List<PostReplyDto.PostReplyResponse>) : this(
+        constructor(post: CommunityPost, replies: List<PostReplyDto.PostReplyResponse> = emptyList()) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,
@@ -209,7 +209,7 @@ class CommunityPostDto {
             },
         )
 
-        constructor(post: CommunityPost, replies: List<PostReplyDto.PostReplyResponse>) : this(
+        constructor(post: CommunityPost, replies: List<PostReplyDto.PostReplyResponse> = emptyList()) : this(
             id = post.id,
             board = post.board.boardType,
             title = post.title,

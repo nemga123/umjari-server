@@ -51,11 +51,34 @@ class ConcertParticipantDto {
         val assistantPrincipal: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
         val member: MutableList<UserDto.SimpleUserDto> = mutableListOf(),
     ) {
-        fun add(concertParticipantInterface: ConcertParticipantSqlShortInterface) {
+        companion object {
+            fun fromSqlInterface(
+                part: String,
+                participantList: List<ConcertParticipantSqlShortInterface>,
+            ): ConcertParticipantsByPartResponse {
+                return ConcertParticipantsByPartResponse(part).also {
+                    participantList.forEach { concertParticipant ->
+                        it.add(concertParticipant)
+                    }
+                }
+            }
+
+            fun fromEntity(
+                part: String,
+                participantList: List<ConcertParticipant>,
+            ): ConcertParticipantsByPartResponse {
+                return ConcertParticipantsByPartResponse(part).also {
+                    participantList.forEach { concertParticipant ->
+                        it.add(concertParticipant)
+                    }
+                }
+            }
+        }
+        private fun add(concertParticipantInterface: ConcertParticipantSqlShortInterface) {
             add(concertParticipantInterface.performer, concertParticipantInterface.role)
         }
 
-        fun add(concertParticipant: ConcertParticipant) {
+        private fun add(concertParticipant: ConcertParticipant) {
             add(concertParticipant.performer, concertParticipant.role)
         }
 

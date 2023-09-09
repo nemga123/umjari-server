@@ -25,15 +25,13 @@ class CommunityPostReplyService(
         val post = communityPostRepository.findByBoardAndId(BoardType.boardNameToBoardType(boardName), postId)
             ?: throw PostIdNotFoundException(postId)
 
-        val reply = CommunityPostReply(
+        CommunityPostReply(
             author = user,
             authorNickname = user.nickname,
             content = createReplyRequest.content!!,
             isAnonymous = createReplyRequest.isAnonymous,
             post = post,
-        )
-
-        communityPostReplyRepository.save(reply)
+        ).also { communityPostReply -> communityPostReplyRepository.save(communityPostReply) }
     }
 
     fun updateReplyOnPost(

@@ -8,11 +8,11 @@ import com.umjari.server.domain.concert.model.ConcertMusic
 import com.umjari.server.domain.concert.repository.ConcertMusicRepository
 import com.umjari.server.domain.concert.repository.ConcertParticipantRepository
 import com.umjari.server.domain.concert.repository.ConcertRepository
-import com.umjari.server.domain.concert.specification.ConcertSpecification
+import com.umjari.server.domain.concert.specification.ConcertSpecificationBuilder
 import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.group.repository.GroupRepository
+import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
 import com.umjari.server.domain.group.members.model.GroupMember
-import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
 import com.umjari.server.domain.music.exception.MusicIdNotFoundException
 import com.umjari.server.domain.music.repository.MusicRepository
 import com.umjari.server.domain.region.service.RegionService
@@ -32,7 +32,7 @@ class ConcertService(
     private val musicRepository: MusicRepository,
     private val regionService: RegionService,
     private val groupRepository: GroupRepository,
-    private val groupMemberAuthorityService: GroupMemberAuthorityService,
+    private val groupMemberAuthorityValidator: GroupMemberAuthorityValidator,
 ) {
     private final val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
@@ -46,7 +46,7 @@ class ConcertService(
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
 
         val region = regionService.getOrCreateRegion(
             createConcertRequest.regionParent!!,
@@ -102,7 +102,7 @@ class ConcertService(
         currentUser: User?,
         pageable: Pageable,
     ): PageResponse<ConcertDto.ConcertDashboardResponse> {
-        val spec = ConcertSpecification()
+        val spec = ConcertSpecificationBuilder()
         startDate?.let { spec.filteredByDateStart(dateFormatter.parse(it)) }
         endDate?.let { spec.filteredByDateEnd(dateFormatter.parse(it)) }
         regionParent?.let { if (regionParent != "전체") spec.filteredByRegionParent(regionParent) }
@@ -131,7 +131,7 @@ class ConcertService(
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
 
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
         with(concert) {
             title = updateConcertDetailRequest.title!!
             subtitle = updateConcertDetailRequest.subtitle!!.trim()
@@ -157,7 +157,7 @@ class ConcertService(
     fun updateConcertInfo(user: User, concertId: Long, updateConcertInfoRequest: ConcertDto.UpdateConcertInfoRequest) {
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, concert.group.id, user.id)
         concert.concertInfo = updateConcertInfoRequest.concertInfo!!
         concertRepository.save(concert)
     }
@@ -171,7 +171,7 @@ class ConcertService(
         val concert = concertRepository.findByIdOrNull(concertId)
             ?: throw ConcertNotFoundException(concertId)
 
-        groupMemberAuthorityService.checkMemberAuthorities(
+        groupMemberAuthorityValidator.checkMemberAuthorities(
             GroupMember.MemberRole.ADMIN,
             concert.group.id,
             user.id,
@@ -203,15 +203,10 @@ class ConcertService(
             throw ConcertNotFoundException(concertId)
         }
 
-        val concertParticipants = concertParticipantRepository.findParticipantsByConcertId(concertId)
-
-        val partNameToParticipants = concertParticipants.groupBy { it.part }
+        val partNameToParticipants = concertParticipantRepository.findParticipantsByConcertId(concertId)
+            .groupBy { it.part }
         val concertParticipantByPartList = partNameToParticipants.map { (partName, partParticipants) ->
-            val partResponse = ConcertParticipantDto.ConcertParticipantsByPartResponse(partName)
-            partParticipants.forEach { concertParticipant ->
-                partResponse.add(concertParticipant)
-            }
-            partResponse
+            ConcertParticipantDto.ConcertParticipantsByPartResponse.fromSqlInterface(partName, partParticipants)
         }
         return ConcertParticipantDto.ConcertParticipantsListResponse(concertParticipantByPartList)
     }

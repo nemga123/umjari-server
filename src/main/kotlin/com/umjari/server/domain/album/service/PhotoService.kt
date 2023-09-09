@@ -17,16 +17,17 @@ import org.springframework.transaction.annotation.Transactional
 class PhotoService(
     private val photoRepository: PhotoRepository,
     private val albumRepository: AlbumRepository,
+    private val albumService: AlbumService,
     private val imageRepository: ImageRepository,
 ) {
     fun getPhotoList(albumId: Long, pageable: Pageable, user: User?): PhotoDto.PhotoListResponse {
         val album = albumRepository.findByIdOrNull(albumId)
             ?: throw AlbumIdNotFoundException(albumId)
 
-        val photoList = photoRepository.getAllByAlbumId(albumId, pageable)
-        val photoPageResponse = photoList.map { PhotoDto.PhotoResponse(it) }
+        val photoResponsePages = photoRepository.getAllByAlbumId(albumId, pageable)
+            .map { PhotoDto.PhotoResponse(it) }
         val pageResponse = PageResponse(
-            photoPageResponse,
+            photoResponsePages,
             pageable.pageNumber,
         )
         return PhotoDto.PhotoListResponse(
@@ -41,35 +42,34 @@ class PhotoService(
         uploadPhotoRequest: PhotoDto.UploadPhotoRequest,
         user: User,
     ): PhotoDto.UploadPhotoResponse {
-        val album = albumRepository.findByIdAndOwnerId(albumId, user.id)
-            ?: throw AlbumIdNotFoundException(albumId)
+        val album = albumService.getAlbumByIdAndOwnerId(albumId, user.id)
 
-        val failedImage = mutableListOf<PhotoDto.FailedImage>()
-        val existImages = imageRepository.findAllByTokenIn(uploadPhotoRequest.tokenList)
-        val existImageMap = existImages.associateBy { it.token }
+        val existImageMap = imageRepository.findAllByTokenIn(uploadPhotoRequest.tokenList)
+            .associateBy { it.token }
 
-        val photoObjectList = mutableListOf<Photo>()
-        uploadPhotoRequest.tokenList.forEach {
-            val image = existImageMap[it]
+        val photoList = mutableListOf<Photo>()
+        val failedPhotoList = mutableListOf<PhotoDto.FailedImage>()
+        uploadPhotoRequest.tokenList.forEach { token: String ->
+            val image = existImageMap[token]
             if (image != null) {
-                photoObjectList.add(
+                photoList.add(
                     Photo(
                         album = album,
                         image = image,
                     ),
                 )
             } else {
-                failedImage.add(
+                failedPhotoList.add(
                     PhotoDto.FailedImage(
-                        token = it,
-                        reason = "There is not image that token is $it",
+                        token = token,
+                        reason = "There is not image that token is $token",
                     ),
                 )
             }
         }
 
-        photoRepository.saveAll(photoObjectList)
-        return PhotoDto.UploadPhotoResponse(failedImage)
+        photoRepository.saveAll(photoList)
+        return PhotoDto.UploadPhotoResponse(failedPhotoList)
     }
 
     @Transactional

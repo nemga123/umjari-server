@@ -20,13 +20,17 @@ class MailVerificationService(
     private val userRepository: UserRepository,
     private val verificationMailSender: VerificationMailSender,
 ) {
+    companion object {
+        private const val EMAIL_VERIFICATION_TIMEOUT = 10 * 60
+    }
+
     fun verifyEmail(mailVerificationRequest: MailVerificationDto.MailVerificationRequest) {
         if (userRepository.existsByEmail(mailVerificationRequest.email!!)) {
             throw DuplicatedUserEmailException(mailVerificationRequest.email)
         }
         val verifyToken = generateVerifyToken()
-        val verifyTokenObject = VerifyToken(token = verifyToken, email = mailVerificationRequest.email)
-        verifyTokenRepository.save(verifyTokenObject)
+        VerifyToken(token = verifyToken, email = mailVerificationRequest.email)
+            .also { token -> verifyTokenRepository.save(token) }
         val contextVariables = mapOf("token" to verifyToken)
         verificationMailSender.sendMail(mailVerificationRequest.email, contextVariables)
     }
@@ -38,7 +42,7 @@ class MailVerificationService(
         )
             ?: throw InvalidTokenException()
         val duration = ChronoUnit.SECONDS.between(LocalDateTime.now(), verifyToken.createdAt!!)
-        if (duration > 600) {
+        if (duration > EMAIL_VERIFICATION_TIMEOUT) {
             throw TokenAlreadyExpiredException()
         }
         verifyToken.confirmed = true

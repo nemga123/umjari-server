@@ -25,8 +25,7 @@ class SwaggerConfig {
 
         val securityRequirement = SecurityRequirement().addList("bearerAuth")
 
-        val server = Server()
-        server.url = "/"
+        val server = Server().also { server -> server.url = "/" }
 
         return OpenAPI()
             .servers(listOf(server))

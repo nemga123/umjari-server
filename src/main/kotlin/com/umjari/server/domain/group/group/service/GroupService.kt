@@ -7,14 +7,14 @@ import com.umjari.server.domain.group.group.dto.GroupRecommendationFilter
 import com.umjari.server.domain.group.group.exception.GroupIdNotFoundException
 import com.umjari.server.domain.group.group.model.Group
 import com.umjari.server.domain.group.group.repository.GroupRepository
-import com.umjari.server.domain.group.group.specification.GroupSpecification
+import com.umjari.server.domain.group.group.specification.GroupSpecificationBuilder
 import com.umjari.server.domain.group.groupmusics.repository.GroupMusicRepository
 import com.umjari.server.domain.group.instruments.Instrument
+import com.umjari.server.domain.group.members.component.GroupMemberAuthorityValidator
 import com.umjari.server.domain.group.members.dto.GroupRegisterDto
 import com.umjari.server.domain.group.members.exception.GroupRoleNotAuthorizedException
 import com.umjari.server.domain.group.members.model.GroupMember
 import com.umjari.server.domain.group.members.repository.GroupMemberRepository
-import com.umjari.server.domain.group.members.service.GroupMemberAuthorityService
 import com.umjari.server.domain.region.service.RegionService
 import com.umjari.server.domain.user.model.User
 import com.umjari.server.domain.user.service.UserService
@@ -33,7 +33,7 @@ class GroupService(
     private val concertRepository: ConcertRepository,
     private val regionService: RegionService,
     private val userService: UserService,
-    private val groupMemberAuthorityService: GroupMemberAuthorityService,
+    private val groupMemberAuthorityValidator: GroupMemberAuthorityValidator,
 ) {
     private final val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
 
@@ -55,28 +55,25 @@ class GroupService(
             homepage = createGroupRequest.homepage,
             detailIntro = createGroupRequest.detailIntro,
             tags = createGroupRequest.tags.joinToString(",", ",", ","),
-        )
+        ).also { group -> groupRepository.save(group) }
 
-        groupRepository.save(group)
-        return GroupDto.GroupDetailResponse(group, GroupMember.MemberRole.NON_MEMBER)
+        return GroupDto.GroupDetailResponse(group)
     }
 
     fun getGroup(groupId: Long, user: User?): GroupDto.GroupDetailResponse {
         val group = groupRepository.findGroupFetchSetList(groupId)
             ?: throw GroupIdNotFoundException(groupId)
-        val memberStatus = if (user != null) {
-            groupMemberRepository.findByGroup_IdAndUser_Id(
+        val memberStatus = user?.let {
+            groupMemberRepository.findByGroupIdAndUserId(
                 groupId = group.id,
-                userId = user.id,
+                userId = it.id,
             )
-        } else {
-            null
         }
 
         return if (memberStatus != null) {
             GroupDto.GroupDetailResponse(group, memberStatus.role)
         } else {
-            GroupDto.GroupDetailResponse(group, GroupMember.MemberRole.NON_MEMBER)
+            GroupDto.GroupDetailResponse(group)
         }
     }
 
@@ -90,7 +87,7 @@ class GroupService(
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
 
         with(group) {
             name = updateGroupRequest.name!!
@@ -115,7 +112,7 @@ class GroupService(
     fun toggleGroupRecruit(user: User, groupId: Long) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         group.recruit = !group.recruit
         groupRepository.save(group)
     }
@@ -127,7 +124,7 @@ class GroupService(
     ) {
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
-        groupMemberAuthorityService.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
+        groupMemberAuthorityValidator.checkMemberAuthorities(GroupMember.MemberRole.ADMIN, groupId, user.id)
         group.recruitInstruments = updateGroupRecruitDetailRequest.recruitInstruments
         group.recruitDetail = updateGroupRecruitDetailRequest.recruitDetail
         groupRepository.save(group)
@@ -138,8 +135,8 @@ class GroupService(
             throw GroupIdNotFoundException(groupId)
         }
         val concerts = concertRepository.getConcertsByGroupId(groupId, pageable)
-        val concertResponses = concerts.map { ConcertDto.ConcertSimpleResponse(it) }
-        return PageResponse(concertResponses, pageable.pageNumber)
+            .map { ConcertDto.ConcertSimpleResponse(it) }
+        return PageResponse(concerts, pageable.pageNumber)
     }
 
     fun updateGroupMemberTimestamp(
@@ -147,23 +144,15 @@ class GroupService(
         groupId: Long,
         updateGroupMemberTimestampRequest: GroupRegisterDto.UpdateGroupMemberTimestampRequest,
     ) {
-        val groupMember = groupMemberRepository.findByGroup_IdAndUser_Id(groupId, user.id)
+        val groupMember = groupMemberRepository.findByGroupIdAndUserId(groupId, user.id)
             ?: throw GroupRoleNotAuthorizedException(GroupMember.MemberRole.MEMBER)
 
         with(groupMember) {
-            joinedAt = if (updateGroupMemberTimestampRequest.joinedAt == null) {
-                null
-            } else {
-                dateFormatter.parse(
-                    updateGroupMemberTimestampRequest.joinedAt,
-                )
+            joinedAt = updateGroupMemberTimestampRequest.joinedAt?.let { timestamp ->
+                dateFormatter.parse(timestamp)
             }
-            leavedAt = if (updateGroupMemberTimestampRequest.leavedAt == null) {
-                null
-            } else {
-                dateFormatter.parse(
-                    updateGroupMemberTimestampRequest.leavedAt,
-                )
+            leavedAt = updateGroupMemberTimestampRequest.leavedAt?.let { timestamp ->
+                dateFormatter.parse(timestamp)
             }
         }
         groupMemberRepository.save(groupMember)
@@ -179,29 +168,24 @@ class GroupService(
 
         val requestUserIds = registerRequest.userIds.toSet()
 
-        val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         val (existingUserIds, userMap) = userService.getUserIdToUserMapInUserIds(requestUserIds)
         val alreadyEnrolledUser = groupMemberRepository.findAllAlreadyEnrolled(existingUserIds, groupId)
         val alreadyEnrolledUserMap = alreadyEnrolledUser.associateBy { it.user.userId }
         val objectList = existingUserIds.map { userId ->
-            if (alreadyEnrolledUserMap.containsKey(userId)) {
-                val groupMember = alreadyEnrolledUserMap[userId]!!
-                groupMember.role = role
-                groupMember
-            } else {
-                GroupMember(
+            val groupMember = alreadyEnrolledUserMap[userId]
+            groupMember?.also { it.role = role }
+                ?: GroupMember(
                     group = group,
-                    user = userMap[userId]!!,
+                    user = userMap.getValue(userId),
                     role = role,
                 )
-            }
         }
 
         groupMemberRepository.saveAll(objectList)
 
         val notExistingUserIds = requestUserIds.subtract(existingUserIds)
-        notExistingUserIds.forEach {
-            failedUsers.add(GroupRegisterDto.FailedUser(it, "User does not exist."))
+        val failedUsers = notExistingUserIds.map {
+            GroupRegisterDto.FailedUser(it, "User does not exist.")
         }
 
         return GroupRegisterDto.GroupRegisterResponse(failedUsers)
@@ -216,7 +200,6 @@ class GroupService(
         val group = groupRepository.findByIdOrNull(groupId)
             ?: throw GroupIdNotFoundException(groupId)
 
-        val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         val (existingUserIds, _) = userService.getUserIdToUserMapInUserIds(userIds)
         val enrolledUser = groupMemberRepository.findAllAlreadyEnrolled(existingUserIds, group.id)
         val enrolledUserIds = enrolledUser.map { it.user.userId }.toSet()
@@ -224,16 +207,15 @@ class GroupService(
         groupMemberRepository.deleteAll(enrolledUser)
 
         val notExistingUserIds = userIds.subtract(existingUserIds)
+        val failedUsers = mutableListOf<GroupRegisterDto.FailedUser>()
         notExistingUserIds.forEach {
             failedUsers.add(GroupRegisterDto.FailedUser(it, "User does not exist."))
         }
 
-        for (userId in existingUserIds) {
-            if (!enrolledUserIds.contains(userId)) {
-                failedUsers.add(GroupRegisterDto.FailedUser(userId, "User does not enrolled in group."))
+        existingUserIds.filter { userId -> !enrolledUserIds.contains(userId) }
+            .forEach { notEnrolledUserId ->
+                failedUsers.add(GroupRegisterDto.FailedUser(notEnrolledUserId, "User does not enrolled in group."))
             }
-        }
-
         return GroupRegisterDto.GroupRegisterResponse(failedUsers)
     }
 
@@ -248,7 +230,7 @@ class GroupService(
         currentUser: User?,
         pageable: Pageable,
     ): PageResponse<GroupDto.GroupListResponse> {
-        val spec = GroupSpecification()
+        val spec = GroupSpecificationBuilder()
         regionParent?.let { if (regionParent != "전체") spec.filteredByRegionParent(regionParent) }
         regionChild?.let { if (regionChild != "전체") spec.filteredByRegionChild(regionChild) }
         name?.let { spec.filteredByName(name) }
@@ -258,8 +240,8 @@ class GroupService(
         if (!tags.isNullOrEmpty()) spec.filteredByTags(tags)
         val groups = groupRepository.findAll(spec.build(), pageable)
         val idSet = groups.map { it.id }.toSet()
-        val groupMusicList = groupMusicRepository.fetchGroupMusicByGroupIds(idSet)
-        val setListMap = groupMusicList.groupBy { it.group.id }
+        val setListMap = groupMusicRepository.fetchGroupMusicByGroupIds(idSet)
+            .groupBy { it.group.id }
         return if (currentUser == null) {
             val groupResponse = groups.map { GroupDto.GroupListResponse(it, setListMap) }
             PageResponse(groupResponse, pageable.pageNumber)
@@ -275,19 +257,25 @@ class GroupService(
         currentUser: User,
     ): List<GroupDto.GroupRecommendationListResponse> {
         val interestMusicIdList = currentUser.getInterestMusicIdList()
+
+        // 유저 선호곡과 겹치는 곡이 1개 이상인 그룹 찾기
         val interestMusicGroupList = groupMusicRepository.countGroupMusicsByMusicIdIn(interestMusicIdList)
         val groupIdSet = interestMusicGroupList.map { it.groupId }.toSet()
+
+        // 유저 선호곡과 겹치는 곡이 1개 이상인 그룹의 회원 fetch
         val groupMemberCounts = groupRepository.findAllByIdsInWithRegionAndMemberList(groupIdSet)
 
+        // 추천 그룹 group_id 순서
         val recommendationOrderedGroupIdList = GroupRecommendationFilter(
             interestMusicGroupList,
             groupMemberCounts,
             currentUser.region,
         ).getRecommendationGroupIdOrder()
+
         val groupQueryList = groupRepository.findAllGroupsFetchSetListByIdIn(groupIdSet)
         val groupIdToGroupMap = groupQueryList.associateBy { it.id }
         return recommendationOrderedGroupIdList.map {
-            GroupDto.GroupRecommendationListResponse(groupIdToGroupMap[it]!!)
+            GroupDto.GroupRecommendationListResponse(groupIdToGroupMap.getValue(it))
         }
     }
 }

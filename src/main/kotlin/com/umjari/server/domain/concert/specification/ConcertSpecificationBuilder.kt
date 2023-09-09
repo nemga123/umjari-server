@@ -9,7 +9,7 @@ import jakarta.persistence.criteria.JoinType
 import org.springframework.data.jpa.domain.Specification
 import java.util.Date
 
-class ConcertSpecification {
+class ConcertSpecificationBuilder {
     private var spec = Specification<Concert> { root, query, _ ->
         if (Concert::class.java == query.resultType) {
             root.fetch<Concert, ConcertMusic>("playList", JoinType.LEFT)
@@ -56,25 +56,22 @@ class ConcertSpecification {
     }
 
     fun filteredByComposer(composer: String) {
-        var composerSpec = Specification<Concert> { root, _, criteriaBuilder ->
+        val composerSpec = Specification<Concert> { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("composerKor")),
                 "%${composer.uppercase()}%",
             )
-        }
-        composerSpec = composerSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("shortComposerKor")),
                 "%${composer.uppercase()}%",
             )
-        }
-        composerSpec = composerSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("composerEng")),
                 "%${composer.uppercase()}%",
             )
-        }
-        composerSpec = composerSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("shortComposerEng")),
                 "%${composer.uppercase()}%",
@@ -85,25 +82,22 @@ class ConcertSpecification {
     }
 
     fun filteredByMusicName(musicName: String) {
-        var musicNameSpec = Specification<Concert> { root, _, criteriaBuilder ->
+        val musicNameSpec = Specification<Concert> { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("nameEng")),
                 "%${musicName.uppercase()}%",
             )
-        }
-        musicNameSpec = musicNameSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("nameKor")),
                 "%${musicName.uppercase()}%",
             )
-        }
-        musicNameSpec = musicNameSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("shortNameEng")),
                 "%${musicName.uppercase()}%",
             )
-        }
-        musicNameSpec = musicNameSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<ConcertMusic>("playList").get<Music>("music").get("shortNameKor")),
                 "%${musicName.uppercase()}%",
@@ -114,32 +108,27 @@ class ConcertSpecification {
     }
 
     fun filteredByText(text: String) {
-        var textSpec = Specification<Concert> { root, _, criteriaBuilder ->
+        val textSpec = Specification<Concert> { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get("title")),
                 "%${text.uppercase()}%",
             )
-        }
-        textSpec = textSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get("subtitle")),
                 "%${text.uppercase()}%",
             )
-        }
-        textSpec = textSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get("concertInfo")),
                 "%${text.uppercase()}%",
             )
-        }
-
-        textSpec = textSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get("regionDetail")),
                 "%${text.uppercase()}%",
             )
-        }
-        textSpec = textSpec.or { root, _, criteriaBuilder ->
+        }.or { root, _, criteriaBuilder ->
             criteriaBuilder.like(
                 criteriaBuilder.upper(root.get<Group>("group").get("name")),
                 "%${text.uppercase()}%",

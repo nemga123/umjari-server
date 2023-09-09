@@ -5,9 +5,8 @@ import com.umjari.server.domain.album.exception.AlbumIdNotFoundException
 import com.umjari.server.domain.album.exception.DuplicatedUserAlbumTitleException
 import com.umjari.server.domain.album.model.Album
 import com.umjari.server.domain.album.repository.AlbumRepository
-import com.umjari.server.domain.user.exception.UserProfileNameNotFoundException
 import com.umjari.server.domain.user.model.User
-import com.umjari.server.domain.user.repository.UserRepository
+import com.umjari.server.domain.user.service.UserService
 import com.umjari.server.global.pagination.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -15,18 +14,17 @@ import org.springframework.stereotype.Service
 @Service
 class AlbumService(
     private val albumRepository: AlbumRepository,
-    private val userRepository: UserRepository,
+    private val userService: UserService,
 ) {
     fun createAlbum(createAlbumRequest: AlbumDto.CreateAlbumRequest, user: User) {
         if (albumRepository.existsByOwnerIdAndTitle(user.id, createAlbumRequest.title)) {
             throw DuplicatedUserAlbumTitleException(createAlbumRequest.title)
         }
 
-        val album = Album(
+        Album(
             title = createAlbumRequest.title,
             owner = user,
-        )
-        albumRepository.save(album)
+        ).also { album: Album -> albumRepository.save(album) }
     }
 
     fun getAlbumListByProfileName(
@@ -34,19 +32,18 @@ class AlbumService(
         currentUser: User?,
         pageable: Pageable,
     ): AlbumDto.AlbumPageResponse {
-        val owner = userRepository.findByProfileName(profileName)
-            ?: throw UserProfileNameNotFoundException(profileName)
+        val owner = userService.getUserByProfileName(profileName)
 
-        val albumList = albumRepository.getAlbumsByOwnerProfileName(profileName, pageable)
-        val albumListResponse = albumList.map { AlbumDto.AlbumSimpleResponse(it) }
+        val albumListResponse = albumRepository.getAlbumsByOwnerProfileName(profileName, pageable).map {
+            AlbumDto.AlbumSimpleResponse(it)
+        }
         val albumPageResponse = PageResponse(albumListResponse, pageable.pageNumber)
 
         return AlbumDto.AlbumPageResponse(owner.id == currentUser?.id, albumPageResponse)
     }
 
     fun updateAlbumTitle(albumId: Long, updateAlbumRequest: AlbumDto.CreateAlbumRequest, user: User) {
-        val album = albumRepository.findByIdAndOwnerId(albumId, user.id)
-            ?: throw AlbumIdNotFoundException(albumId)
+        val album = getAlbumByIdAndOwnerId(albumId, user.id)
 
         if (albumRepository.existsByOwnerIdAndTitle(user.id, updateAlbumRequest.title)) {
             throw DuplicatedUserAlbumTitleException(updateAlbumRequest.title)
@@ -57,9 +54,9 @@ class AlbumService(
     }
 
     fun deleteAlbum(albumId: Long, user: User) {
-        val album = albumRepository.findByIdAndOwnerId(albumId, user.id)
-            ?: throw AlbumIdNotFoundException(albumId)
-
-        albumRepository.delete(album)
+        getAlbumByIdAndOwnerId(albumId, user.id).let { album: Album -> albumRepository.delete(album) }
     }
+
+    fun getAlbumByIdAndOwnerId(albumId: Long, userId: Long): Album = albumRepository.findByIdAndOwnerId(albumId, userId)
+        ?: throw AlbumIdNotFoundException(albumId)
 }
