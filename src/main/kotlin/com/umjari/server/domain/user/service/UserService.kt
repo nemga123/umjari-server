@@ -79,6 +79,7 @@ class UserService(
             with(user) {
                 profileName = updateUserInfo.profileName
                 intro = updateUserInfo.intro
+                region = updateUserInfo.regionParent + " " + updateUserInfo.regionChild
             }
         } else {
             if (user.nicknameUpdatedAt.isAfter(LocalDate.now().minusMonths(1))) {
