@@ -16,3 +16,8 @@ app:
     jwt:
         jwt-secret-key: "umjarijwtsecretkeyumjarijwtsecretkeyumjarijwtsecretkey"
         jwt-expiration-in-ms: 36000000
+management:
+    endpoints:
+        web:
+            exposure:
+                include: prometheus

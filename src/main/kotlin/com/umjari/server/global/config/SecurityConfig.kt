@@ -125,6 +125,7 @@ class SecurityConfig(
             .requestMatchers("/api/v1/ping/").permitAll()
             .requestMatchers("/api/v1/user/me/").authenticated()
             .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
+            .requestMatchers("/actuator/prometheus").permitAll()
             .anyRequest().authenticated()
         return httpSecurity.build()
     }
