@@ -36,7 +36,7 @@ dependencies {
     implementation("org.thymeleaf:thymeleaf-spring5:3.0.15.RELEASE")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    runtimeOnly ("io.micrometer:micrometer-registry-prometheus")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
