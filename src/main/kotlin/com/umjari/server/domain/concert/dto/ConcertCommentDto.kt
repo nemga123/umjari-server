@@ -13,12 +13,14 @@ class ConcertCommentDto {
     )
 
     data class ConcertCommentResponse(
+        val id: Long,
         val simpleUserDto: UserDto.SimpleUserDto,
         val comment: String,
         val createAt: String,
         val isOwnedComment: Boolean,
     ) {
         constructor(concertComment: ConcertComment, isOwned: Boolean) : this(
+            id = concertComment.id,
             simpleUserDto = UserDto.SimpleUserDto(concertComment.user),
             comment = concertComment.comment,
             createAt = concertComment.createdAt!!.toString(),

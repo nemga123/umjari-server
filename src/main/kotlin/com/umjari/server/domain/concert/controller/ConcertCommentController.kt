@@ -64,12 +64,12 @@ class ConcertCommentController(
     @ResponseStatus(HttpStatus.OK)
     fun getConcertCommentList(
         @PathVariable("concert_id") concertId: Long,
-        @CurrentUser user: User,
         @PageableDefault(
             size = 20,
             sort = ["createdAt"],
             direction = Sort.Direction.DESC,
         ) pageable: Pageable,
+        @CurrentUser user: User?,
     ): PageResponse<ConcertCommentDto.ConcertCommentResponse> {
         return concertCommentService.getConcertCommentList(user, concertId, pageable)
     }
