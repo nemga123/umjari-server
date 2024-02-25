@@ -65,9 +65,10 @@ class ConcertCommentService(
             user.id,
             concertId,
         )
-        if (deletedRow == 0L) {
-            throw ConcertCommentIdNotFoundException(commentId)
-        }
+        // if (deletedRow == 0L) {
+        //     throw ConcertCommentIdNotFoundException(commentId)
+        // }
+        // if (deletedRow.id != commentId && deletedRow.)
         concertCommentRepository.delete(deletedRow)
     }
 
