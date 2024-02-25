@@ -61,7 +61,7 @@ class ConcertCommentService(
         commentId: Long,
     ) {
         val deletedRow = concertCommentRepository.deleteConcertCommentByIdAndUserIdAndConcertId(
-            concertId,
+            commentId,
             user.id,
             concertId,
         )
