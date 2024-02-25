@@ -68,6 +68,7 @@ class ConcertCommentService(
         if (deletedRow == 0L) {
             throw ConcertCommentIdNotFoundException(commentId)
         }
+        concertCommentRepository.delete(deletedRow)
     }
 
     fun getConcertCommentList(
