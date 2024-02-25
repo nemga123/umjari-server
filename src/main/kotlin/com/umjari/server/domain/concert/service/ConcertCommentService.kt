@@ -61,6 +61,7 @@ class ConcertCommentService(
         commentId: Long,
     ) {
         val deletedRow = concertCommentRepository.findByIdOrNull(commentId)
+            ?: throw ConcertCommentIdNotFoundException(commentId)
         // if (deletedRow == 0L) {
         //     throw ConcertCommentIdNotFoundException(commentId)
         // }
