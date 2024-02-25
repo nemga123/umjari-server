@@ -12,8 +12,7 @@ interface ConcertCommentRepository : JpaRepository<ConcertComment, Long> {
 
     fun findConcertCommentByIdAndUserIdAndConcertId(id: Long, userId: Long, concertId: Long): ConcertComment?
 
-    fun deleteConcertCommentByIdAndUserIdAndConcertId(id: Long, userId: Long, concertId: Long): ConcertComment?
-
+    fun deleteConcertCommentByIdAndUserIdAndConcertId(id: Long, userId: Long, concertId: Long): ConcertComment
 
     @Query(
         value = """
