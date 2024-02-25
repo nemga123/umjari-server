@@ -14,7 +14,6 @@ interface ConcertCommentRepository : JpaRepository<ConcertComment, Long> {
 
     fun deleteConcertCommentByIdAndUserIdAndConcertId(id: Long, userId: Long, concertId: Long): ConcertComment
 
-
     @Query(
         value = """
             SELECT concertComment FROM ConcertComment AS concertComment JOIN FETCH concertComment.user WHERE concertComment.concert.id = :concertId
