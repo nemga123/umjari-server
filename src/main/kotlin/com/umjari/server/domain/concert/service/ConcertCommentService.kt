@@ -71,7 +71,7 @@ class ConcertCommentService(
     }
 
     fun getConcertCommentList(
-        user: User,
+        user: User?,
         concertId: Long,
         pageable: Pageable,
     ): PageResponse<ConcertCommentDto.ConcertCommentResponse> {
@@ -79,7 +79,7 @@ class ConcertCommentService(
             ?: throw ConcertNotFoundException(concertId)
 
         val commentList = concertCommentRepository.getAllByConcertId(concert.id, pageable)
-        val pagedResponse = commentList.map { ConcertCommentDto.ConcertCommentResponse(it, it.user.id == user.id) }
+        val pagedResponse = commentList.map { ConcertCommentDto.ConcertCommentResponse(it, it.user.id == user?.id) }
         return PageResponse(pagedResponse, pageable.pageNumber)
     }
 }
