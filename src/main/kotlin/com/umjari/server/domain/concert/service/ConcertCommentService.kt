@@ -60,11 +60,7 @@ class ConcertCommentService(
         concertId: Long,
         commentId: Long,
     ) {
-        val deletedRow = concertCommentRepository.findConcertCommentByIdAndUserIdAndConcertId(
-            commentId,
-            user.id,
-            concertId,
-        )
+        val deletedRow = concertCommentRepository.findByIdOrNull(commentId)
         // if (deletedRow == 0L) {
         //     throw ConcertCommentIdNotFoundException(commentId)
         // }
